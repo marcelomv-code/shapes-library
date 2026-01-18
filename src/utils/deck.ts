@@ -103,7 +103,23 @@ try {
   $app.DisplayAlerts = 0
   $d = $app.Presentations.Open($deck,$true,$false,$false)
   $sl = $d.Slides.Item($idx)
-  if ($sl.Shapes.Count -gt 0) { $sl.Shapes.Range().Copy() }
+  # Filter out footer/slide number/date placeholders and copyright text
+  $validNames = @()
+  foreach ($shape in $sl.Shapes) {
+    $skip = $false
+    try {
+      $phType = $shape.PlaceholderFormat.Type
+      if ($phType -eq 6 -or $phType -eq 13 -or $phType -eq 16) { $skip = $true }
+    } catch {}
+    if (-not $skip) {
+      try {
+        $txt = $shape.TextFrame.TextRange.Text
+        if ($txt -match 'Copyright|©') { $skip = $true }
+      } catch {}
+    }
+    if (-not $skip) { $validNames += $shape.Name }
+  }
+  if ($validNames.Count -gt 0) { $sl.Shapes.Range($validNames).Copy() }
   $d.Close()
   'OK'
 } catch { "ERROR:$($_.Exception.Message)"; exit 1 }
@@ -123,7 +139,23 @@ try {
   if ($null -eq $dest) { $dest = $app.ActivePresentation.Slides.Item(1) }
   $d = $app.Presentations.Open($deck,$true,$false,$false)
   $sl = $d.Slides.Item($idx)
-  if ($sl.Shapes.Count -gt 0) { $sl.Shapes.Range().Copy() }
+  # Filter out footer/slide number/date placeholders and copyright text
+  $validNames = @()
+  foreach ($shape in $sl.Shapes) {
+    $skip = $false
+    try {
+      $phType = $shape.PlaceholderFormat.Type
+      if ($phType -eq 6 -or $phType -eq 13 -or $phType -eq 16) { $skip = $true }
+    } catch {}
+    if (-not $skip) {
+      try {
+        $txt = $shape.TextFrame.TextRange.Text
+        if ($txt -match 'Copyright|©') { $skip = $true }
+      } catch {}
+    }
+    if (-not $skip) { $validNames += $shape.Name }
+  }
+  if ($validNames.Count -gt 0) { $sl.Shapes.Range($validNames).Copy() }
   $dest.Shapes.Paste() | Out-Null
   $d.Close()
   'OK'
