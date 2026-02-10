@@ -222,4 +222,8 @@ Arthur Andrade
 
 ## Changelog
 
-For detailed changes, see [CHANGELOG.md](./CHANGELOG.md)
+### Version 1.3.3
+- 🔧 **Thumbnail display**: Fixed issue where PNG previews were not loading on Raycast Windows v0.44+. The fix converts Windows file paths to `file:///` URLs with forward slashes, which is now required by Raycast.
+
+### Version 1.3.2
+- 🚀 **Initial tracked version**: Full shape capture and library management features
