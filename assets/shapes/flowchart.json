@@ -1,5 +1,28 @@
 [
   {
+    "id": "captured-group-9-mnpdaxy6",
+    "name": "Make or Buy",
+    "category": "flowchart",
+    "description": "Captured from PowerPoint (Group) (Type: -2)",
+    "tags": [
+      "captured",
+      "basic",
+      "rectangle",
+      "group"
+    ],
+    "preview": "flowchart/captured-group-9-mnpdaxy6.png",
+    "pptxDefinition": {
+      "type": "rectangle",
+      "x": 0.417,
+      "y": 1.607,
+      "w": 12.771,
+      "h": 5.142,
+      "adj": []
+    },
+    "nativePptx": "native/shape_captured_1775611593762.pptx",
+    "nativeOnly": true
+  },
+  {
     "id": "captured-group-6-mmkwfp1f",
     "name": "Mapa Capacidades",
     "category": "flowchart",

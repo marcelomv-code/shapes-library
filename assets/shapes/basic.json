@@ -112,6 +112,30 @@
     "nativeOnly": true
   },
   {
+    "id": "captured-group-194-mnonti8t",
+    "name": "Framework Process",
+    "category": "basic",
+    "description": "Captured from PowerPoint (Group) (Type: -2)",
+    "tags": [
+      "captured",
+      "basic",
+      "rectangle",
+      "group",
+      "194"
+    ],
+    "preview": "basic/captured-group-194-mnonti8t.png",
+    "pptxDefinition": {
+      "type": "rectangle",
+      "x": 0.48,
+      "y": 1.486,
+      "w": 12.398,
+      "h": 5.443,
+      "adj": []
+    },
+    "nativePptx": "native/shape_captured_1775568783287.pptx",
+    "nativeOnly": true
+  },
+  {
     "id": "captured-table-6-mhzatht5",
     "name": "Plano Diário",
     "category": "basic",
@@ -160,6 +184,29 @@
       }
     },
     "nativePptx": "native/shape_captured_1761955065890.pptx"
+  },
+  {
+    "id": "captured-group-6-mnp312lc",
+    "name": "SIPOC",
+    "category": "basic",
+    "description": "Captured from PowerPoint (Group) (Type: -2)",
+    "tags": [
+      "captured",
+      "basic",
+      "rectangle",
+      "group"
+    ],
+    "preview": "basic/captured-group-6-mnp312lc.png",
+    "pptxDefinition": {
+      "type": "rectangle",
+      "x": 0.349,
+      "y": 1.761,
+      "w": 12.73,
+      "h": 5.176,
+      "adj": []
+    },
+    "nativePptx": "native/shape_captured_1775594339326.pptx",
+    "nativeOnly": true
   },
   {
     "id": "captured-rectangle-70-mmjp9rxz",
