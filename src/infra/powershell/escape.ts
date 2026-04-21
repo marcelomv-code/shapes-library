@@ -2,12 +2,12 @@
  * String escaping helpers for safely interpolating values into PowerShell
  * single-quoted string literals.
  *
- * Rationale: today many call sites inline user-controlled paths with a
- * hand-written `.replace(/'/g, "''")`. Centralizing prevents drift and
- * makes it easier to audit the set of places where untrusted input crosses
+ * Centralizing these avoids the drift we see today, where every call site
+ * hand-rolls `.replace(/'/g, "''")` with no tests or audit trail. Grep for
+ * `psSingleQuote` / `psPath` to list every crossing of untrusted input
  * into a PS script.
  *
- * Scaffolding only — Phase 4 migrates call sites to these helpers.
+ * Scaffolding only -- Phase 4 migrates call sites.
  */
 
 /**
@@ -15,39 +15,40 @@
  *
  *   `'${psSingleQuote(value)}'`
  *
- * In PS single-quoted strings, the only character that needs escaping is the
- * single quote itself, which is doubled (`'` -> `''`). No variable or
- * sub-expression expansion occurs, so this is the safest interpolation form.
+ * Why single-quoted: inside `'...'` PowerShell performs NO variable or
+ * sub-expression expansion. The only character that needs escaping is
+ * the single quote itself, which is doubled (`'` -> `''`).
  *
- * Also strips NUL which PowerShell cannot represent in a string literal,
- * and normalizes any stray line separators that could break the quoting.
+ * Also strips NUL (`U+0000`), which PS cannot represent in a string
+ * literal and which could truncate output when the string is piped
+ * through C APIs. Other whitespace (newlines, tabs) passes through
+ * literally, which is safe inside single quotes.
  */
 export function psSingleQuote(value: string): string {
   if (value == null) return "";
   return String(value)
     .split("\u0000") // strip NUL (split/join avoids no-control-regex lint)
     .join("")
-    .replace(/\r\n/g, "\n") // normalize CRLF before re-expansion
-    .replace(/'/g, "''"); // double single quotes
+    .replace(/'/g, "''");
 }
 
 /**
  * Escape a filesystem path for use inside a PowerShell single-quoted literal.
- * Thin wrapper over `psSingleQuote` — kept separate to make audit grep easy
- * (all path interpolations should use this).
+ * Thin alias over `psSingleQuote` -- kept separate so an audit grep for
+ * `psPath(` lists every PS <-> filesystem boundary in the codebase.
  */
 export function psPath(path: string): string {
   return psSingleQuote(path);
 }
 
 /**
- * Encode a PS script as a UTF-16LE base64 blob suitable for the
- * `-EncodedCommand` flag. Avoids writing anything to disk and dodges
- * quoting issues entirely — at the cost of being harder to debug.
+ * Encode a PS script as a UTF-16LE base64 blob for the `-EncodedCommand`
+ * flag. Avoids writing anything to disk and sidesteps PS 5.1's default
+ * .ps1 encoding (Windows-1252) at the cost of harder-to-debug errors and
+ * a ~8 KiB command-line size limit.
  *
- * The runner does not use this by default (temp-file path gives better
- * error messages and is what the existing call sites assume). Exposed for
- * future use by Phase 4 and for scripts that must not touch the filesystem.
+ * The default runner uses the `-File` path, not this. Exported for future
+ * callers (Phase 4+) that need no-disk execution.
  */
 export function encodePSCommand(script: string): string {
   const utf16le = Buffer.from(script, "utf16le");

@@ -1,13 +1,12 @@
 /**
  * Type contracts for the PowerShell runner infrastructure.
  *
- * These types are consumed by `runner.ts` and re-exported from the barrel
- * `index.ts`. They exist so that call sites can adopt a strict, consistent
- * shape for PS invocations instead of hand-rolling `spawn("powershell", ...)`
- * in every file.
+ * Consumed by `runner.ts` and re-exported from the barrel `index.ts`.
+ * Call sites should adopt these types instead of hand-rolling
+ * `spawn("powershell", ...)` in every file.
  *
- * Scaffolding only — no callers consume these yet. Migration happens in
- * Phase 4 (extract inline scripts to `scripts/ps/*.ps1`).
+ * Scaffolding only -- Phase 4 migrates the 8 existing spawn invocations
+ * (across 7 files) to `runPowerShellScript`.
  */
 
 /**
@@ -15,7 +14,7 @@
  */
 export interface PSRunOptions {
   /**
-   * Hard kill the PS process after this many milliseconds.
+   * Hard-kill the PS process after this many milliseconds.
    * Defaults to 60_000 (60s). Use `0` to disable (not recommended).
    */
   timeoutMs?: number;
@@ -27,13 +26,14 @@ export interface PSRunOptions {
   signal?: AbortSignal;
 
   /**
-   * Filename prefix used when materializing the temp `.ps1` file on disk.
-   * The runner appends `-${Date.now()}.ps1`. Defaults to `ps-run`.
+   * Filename prefix for the temp `.ps1`. The runner appends
+   * `-${Date.now()}-${random}.ps1`. Defaults to `ps-run`.
    */
   tempPrefix?: string;
 
   /**
-   * Max bytes of stdout to retain in memory. Excess is discarded.
+   * Max bytes of stdout to retain. Excess is discarded but counted in
+   * `droppedBytes.stdout` in the result for observability.
    * Defaults to 5 * 1024 * 1024 (5 MiB). Guards against runaway output.
    */
   maxStdoutBytes?: number;
@@ -44,8 +44,8 @@ export interface PSRunOptions {
   maxStderrBytes?: number;
 
   /**
-   * When true, keep the temp `.ps1` file on disk after the run (for debugging).
-   * Defaults to false.
+   * When true, keep the temp `.ps1` file on disk after the run.
+   * Useful for debugging. Defaults to false.
    */
   keepTempFile?: boolean;
 }
@@ -55,16 +55,30 @@ export interface PSRunOptions {
  */
 export type PSFailureReason =
   | "unsupported-platform" // non-Windows host
+  | "invalid-input" // empty/whitespace-only script, etc.
   | "spawn-failed" // spawn error event (PATH / permissions)
   | "timeout" // exceeded options.timeoutMs
   | "aborted" // AbortSignal fired
   | "write-failed" // writing the temp .ps1 failed
   | "exit-nonzero" // process exited with non-zero code
-  | "protocol-error"; // stdout tagged ERROR: or no usable payload
+  | "protocol-error"; // stdout tagged "ERROR:" (legacy sentinel)
 
 /**
- * Structured result of a PS run. Always resolves — never rejects —
- * so callers can use `if (!result.ok)` without try/catch noise.
+ * Bytes dropped when output exceeded max*Bytes caps. Useful for surfacing
+ * "output truncated" warnings in the UI layer without re-reading logs.
+ */
+export interface PSDroppedBytes {
+  stdout: number;
+  stderr: number;
+}
+
+/**
+ * Discriminated-union result of a PS run. Always resolves -- never rejects --
+ * so callers use `if (!result.ok)` without try/catch.
+ *
+ * Strings are decoded as UTF-8. Callers that expect a non-UTF-8 console
+ * encoding must override Console.OutputEncoding inside the script itself
+ * (e.g. `[Console]::OutputEncoding = [Text.UTF8Encoding]::new()`).
  */
 export type PSResult =
   | {
@@ -72,6 +86,7 @@ export type PSResult =
       stdout: string;
       stderr: string;
       code: 0;
+      droppedBytes: PSDroppedBytes;
     }
   | {
       ok: false;
@@ -82,4 +97,5 @@ export type PSResult =
       code: number | null;
       stdout: string;
       stderr: string;
+      droppedBytes: PSDroppedBytes;
     };
