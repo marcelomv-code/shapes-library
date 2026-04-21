@@ -72,20 +72,23 @@ export async function generateShapePptx(shape: ShapeInfo): Promise<string> {
 
   // Normalize colors to ensure absolute RGB format with # prefix
   // This prevents theme color interpretation and ensures consistent colors
-  slide.addShape(shapeDef.type as any, {
-    x: shapeDef.x,
-    y: shapeDef.y,
-    w: shapeDef.w,
-    h: shapeDef.h,
-    fill: normalizeFill(shapeDef.fill),
-    line: normalizeLine(shapeDef.line),
-    shadow: shapeDef.shadow,
-    rotate: shapeDef.rotate,
-    flipH: shapeDef.flipH,
-    flipV: shapeDef.flipV,
-    // carry optional adjustments
-    ...(shapeDef as any),
-  } as any);
+  slide.addShape(
+    shapeDef.type as any,
+    {
+      x: shapeDef.x,
+      y: shapeDef.y,
+      w: shapeDef.w,
+      h: shapeDef.h,
+      fill: normalizeFill(shapeDef.fill),
+      line: normalizeLine(shapeDef.line),
+      shadow: shapeDef.shadow,
+      rotate: shapeDef.rotate,
+      flipH: shapeDef.flipH,
+      flipV: shapeDef.flipV,
+      // carry optional adjustments
+      ...(shapeDef as any),
+    } as any
+  );
 
   // Generate unique filename with timestamp
   const timestamp = Date.now();
@@ -125,7 +128,9 @@ export async function openShapeInPowerPoint(shape: ShapeInfo): Promise<void> {
         srcPptx = join(getLibraryRoot(), shape.nativePptx.replace(/^[\\/]+/, ""));
       } else {
         if (prefs.forceExactShapes || shape.nativeOnly) {
-          throw new Error("Native PPTX required. Recapture this shape to generate a native PPTX file with your template theme.");
+          throw new Error(
+            "Native PPTX required. Recapture this shape to generate a native PPTX file with your template theme."
+          );
         }
         srcPptx = await generateShapePptx(shape);
         tempPath = srcPptx;

@@ -39,7 +39,7 @@ export async function generatePreview(shape: ShapeInfo): Promise<string | null> 
     // Using pptxgenjs would apply default Office theme colors
     throw new Error(
       "Native PPTX required for preview generation. " +
-      "Recapture this shape to generate a native PPTX file with your template theme."
+        "Recapture this shape to generate a native PPTX file with your template theme."
     );
   }
 
@@ -85,14 +85,7 @@ try {
       return reject(e as Error);
     }
 
-    const ps = spawn("powershell", [
-      "-NoProfile",
-      "-NonInteractive",
-      "-ExecutionPolicy",
-      "Bypass",
-      "-File",
-      temp,
-    ]);
+    const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", temp]);
     let stdout = "";
     let stderr = "";
     ps.stdout.on("data", (d) => (stdout += d.toString()));
@@ -110,4 +103,3 @@ try {
     }
   });
 }
-

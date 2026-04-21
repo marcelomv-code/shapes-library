@@ -36,8 +36,12 @@ export default async function ImportLibrary(props: { arguments: Args }) {
     toast.style = Toast.Style.Success;
     toast.title = "Library imported";
     toast.message = root;
-    try { await Clipboard.copy(root); } catch {}
-    try { await showInFinder(root); } catch {}
+    try {
+      await Clipboard.copy(root);
+    } catch {}
+    try {
+      await showInFinder(root);
+    } catch {}
   } catch (err) {
     toast.style = Toast.Style.Failure;
     toast.title = "Import failed";
@@ -83,13 +87,20 @@ Expand-Archive -LiteralPath $s -DestinationPath $d -Force
 function runPs(script: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const tmp = join(tmpdir(), `import_${Date.now()}.ps1`);
-    try { require("fs").writeFileSync(tmp, script, "utf-8"); } catch (e) { return reject(e as Error); }
+    try {
+      require("fs").writeFileSync(tmp, script, "utf-8");
+    } catch (e) {
+      return reject(e as Error);
+    }
     const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", tmp]);
     ps.on("error", (e) => done(e));
     ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code})`)));
     function done(err: Error | null) {
-      try { require("fs").unlinkSync(tmp); } catch {}
-      if (err) reject(err); else resolve();
+      try {
+        require("fs").unlinkSync(tmp);
+      } catch {}
+      if (err) reject(err);
+      else resolve();
     }
   });
 }

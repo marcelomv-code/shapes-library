@@ -183,7 +183,9 @@ export function deleteCategory(categoryId: string): boolean {
   // Check if category has shapes
   const shapeCount = getShapeCountInCategory(categoryId);
   if (shapeCount > 0) {
-    throw new Error(`Cannot delete category "${categories[index].name}" - it contains ${shapeCount} shape(s). Move or delete the shapes first.`);
+    throw new Error(
+      `Cannot delete category "${categories[index].name}" - it contains ${shapeCount} shape(s). Move or delete the shapes first.`
+    );
   }
 
   // Remove from list

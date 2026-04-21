@@ -94,7 +94,7 @@ export function generateSvgPreview(shape: ShapeInfo): string {
       // Fallback: draw a rectangle for unknown shapes
       shapeSvg = `<rect x="${shapeX}" y="${shapeY}" width="${shapeWidth}" height="${shapeHeight}"
                    fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
-                   <text x="${width/2}" y="${height/2 + 60}" text-anchor="middle"
+                   <text x="${width / 2}" y="${height / 2 + 60}" text-anchor="middle"
                    font-family="Arial" font-size="14" fill="#666">${shape.name}</text>`;
   }
 

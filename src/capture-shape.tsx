@@ -124,14 +124,29 @@ function SaveForm({ shape }: { shape: ShapeInfo }) {
 
       <Form.Separator />
 
-      <Form.TextField id="shapeName" title="Shape Name" placeholder="Enter a descriptive name" defaultValue={shape.name} />
+      <Form.TextField
+        id="shapeName"
+        title="Shape Name"
+        placeholder="Enter a descriptive name"
+        defaultValue={shape.name}
+      />
       <Form.Dropdown id="category" title="Category" defaultValue={shape.category}>
         {loadCategories().map((cat) => (
           <Form.Dropdown.Item key={cat.id} value={cat.id} title={cat.name} />
         ))}
       </Form.Dropdown>
-      <Form.TextArea id="description" title="Description" placeholder="Optional description" defaultValue={shape.description} />
-      <Form.TextField id="tags" title="Tags" placeholder="tag1, tag2, tag3" defaultValue={shape.tags?.join(", ") || ""} />
+      <Form.TextArea
+        id="description"
+        title="Description"
+        placeholder="Optional description"
+        defaultValue={shape.description}
+      />
+      <Form.TextField
+        id="tags"
+        title="Tags"
+        placeholder="tag1, tag2, tag3"
+        defaultValue={shape.tags?.join(", ") || ""}
+      />
     </Form>
   );
 }
@@ -145,7 +160,11 @@ export default function CaptureShape() {
   async function handleCapture() {
     setIsCapturing(true);
     setStatus("Extracting shape...");
-    const toast = await showToast({ style: Toast.Style.Animated, title: "Capturing shape...", message: "Select a shape in PowerPoint" });
+    const toast = await showToast({
+      style: Toast.Style.Animated,
+      title: "Capturing shape...",
+      message: "Select a shape in PowerPoint",
+    });
     try {
       const result: any = await captureShapeFromPowerPoint();
       if (Array.isArray(result.logs)) setLastLogs(result.logs as string[]);
@@ -160,7 +179,9 @@ export default function CaptureShape() {
 
       setStatus("Mapping shape...");
       const shapeInfo = mapToShapeInfo(result.shape);
-      try { (shapeInfo as any).__tempPng = (result.shape as any).pngTempPath; } catch {}
+      try {
+        (shapeInfo as any).__tempPng = (result.shape as any).pngTempPath;
+      } catch {}
 
       // Optional auto-save
       const prefs = getPreferenceValues<Preferences>();
@@ -192,7 +213,9 @@ export default function CaptureShape() {
             if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
             const outPng = join(outDir, `${shapeInfo.id}.png`);
             copyFileSync(tempPng, outPng);
-            updateShapeInLibrary(shapeInfo.id, shapeInfo.category, { preview: `${shapeInfo.category}/${shapeInfo.id}.png` });
+            updateShapeInLibrary(shapeInfo.id, shapeInfo.category, {
+              preview: `${shapeInfo.category}/${shapeInfo.id}.png`,
+            });
           }
         } catch {}
 
@@ -249,4 +272,3 @@ export default function CaptureShape() {
     />
   );
 }
-

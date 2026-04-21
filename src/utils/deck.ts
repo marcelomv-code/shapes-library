@@ -26,7 +26,9 @@ export async function ensureDeck(): Promise<string> {
   const deck = getDeckPath();
   const dir = join(deck, "..");
   if (!existsSync(dir)) {
-    try { mkdirSync(dir, { recursive: true }); } catch {}
+    try {
+      mkdirSync(dir, { recursive: true });
+    } catch {}
   }
   if (existsSync(deck)) return deck;
 
@@ -166,19 +168,25 @@ try {
 async function runPs(script: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const temp = join(tmpdir(), `deck-${Date.now()}.ps1`);
-    try { require("fs").writeFileSync(temp, script, "utf-8"); } catch (e) { return reject(e as Error); }
-    const ps = spawn("powershell", ["-NoProfile","-NonInteractive","-ExecutionPolicy","Bypass","-File", temp]);
-    let stdout = ""; let stderr = "";
-    ps.stdout.on("data", (d) => stdout += d.toString());
-    ps.stderr.on("data", (d) => stderr += d.toString());
+    try {
+      require("fs").writeFileSync(temp, script, "utf-8");
+    } catch (e) {
+      return reject(e as Error);
+    }
+    const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", temp]);
+    let stdout = "";
+    let stderr = "";
+    ps.stdout.on("data", (d) => (stdout += d.toString()));
+    ps.stderr.on("data", (d) => (stderr += d.toString()));
     ps.on("error", (e) => done(e));
     ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code}). ${stderr || stdout}`)));
     function done(err: Error | null) {
-      try { require("fs").unlinkSync(temp); } catch {}
+      try {
+        require("fs").unlinkSync(temp);
+      } catch {}
       if (err) return reject(err);
       if (stdout.trim().startsWith("ERROR:")) return reject(new Error(stdout.trim().slice(6)));
       resolve(stdout);
     }
   });
 }
-

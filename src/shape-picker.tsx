@@ -1,5 +1,20 @@
 import { useState, useEffect } from "react";
-import { Grid, ActionPanel, Action, showToast, Toast, getPreferenceValues, Icon, confirmAlert, Alert, showInFinder, Form, useNavigation, launchCommand, LaunchType } from "@raycast/api";
+import {
+  Grid,
+  ActionPanel,
+  Action,
+  showToast,
+  Toast,
+  getPreferenceValues,
+  Icon,
+  confirmAlert,
+  Alert,
+  showInFinder,
+  Form,
+  useNavigation,
+  launchCommand,
+  LaunchType,
+} from "@raycast/api";
 import { readFileSync, existsSync, mkdirSync, readdirSync, copyFileSync, renameSync } from "fs";
 import { join } from "path";
 import { environment } from "@raycast/api";
@@ -20,10 +35,7 @@ import { loadCategories, getCategoryDisplayName, CategoryConfig } from "./utils/
  */
 function buildCategoryOptions(): CategoryOption[] {
   const categories = loadCategories();
-  return [
-    { title: "All Shapes", value: "all" },
-    ...categories.map((c) => ({ title: c.name, value: c.id })),
-  ];
+  return [{ title: "All Shapes", value: "all" }, ...categories.map((c) => ({ title: c.name, value: c.id }))];
 }
 
 /**
@@ -104,13 +116,7 @@ function EditShapeForm({ shape, onSave }: { shape: ShapeInfo; onSave: () => void
         </ActionPanel>
       }
     >
-      <Form.TextField
-        id="name"
-        title="Shape Name"
-        placeholder="Enter shape name"
-        defaultValue={shape.name}
-        autoFocus
-      />
+      <Form.TextField id="name" title="Shape Name" placeholder="Enter shape name" defaultValue={shape.name} autoFocus />
       <Form.Dropdown id="category" title="Category" defaultValue={shape.category}>
         {loadCategories().map((cat) => (
           <Form.Dropdown.Item key={cat.id} value={cat.id} title={cat.name} />
@@ -169,7 +175,9 @@ async function exportLibraryZip(): Promise<void> {
   const hasDeck = existsSync(join(root, "library_deck.pptx"));
 
   console.log(`[Export] Root: ${root}`);
-  console.log(`[Export] Folders present -> shapes:${hasShapes} assets:${hasAssets} native:${hasNative} deck:${hasDeck}`);
+  console.log(
+    `[Export] Folders present -> shapes:${hasShapes} assets:${hasAssets} native:${hasNative} deck:${hasDeck}`
+  );
 
   const toast = await showToast({ style: Toast.Style.Animated, title: "Exporting library..." });
 
@@ -196,14 +204,32 @@ Write-Output "OK:$dest"
 
       const tmpScript = join(tmpdir(), `export-${Date.now()}.ps1`);
       require("fs").writeFileSync(tmpScript, ps, "utf-8");
-      const child = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", tmpScript]);
-      let stdout = ""; let stderr = "";
-      child.stdout.on("data", (d) => { const t = d.toString(); stdout += t; console.log(`[Export][stdout] ${t.trim()}`); });
-      child.stderr.on("data", (d) => { const t = d.toString(); stderr += t; console.error(`[Export][stderr] ${t.trim()}`); });
+      const child = spawn("powershell", [
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        tmpScript,
+      ]);
+      let stdout = "";
+      let stderr = "";
+      child.stdout.on("data", (d) => {
+        const t = d.toString();
+        stdout += t;
+        console.log(`[Export][stdout] ${t.trim()}`);
+      });
+      child.stderr.on("data", (d) => {
+        const t = d.toString();
+        stderr += t;
+        console.error(`[Export][stderr] ${t.trim()}`);
+      });
       await new Promise<void>((resolve, reject) => {
         child.on("error", (e) => reject(e));
         child.on("close", (code) => {
-          try { require("fs").unlinkSync(tmpScript); } catch {}
+          try {
+            require("fs").unlinkSync(tmpScript);
+          } catch {}
           if (code !== 0) return reject(new Error(`PowerShell failed (${code}). ${stderr || stdout}`));
           if (!/^OK:/m.test(stdout)) return reject(new Error(`Unexpected output: ${stdout}`));
           resolve();
@@ -224,7 +250,7 @@ Write-Output "OK:$dest"
         zip.stdout.on("data", (d) => console.log(`[Export][zip] ${d.toString().trim()}`));
         zip.stderr.on("data", (d) => console.error(`[Export][zip-err] ${d.toString().trim()}`));
         zip.on("error", (e) => reject(e));
-        zip.on("close", (code) => code === 0 ? resolve() : reject(new Error(`zip failed (${code})`)));
+        zip.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`zip failed (${code})`))));
       });
     }
 
@@ -257,14 +283,32 @@ Write-Output "OK:$dest"
 `;
     const tmpScript = join(tmpdir(), `import-${Date.now()}.ps1`);
     require("fs").writeFileSync(tmpScript, ps, "utf-8");
-    const child = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", tmpScript]);
-    let stdout = ""; let stderr = "";
-    child.stdout.on("data", (d) => { const t = d.toString(); stdout += t; console.log(`[Import][stdout] ${t.trim()}`); });
-    child.stderr.on("data", (d) => { const t = d.toString(); stderr += t; console.error(`[Import][stderr] ${t.trim()}`); });
+    const child = spawn("powershell", [
+      "-NoProfile",
+      "-NonInteractive",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      tmpScript,
+    ]);
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (d) => {
+      const t = d.toString();
+      stdout += t;
+      console.log(`[Import][stdout] ${t.trim()}`);
+    });
+    child.stderr.on("data", (d) => {
+      const t = d.toString();
+      stderr += t;
+      console.error(`[Import][stderr] ${t.trim()}`);
+    });
     await new Promise<void>((resolve, reject) => {
       child.on("error", (e) => reject(e));
       child.on("close", (code) => {
-        try { require("fs").unlinkSync(tmpScript); } catch {}
+        try {
+          require("fs").unlinkSync(tmpScript);
+        } catch {}
         if (code !== 0) return reject(new Error(`PowerShell failed (${code}). ${stderr || stdout}`));
         if (!/^OK:/m.test(stdout)) return reject(new Error(`Unexpected output: ${stdout}`));
         resolve();
@@ -278,7 +322,7 @@ Write-Output "OK:$dest"
     unzip.stdout.on("data", (d) => console.log(`[Import][unzip] ${d.toString().trim()}`));
     unzip.stderr.on("data", (d) => console.error(`[Import][unzip-err] ${d.toString().trim()}`));
     unzip.on("error", (e) => reject(e));
-    unzip.on("close", (code) => code === 0 ? resolve() : reject(new Error(`unzip failed (${code})`)));
+    unzip.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`unzip failed (${code})`))));
   });
 }
 
@@ -552,7 +596,8 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
         toast.message = "Ctrl+V in PowerPoint";
         return;
       }
-      const requireNative = ((getPreferenceValues<Preferences>().forceExactShapes ?? false) === true) || shape.nativeOnly === true;
+      const requireNative =
+        (getPreferenceValues<Preferences>().forceExactShapes ?? false) === true || shape.nativeOnly === true;
       if (shape.nativePptx) {
         srcPptx = join(getLibraryRoot(), shape.nativePptx);
       }
@@ -570,7 +615,8 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
       try {
         await runCopyViaPowerPoint(srcPptx);
       } catch (primaryErr) {
-        const requireNative2 = ((getPreferenceValues<Preferences>().forceExactShapes ?? false) === true) || shape.nativeOnly === true;
+        const requireNative2 =
+          (getPreferenceValues<Preferences>().forceExactShapes ?? false) === true || shape.nativeOnly === true;
         if (requireNative2) {
           throw primaryErr;
         }
@@ -578,7 +624,9 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
         const fallback = await generateShapePptx(shape);
         isTemp = true;
         await runCopyViaPowerPoint(fallback);
-        try { require("fs").unlinkSync(fallback); } catch {}
+        try {
+          require("fs").unlinkSync(fallback);
+        } catch {}
       }
 
       toast.style = Toast.Style.Success;
@@ -590,7 +638,9 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
       toast.message = err instanceof Error ? err.message : "Unknown error";
     } finally {
       if (isTemp && srcPptx) {
-        try { require("fs").unlinkSync(srcPptx); } catch {}
+        try {
+          require("fs").unlinkSync(srcPptx);
+        } catch {}
       }
     }
   }
@@ -630,15 +680,22 @@ try {
 }
 `;
       const temp = join(tmpdir(), `raycast-copy-${Date.now()}.ps1`);
-      try { require("fs").writeFileSync(temp, script, "utf-8"); } catch (e) { return reject(e as Error); }
+      try {
+        require("fs").writeFileSync(temp, script, "utf-8");
+      } catch (e) {
+        return reject(e as Error);
+      }
       const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", temp]);
-      let stdout = ""; let stderr = "";
+      let stdout = "";
+      let stderr = "";
       ps.stdout.on("data", (d) => (stdout += d.toString()));
       ps.stderr.on("data", (d) => (stderr += d.toString()));
       ps.on("error", (e) => done(e));
       ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code}). ${stderr || stdout}`)));
       function done(err: Error | null) {
-        try { require("fs").unlinkSync(temp); } catch {}
+        try {
+          require("fs").unlinkSync(temp);
+        } catch {}
         if (err) return reject(err);
         if (stdout.trim().startsWith("ERROR:")) return reject(new Error(stdout.trim().slice(6)));
         resolve();
@@ -697,7 +754,7 @@ try {
                     onAction={() => copyShapeToClipboard(shape)}
                   />
                   <Action
-                    title="Open in PowerPoint"
+                    title="Open in Powerpoint"
                     icon={Icon.Document}
                     onAction={async () => {
                       const prefs = getPreferenceValues<Preferences>();
@@ -711,15 +768,14 @@ try {
                 </ActionPanel.Section>
 
                 <ActionPanel.Section title="Utility">
-                  <ActionPanel.Submenu title="Share Library" icon={Icon.Upload}
-                    shortcut={{ modifiers: ["cmd"], key: "s" }}>
+                  <ActionPanel.Submenu
+                    title="Share Library"
+                    icon={Icon.Upload}
+                    shortcut={{ modifiers: ["cmd"], key: "s" }}
+                  >
+                    <Action title="Export Library (zip)" icon={Icon.Upload} onAction={exportLibraryZip} />
                     <Action
-                      title="Export Library (ZIP)"
-                      icon={Icon.Upload}
-                      onAction={exportLibraryZip}
-                    />
-                    <Action
-                      title="Import Library (ZIP)"
+                      title="Import Library (zip)"
                       icon={Icon.Download}
                       onAction={() => push(<ImportLibraryForm />)}
                     />
@@ -732,7 +788,11 @@ try {
                       try {
                         await launchCommand({ name: "manage-categories", type: LaunchType.UserInitiated });
                       } catch {
-                        await showToast({ style: Toast.Style.Failure, title: "Command not found", message: "Manage Categories command is not available" });
+                        await showToast({
+                          style: Toast.Style.Failure,
+                          title: "Command not found",
+                          message: "Manage Categories command is not available",
+                        });
                       }
                     }}
                   />

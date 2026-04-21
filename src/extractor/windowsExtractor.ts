@@ -259,8 +259,14 @@ try {
     const logs: string[] = [];
     let killTimer: NodeJS.Timeout | null = null;
     const setKill = (ms: number) => {
-      try { if (killTimer) clearTimeout(killTimer); } catch {}
-      killTimer = setTimeout(() => { try { ps.kill(); } catch {} }, ms);
+      try {
+        if (killTimer) clearTimeout(killTimer);
+      } catch {}
+      killTimer = setTimeout(() => {
+        try {
+          ps.kill();
+        } catch {}
+      }, ms);
     };
     setKill(30000);
 
@@ -293,7 +299,9 @@ try {
     // kill timer handled via setKill above
 
     ps.on("close", (code) => {
-      try { if (killTimer) clearTimeout(killTimer); } catch {}
+      try {
+        if (killTimer) clearTimeout(killTimer);
+      } catch {}
       cleanup();
 
       if (code !== 0 && code !== null) {
@@ -303,7 +311,13 @@ try {
         if (errLine) {
           return resolve({ success: false, error: errLine.trim().replace(/^ERROR:/, ""), logs, stdout, stderr });
         }
-        return resolve({ success: false, error: `PowerShell failed (${code}). ${stderr || out}` , logs, stdout, stderr });
+        return resolve({
+          success: false,
+          error: `PowerShell failed (${code}). ${stderr || out}`,
+          logs,
+          stdout,
+          stderr,
+        });
       }
 
       const output = stdout.trim();
@@ -351,4 +365,3 @@ try {
     }
   });
 }
-

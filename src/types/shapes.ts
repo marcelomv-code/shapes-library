@@ -1,4 +1,3 @@
-
 /**
  * PowerPoint shape type definitions compatible with PptxGenJS
  */

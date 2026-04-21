@@ -1,133 +1,151 @@
 {
-    "$schema": "https://www.raycast.com/schemas/extension.json",
-    "name": "shapes-library",
-    "title": "PowerPoint Shapes Library",
-    "description": "Browse and insert editable PowerPoint shapes into your presentations",
-    "icon":  "icon.png",
-    "author": "arthur.andrade",
-    "license": "MIT",
-    "version": "1.3.3",
-    "commands": [
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "shapes-library",
+  "title": "PowerPoint Shapes Library",
+  "description": "Browse, capture, and insert editable PowerPoint shapes into your presentations.",
+  "icon": "icon.png",
+  "author": "marcelo_vieira",
+  "platforms": ["Windows"],
+  "categories": ["Design Tools", "Productivity"],
+  "keywords": ["powerpoint", "ppt", "pptx", "shape", "shapes", "library", "presentation", "slides"],
+  "license": "MIT",
+  "version": "2.0.1",
+  "engines": {
+    "node": ">=22.14.0",
+    "npm": ">=7.0.0"
+  },
+  "commands": [
+    {
+      "name": "shape-picker",
+      "title": "Search Shapes",
+      "description": "Browse and insert PowerPoint shapes.",
+      "mode": "view",
+      "keywords": ["search", "shape", "shapes", "powerpoint", "ppt", "pptx", "library"],
+      "arguments": [
         {
-            "name": "shape-picker",
-            "title": "Search Shapes",
-            "description": "Browse and insert PowerPoint shapes",
-            "mode": "view",
-            "arguments": [
-                {
-                    "name": "category",
-                    "type": "text",
-                    "required": false,
-                    "placeholder": "Category ID"
-                }
-            ]
-        },
-        {
-            "name": "capture-shape",
-            "title": "Capture Shape from PowerPoint",
-            "description": "Extract selected shape and add to library",
-            "mode": "view"
-        },
-        {
-            "name": "manage-categories",
-            "title": "Manage Categories",
-            "description": "Add, rename, or delete shape categories",
-            "mode": "view"
+          "name": "category",
+          "type": "text",
+          "required": false,
+          "placeholder": "Category ID"
         }
-    ],
-    "preferences": [
-        {
-            "name": "enableCache",
-            "type": "checkbox",
-            "required": false,
-            "title": "Enable Cache",
-            "description": "Cache shape definitions for faster loading",
-            "default": true,
-            "label": "Enable caching of shape definitions"
-        },
-        {
-            "name": "autoCleanup",
-            "type": "checkbox",
-            "required": false,
-            "title": "Auto Cleanup Temp Files",
-            "description": "Automatically delete temporary PowerPoint files after 60 seconds",
-            "default": true,
-            "label": "Enable automatic cleanup"
-        },
-        {
-            "name": "libraryPath",
-            "type": "textfield",
-            "required": false,
-            "title": "Library Folder",
-            "description": "Absolute path to store shapes JSON, previews and native PPTX. Leave empty to use app data.",
-            "placeholder": "C:\\\\Users\\\\User\\\\Documents\\\\ShapesLibrary"
-        },
-        {
-            "name": "autoSaveAfterCapture",
-            "type": "checkbox",
-            "required": false,
-            "title": "Auto-save after capture",
-            "description": "Automatically save the captured shape to the library without showing the form",
-            "default": false,
-            "label": "Save immediately after capture"
-        },
-        {
-            "name": "forceExactShapes",
-            "type": "checkbox",
-            "required": false,
-            "title": "Force Exact Shapes Only",
-            "description": "Block open/copy if there is no native PPTX (100% fidelity)",
-            "default": true,
-            "label": "Require native PPTX to use shapes"
-        },
-        {
-            "name": "useLibraryDeck",
-            "type": "checkbox",
-            "required": false,
-            "title": "Use PPTX Library Deck",
-            "description": "Store shapes inside a single PPTX deck and copy from it",
-            "default": true,
-            "label": "Enable library deck"
-        },
-        {
-            "name": "skipNativeSave",
-            "type": "checkbox",
-            "required": false,
-            "title": "Skip native PPTX save at capture",
-            "description": "Avoid saving a PPTX during capture (faster, more reliable). Native insert still works and you can save later.",
-            "default": true,
-            "label": "Skip native save on capture"
-        },
-        {
-            "name": "templatePath",
-            "type": "textfield",
-            "required": false,
-            "title": "PowerPoint Template Path (Optional)",
-            "description": "Path to a PPTX template with your company theme. If provided, all captures will use this template's theme, colors, and fonts. Leave empty to use Office default theme.",
-            "placeholder": "C:\\\\Users\\\\User\\\\Documents\\\\CompanyTemplate.pptx"
-        }
-    ],
-    "dependencies": {
-        "@raycast/api": "^1.82.0",
-        "pptxgenjs": "^3.12.0"
+      ]
     },
-    "devDependencies": {
-        "@raycast/eslint-config": "^1.0.11",
-        "@types/node": "^20.8.10",
-        "@types/react": "^19.0.10",
-        "eslint": "^8.57.0",
-        "prettier": "^3.2.5",
-        "react": "^18.2.0",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.2.2"
+    {
+      "name": "capture-shape",
+      "title": "Capture Shape from PowerPoint",
+      "description": "Extract the selected shape and add it to the library.",
+      "mode": "view",
+      "keywords": ["capture", "extract", "shape", "powerpoint", "ppt", "pptx", "library"]
     },
-    "scripts": {
-        "build": "ray build -e dist",
-        "dev": "ray develop",
-        "fix-lint": "ray lint --fix",
-        "lint": "ray lint",
-        "generate-previews": "ts-node scripts/generate-previews.ts",
-        "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
-        "publish": "npx @raycast/api@latest publish"
+    {
+      "name": "manage-categories",
+      "title": "Manage Categories",
+      "description": "Add, rename, or delete shape categories.",
+      "mode": "view",
+      "keywords": ["categories", "taxonomy", "shape", "shapes", "library"]
     }
+  ],
+  "preferences": [
+    {
+      "name": "enableCache",
+      "type": "checkbox",
+      "required": false,
+      "title": "Enable Cache",
+      "description": "Cache shape definitions for faster loading.",
+      "default": true,
+      "label": "Enable caching of shape definitions"
+    },
+    {
+      "name": "autoCleanup",
+      "type": "checkbox",
+      "required": false,
+      "title": "Auto Cleanup Temp Files",
+      "description": "Automatically delete temporary PowerPoint files after 60 seconds.",
+      "default": true,
+      "label": "Enable automatic cleanup"
+    },
+    {
+      "name": "libraryPath",
+      "type": "directory",
+      "required": false,
+      "title": "Library Folder",
+      "description": "Absolute folder path to store shapes JSON, previews, and native PPTX. Leave empty to use the Raycast support directory.",
+      "placeholder": "C:\\Users\\User\\Documents\\ShapesLibrary"
+    },
+    {
+      "name": "autoSaveAfterCapture",
+      "type": "checkbox",
+      "required": false,
+      "title": "Auto-Save After Capture",
+      "description": "Automatically save the captured shape to the library without showing the form.",
+      "default": false,
+      "label": "Save immediately after capture"
+    },
+    {
+      "name": "forceExactShapes",
+      "type": "checkbox",
+      "required": false,
+      "title": "Force Exact Shapes Only",
+      "description": "Block open and copy actions if there is no native PPTX available for 100% fidelity.",
+      "default": true,
+      "label": "Require native PPTX to use shapes"
+    },
+    {
+      "name": "useLibraryDeck",
+      "type": "checkbox",
+      "required": false,
+      "title": "Use PPTX Library Deck",
+      "description": "Store shapes inside a single PPTX deck and copy from it.",
+      "default": true,
+      "label": "Enable library deck"
+    },
+    {
+      "name": "skipNativeSave",
+      "type": "checkbox",
+      "required": false,
+      "title": "Skip Native PPTX Save at Capture",
+      "description": "Avoid saving a PPTX during capture for a faster and more reliable flow. Native insert still works and you can save later.",
+      "default": true,
+      "label": "Skip native save on capture"
+    },
+    {
+      "name": "templatePath",
+      "type": "file",
+      "required": false,
+      "title": "PowerPoint Template File (Optional)",
+      "description": "Path to a PPTX template with your company theme. If provided, all captures will use this template's theme, colors, and fonts. Leave empty to use the Office default theme.",
+      "placeholder": "C:\\Users\\User\\Documents\\CompanyTemplate.pptx"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.102.7",
+    "pptxgenjs": "^3.12.0"
+  },
+  "devDependencies": {
+  "@raycast/eslint-config": "^1.0.11",
+  "@types/node": "^24.3.1",
+  "@types/react": "^18.3.0",
+  "@vitest/coverage-v8": "^3.2.4",
+  "eslint": "^8.57.0",
+  "prettier": "^3.6.2",
+  "react": "^18.2.0",
+  "ts-node": "^10.9.2",
+  "typescript": "^5.9.2",
+  "vitest": "^3.2.4"
+},
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "audit": "npm audit --audit-level=moderate",
+    "audit:fix": "npm audit fix",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run audit",
+    "generate-previews": "ts-node scripts/generate-previews.ts",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
 }

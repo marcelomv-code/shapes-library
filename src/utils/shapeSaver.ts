@@ -164,7 +164,11 @@ export function getTotalShapeCount(): number {
  * Move preview file from old category to new category
  * Returns the new preview path
  */
-export function movePreviewToCategory(shape: ShapeInfo, oldCategory: ShapeCategory, newCategory: ShapeCategory): string {
+export function movePreviewToCategory(
+  shape: ShapeInfo,
+  oldCategory: ShapeCategory,
+  newCategory: ShapeCategory
+): string {
   const assetsDir = getAssetsDir();
 
   // Build old and new paths

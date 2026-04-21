@@ -49,4 +49,3 @@ export interface ExtractionResult {
   stdout?: string; // raw stdout
   stderr?: string; // raw stderr
 }
-

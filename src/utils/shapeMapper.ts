@@ -250,9 +250,7 @@ export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): 
 
   // Map using enum-name mapping > numeric mapping > heuristics (only when not native-only)
   const pptxType = isNativeOnly ? undefined : chooseType(extracted);
-  const category: ShapeCategory = isNativeOnly
-    ? "basic"
-    : getCategoryFromType(pptxType as ShapeType);
+  const category: ShapeCategory = isNativeOnly ? "basic" : getCategoryFromType(pptxType as ShapeType);
 
   const id = generateShapeId(customName || extracted.name);
   const tags = generateTags(customName || extracted.name, (pptxType || "rectangle") as ShapeType, category);
