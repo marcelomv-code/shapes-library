@@ -1,0 +1,351 @@
+src/capture-shape.tsx(112,6): error TS2786: 'Form' cannot be used as a JSX component.
+  Its type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(114,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(116,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(120,8): error TS2786: 'Form.Description' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DescriptionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DescriptionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(125,8): error TS2786: 'Form.Separator' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SeparatorProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SeparatorProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(127,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(133,8): error TS2786: 'Form.Dropdown' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<DropdownProps & RefAttributes<FormItemRef>> & DropdownMembers' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<DropdownProps & RefAttributes<FormItemRef>> & DropdownMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(135,12): error TS2786: 'Form.Dropdown.Item' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DropdownItemProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DropdownItemProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(138,8): error TS2786: 'Form.TextArea' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextAreaProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextAreaProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(144,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(251,6): error TS2786: 'Detail' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DetailProps_2> & DetailMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<DetailProps_2> & DetailMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(255,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(256,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(257,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/capture-shape.tsx(269,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(79,6): error TS2786: 'Form' cannot be used as a JSX component.
+  Its type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(81,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(83,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(87,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(95,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(103,8): error TS2786: 'Form.Description' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DescriptionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DescriptionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(140,6): error TS2786: 'Form' cannot be used as a JSX component.
+  Its type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(142,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(144,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(148,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(157,8): error TS2786: 'Form.Description' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DescriptionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DescriptionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(226,6): error TS2786: 'List' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ListProps_2> & ListMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ListProps_2> & ListMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(227,8): error TS2786: 'List.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps_2>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps_2>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(231,14): error TS2786: 'List.Item' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ItemProps> & ItemMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ItemProps> & ItemMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(236,18): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(237,20): error TS2786: 'ActionPanel.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(238,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(243,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(251,20): error TS2786: 'ActionPanel.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(252,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(259,20): error TS2786: 'ActionPanel.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(260,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(275,10): error TS2786: 'List.EmptyView' cannot be used as a JSX component.
+  Its type 'FunctionComponent<EmptyViewProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<EmptyViewProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(280,14): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/manage-categories.tsx(281,16): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(111,6): error TS2786: 'Form' cannot be used as a JSX component.
+  Its type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(113,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(115,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(119,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(120,8): error TS2786: 'Form.Dropdown' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<DropdownProps & RefAttributes<FormItemRef>> & DropdownMembers' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<DropdownProps & RefAttributes<FormItemRef>> & DropdownMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(122,12): error TS2786: 'Form.Dropdown.Item' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DropdownItemProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DropdownItemProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(125,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(131,8): error TS2786: 'Form.Description' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DescriptionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<DescriptionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(153,6): error TS2786: 'Form' cannot be used as a JSX component.
+  Its type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<FormProps_2> & FormMembers & DeprecatedFormMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(155,10): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(157,12): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(161,8): error TS2786: 'Form.TextField' cannot be used as a JSX component.
+  Its type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not a valid JSX element type.
+    Type 'ForwardRefExoticComponent<TextFieldProps & RefAttributes<FormItemRef>>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'import("/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library/node_modules/@raycast/api/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(712,6): error TS2786: 'Grid' cannot be used as a JSX component.
+  Its type 'FunctionComponent<GridProps> & GridMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<GridProps> & GridMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(716,10): error TS2786: 'Grid.Dropdown' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DropdownProps_2> & DropdownMembers_2' is not a valid JSX element type.
+    Type 'FunctionComponent<DropdownProps_2> & DropdownMembers_2' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(718,14): error TS2786: 'Grid.Dropdown.Item' cannot be used as a JSX component.
+  Its type 'FunctionComponent<DropdownItemProps_2>' is not a valid JSX element type.
+    Type 'FunctionComponent<DropdownItemProps_2>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(742,12): error TS2786: 'Grid.Item' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ItemProps_2>' is not a valid JSX element type.
+    Type 'FunctionComponent<ItemProps_2>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(749,16): error TS2786: 'ActionPanel' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionPanelProps_2> & DeprecatedActionPanelMembers & ActionPanelMembers' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(750,18): error TS2786: 'ActionPanel.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(751,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(756,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(770,18): error TS2786: 'ActionPanel.Section' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SectionProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SectionProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(771,20): error TS2786: 'ActionPanel.Submenu' cannot be used as a JSX component.
+  Its type 'FunctionComponent<SubmenuProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<SubmenuProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(776,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(777,22): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(783,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(799,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(805,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(811,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(816,20): error TS2786: 'Action' cannot be used as a JSX component.
+  Its type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not a valid JSX element type.
+    Type 'FunctionComponent<ActionProps> & ConvenienceActions & { Style: typeof ActionStyle; }' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+src/shape-picker.tsx(831,10): error TS2786: 'Grid.EmptyView' cannot be used as a JSX component.
+  Its type 'FunctionComponent<EmptyViewProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<EmptyViewProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+tsc exit=2
