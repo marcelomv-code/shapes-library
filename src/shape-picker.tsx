@@ -15,20 +15,19 @@ import {
   launchCommand,
   LaunchType,
 } from "@raycast/api";
-import { readFileSync, existsSync, mkdirSync, readdirSync, copyFileSync, renameSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, readdirSync, copyFileSync } from "fs";
 import { join } from "path";
 import { environment } from "@raycast/api";
-import { getShapesDir as getShapesDirUtil, getLibraryRoot, getAssetsDir as getAssetsDirUtil } from "./utils/paths";
+import { getShapesDir as getShapesDirUtil, getLibraryRoot } from "./utils/paths";
 import { ShapeInfo, Preferences, CategoryOption, ShapeCategory } from "./types/shapes";
 import { openShapeInPowerPoint, generateShapePptx } from "./generator/pptxGenerator";
-import { copyFromDeckToClipboard, insertFromDeckIntoActive, addShapeToDeckFromPptx } from "./utils/deck";
+import { copyFromDeckToClipboard, insertFromDeckIntoActive } from "./utils/deck";
 import { getCachedShapes, setCachedShapes, clearCache } from "./utils/cache";
 import { updateShapeInLibrary, removeShapeFromLibrary } from "./utils/shapeSaver";
-import { generatePreview } from "./utils/previewGenerator";
 import { generateSvgPreview, svgToDataUrl } from "./utils/svgPreview";
 import { spawn } from "child_process";
 import { tmpdir } from "os";
-import { loadCategories, getCategoryDisplayName, CategoryConfig } from "./utils/categoryManager";
+import { loadCategories, getCategoryDisplayName } from "./utils/categoryManager";
 
 /**
  * Build category options for dropdown dynamically
@@ -358,13 +357,6 @@ function getShapesDir(): string {
 }
 
 /**
- * Get path to assets directory
- */
-function getAssetsDir(): string {
-  return getAssetsDirUtil();
-}
-
-/**
  * Load shapes from a JSON file
  * @param category - Category to load shapes for
  * @param useCache - Whether to use cache
@@ -500,39 +492,6 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
     clearCache();
     setCategoryOptions(buildCategoryOptions()); // Reload categories
     await loadShapes(true);
-  }
-
-  /**
-   * Handle repair broken previews
-   */
-  async function handleRepairPreviews() {
-    const toast = await showToast({
-      style: Toast.Style.Animated,
-      title: "Repairing previews...",
-    });
-
-    try {
-      const { repairOrphanedPreviews } = await import("./utils/shapeSaver");
-      const repairedCount = repairOrphanedPreviews(true); // Force repair
-
-      if (repairedCount > 0) {
-        toast.style = Toast.Style.Success;
-        toast.title = "Previews repaired!";
-        toast.message = `Fixed ${repairedCount} broken preview${repairedCount > 1 ? "s" : ""}`;
-
-        // Refresh to show fixed previews
-        clearCache();
-        await loadShapes(true);
-      } else {
-        toast.style = Toast.Style.Success;
-        toast.title = "All previews OK";
-        toast.message = "No broken previews found";
-      }
-    } catch (error) {
-      toast.style = Toast.Style.Failure;
-      toast.title = "Repair failed";
-      toast.message = error instanceof Error ? error.message : "Unknown error";
-    }
   }
 
   /**

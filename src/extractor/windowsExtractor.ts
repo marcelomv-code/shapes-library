@@ -7,7 +7,7 @@ import { writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { ExtractedShape, ExtractionResult } from "./types";
-import { environment, getPreferenceValues } from "@raycast/api";
+import { getPreferenceValues } from "@raycast/api";
 import { getNativeDir, getLibraryRoot } from "../utils/paths";
 
 /**

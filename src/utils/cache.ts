@@ -1,5 +1,5 @@
 import { statSync } from "fs";
-import { ShapeCache, ShapeCacheEntry, ShapeInfo } from "../types/shapes";
+import { ShapeCache, ShapeInfo } from "../types/shapes";
 
 /**
  * In-memory cache for shape data

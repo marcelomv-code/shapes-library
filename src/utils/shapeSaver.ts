@@ -2,12 +2,11 @@
  * Save captured shapes to JSON files
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, renameSync, copyFileSync } from "fs";
-import { join, basename, dirname } from "path";
-import { environment } from "@raycast/api";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, copyFileSync } from "fs";
+import { join } from "path";
 import { getShapesDir as getShapesDirUtil, getAssetsDir, getLibraryRoot } from "./paths";
 import { ShapeInfo, ShapeCategory } from "../types/shapes";
-import { loadCategories, getCategoryIds } from "./categoryManager";
+import { getCategoryIds } from "./categoryManager";
 
 /**
  * Get path to shapes directory

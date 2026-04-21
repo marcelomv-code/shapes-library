@@ -1,0 +1,128 @@
+
+> shapes-library@2.0.1 lint
+> ray lint
+
+error  - validate package.json file
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/package.json
+  7:12  error  Invalid author "marcelo_vieira". HTTP request: request to https://www.raycast.com/api/v1/users/marcelo_vieira failed, reason: getaddrinfo EAI_AGAIN www.raycast.com
+        error  Failed compiling JSON schema: request to https://www.raycast.com/schemas/extension.json failed, reason: getaddrinfo EAI_AGAIN www.raycast.com
+ready  - validate extension icons
+error  - run ESLint
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/capture-shape.tsx
+   62:55   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:15   error  Empty block statement                     no-empty
+   77:17   error  Empty block statement                     no-empty
+   92:17   error  Empty block statement                     no-empty
+  101:15   error  Empty block statement                     no-empty
+  122:108  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  169:21   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:23   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:57   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:15   error  Empty block statement                     no-empty
+  200:19   error  Empty block statement                     no-empty
+  206:19   error  Empty block statement                     no-empty
+  210:64   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:17   error  Empty block statement                     no-empty
+  248:206  error  Unnecessary escape character: \"          no-useless-escape
+  248:230  error  Unnecessary escape character: \"          no-useless-escape
+  248:314  error  Unnecessary escape character: \"          no-useless-escape
+  248:331  error  Unnecessary escape character: \"          no-useless-escape
+  266:23   error  Empty block statement                     no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/extractor/windowsExtractor.ts
+   23:11  error  Empty block statement  no-empty
+  264:15  error  Empty block statement  no-empty
+  268:17  error  Empty block statement  no-empty
+  304:15  error  Empty block statement  no-empty
+  364:15  error  Empty block statement  no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/generator/pptxGenerator.ts
+   76:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  278:15  error  Empty block statement                     no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/import-library.tsx
+   41:13  error  Empty block statement                           no-empty
+   44:13  error  Empty block statement                           no-empty
+   91:7   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  100:9   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  101:15  error  Empty block statement                           no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/shape-picker.tsx
+  205:7   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  230:13  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  231:19  error  Empty block statement                           no-empty
+  284:5   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  309:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  310:17  error  Empty block statement                           no-empty
+  337:13  error  Empty block statement                           no-empty
+  349:15  error  Empty block statement                           no-empty
+  351:11  error  Empty block statement                           no-empty
+  587:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  588:17  error  Empty block statement                           no-empty
+  601:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  602:17  error  Empty block statement                           no-empty
+  643:9   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  656:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  657:17  error  Empty block statement                           no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/cache.ts
+  55:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/deck.ts
+   20:7   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+   21:13  error  Empty block statement                           no-empty
+   31:13  error  Empty block statement                           no-empty
+  172:7   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  185:9   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  186:15  error  Empty block statement                           no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/paths.ts
+  39:15  error  Empty block statement  no-empty
+  50:11  error  Empty block statement  no-empty
+  58:11  error  Empty block statement  no-empty
+  66:11  error  Empty block statement  no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/previewGenerator.ts
+  27:11  error  Empty block statement                           no-empty
+  51:54  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  52:11  error  Empty block statement                           no-empty
+  83:7   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  98:9   error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  99:15  error  Empty block statement                           no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/shapeMapper.ts
+  249:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  262:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  274:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  301:11  error  Empty block statement                     no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/shapeSaver.ts
+  60:13  error  Empty block statement  no-empty
+
+/sessions/affectionate-quirky-brahmagupta/mnt/Shapes-libreary-v3/shapes-library/src/utils/svgPreview.ts
+  45:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  46:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  47:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  48:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  54:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  55:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  56:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  57:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  58:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  59:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  65:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  66:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  67:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  68:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  69:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  70:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  71:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  72:7  error  Unexpected lexical declaration in case block  no-case-declarations
+
+✖ 89 problems (89 errors, 0 warnings)
+
+ready  - run Prettier 3.8.3
+ ›   Error: linting issues found (tip: try re-running with '--fix')

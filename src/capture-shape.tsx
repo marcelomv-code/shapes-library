@@ -21,7 +21,7 @@ import { existsSync, mkdirSync, copyFileSync } from "fs";
 import { captureShapeFromPowerPoint } from "./extractor";
 import { mapToShapeInfo, getShapeTypeName } from "./utils/shapeMapper";
 import { addShapeToLibrary, shapeExists, updateShapeInLibrary } from "./utils/shapeSaver";
-import { getLibraryRoot, getShapesDir as getShapesDirUtil } from "./utils/paths";
+import { getLibraryRoot } from "./utils/paths";
 import { ShapeInfo, ShapeCategory, Preferences } from "./types/shapes";
 import { loadCategories } from "./utils/categoryManager";
 

@@ -1,6 +1,6 @@
-import { showToast, Toast, showInFinder, Clipboard, getPreferenceValues } from "@raycast/api";
+import { showToast, Toast, showInFinder, Clipboard } from "@raycast/api";
 import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync } from "fs";
-import { join, basename } from "path";
+import { join } from "path";
 import { spawn } from "child_process";
 import { tmpdir } from "os";
 import { getLibraryRoot } from "./utils/paths";

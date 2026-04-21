@@ -1,5 +1,5 @@
 import pptxgen from "pptxgenjs";
-import { open, showToast, Toast, getPreferenceValues, environment } from "@raycast/api";
+import { open, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { writeFileSync, unlinkSync, existsSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";

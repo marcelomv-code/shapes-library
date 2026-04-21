@@ -25,7 +25,6 @@ import {
   renameCategory,
   deleteCategory,
   getShapeCountInCategory,
-  generateCategoryId,
   CategoryConfig,
 } from "./utils/categoryManager";
 
@@ -66,12 +65,12 @@ function AddCategoryForm({ onSave }: { onSave: () => void }) {
     }
   }
 
-  function handleNameChange(value: string) {
+  function handleNameChange() {
     setNameError(undefined);
     // Auto-generate ID from name
   }
 
-  function handleIdChange(value: string) {
+  function handleIdChange() {
     setIdError(undefined);
   }
 
