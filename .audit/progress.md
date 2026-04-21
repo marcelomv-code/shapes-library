@@ -5,8 +5,8 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 1 complete
-- **Next phase:** Phase 2 — Categories alignment
+- **Current phase:** Phase 2 complete
+- **Next phase:** Phase 3 — PS hardening (`src/infra/powershell/` scaffolding)
 - **Last updated:** 2026-04-20
 
 ## Baseline findings (Phase 0)
@@ -50,7 +50,7 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 |---|---|---|---|
 | 0 — Baseline | DONE | (no code change) | Branch `refactor/hardening` created. `.audit/` populated. |
 | 1 — Dead code | DONE | (see commit below) | Deleted V2/V3 extractors (501 LOC). Removed 20 unused imports + dead `getAssetsDir`/`handleRepairPreviews`. Lint 110→89 errors (-21). tsc 351→350 lines (unchanged JSX-typing baseline). "Log string" fix: no malformed logs found in live code; item was resolved by V2/V3 deletion (30 redundant console calls removed with them). |
-| 2 — Categories | PENDING | — | Align `DEFAULT_CATEGORIES`. |
+| 2 — Categories | DONE | (see commit below) | Aligned display names to IDs in `src/utils/categoryManager.ts` (arrows→"Arrows", flowchart→"Flowchart", callouts→"Callouts"; basic→"Basic Shapes" kept). Synced seed `assets/categories.json`. tsc 70 errors (=phase1), lint 89 errors (=phase1). No regressions. |
 | 3 — PS hardening | PENDING | — | `src/infra/powershell/` scaffolding. |
 | 4 — PS scripts | PENDING | — | Extract inline PS to `scripts/ps/*.ps1`. |
 | 5 — Ports/Adapters | PENDING | — | `PowerPointClient` interface + adapters. |
@@ -68,4 +68,11 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 17 — Local build | MANUAL | — | Run on host PS. |
 | 18 — ray develop | MANUAL | — | Host. |
 | 19 — Acceptance | MANUAL | — | 12 scenarios. |
-| 20 �
+| 20 — Publish | OPTIONAL | — | Store release. |
+
+## How to resume
+
+Open a new Cowork session and say:
+> Retome o plano shapes-library a partir da Fase N. O estado atual está em `.audit/progress.md` dentro do projeto.
+
+Cowork will re-mount the folder, read this file, and continue.

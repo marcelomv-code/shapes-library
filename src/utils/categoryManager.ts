@@ -29,9 +29,9 @@ interface CategoriesFile {
  */
 const DEFAULT_CATEGORIES: CategoryConfig[] = [
   { id: "basic", name: "Basic Shapes" },
-  { id: "arrows", name: "Proposals" },
-  { id: "flowchart", name: "Visuals" },
-  { id: "callouts", name: "Legal" },
+  { id: "arrows", name: "Arrows" },
+  { id: "flowchart", name: "Flowchart" },
+  { id: "callouts", name: "Callouts" },
 ];
 
 /**
@@ -211,4 +211,5 @@ export function generateCategoryId(displayName: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
 }

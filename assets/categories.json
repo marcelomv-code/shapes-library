@@ -6,15 +6,15 @@
     },
     {
       "id": "arrows",
-      "name": "Proposals"
+      "name": "Arrows"
     },
     {
       "id": "flowchart",
-      "name": "Visuals"
+      "name": "Flowchart"
     },
     {
       "id": "callouts",
-      "name": "Legal"
+      "name": "Callouts"
     }
   ]
 }
