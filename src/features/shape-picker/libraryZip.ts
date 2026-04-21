@@ -4,6 +4,7 @@ import { spawn } from "child_process";
 import { showToast, Toast } from "@raycast/api";
 import { getLibraryRoot } from "../../utils/paths";
 import { runPowerShellFile, resolvePsScript } from "../../infra/powershell";
+import { invalidateCategoriesCache } from "../../utils/categoryManager";
 
 /**
  * Export the library (shapes, assets, native, deck) into a timestamped ZIP
@@ -91,6 +92,8 @@ export async function importLibraryZip(zipPath: string): Promise<void> {
     if (!/^OK:/m.test(result.stdout)) {
       throw new Error(`Unexpected output: ${result.stdout}`);
     }
+    // Imports may overwrite categories.json outside of saveCategories.
+    invalidateCategoriesCache();
     return;
   }
 
@@ -101,4 +104,6 @@ export async function importLibraryZip(zipPath: string): Promise<void> {
     unzip.on("error", (e) => reject(e));
     unzip.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`unzip failed (${code})`))));
   });
+  // Same rationale for non-Windows hosts.
+  invalidateCategoriesCache();
 }

@@ -24,7 +24,14 @@ function expandUserPath(p: string): string {
   return out;
 }
 
+// Memoized library root. Raycast command processes are short-lived and the
+// `libraryPath` preference can only change between invocations, so a single
+// resolution per process is safe. Reset via `resetLibraryRootCache()` in tests.
+let cachedLibraryRoot: string | undefined;
+
 export function getLibraryRoot(): string {
+  if (cachedLibraryRoot !== undefined) return cachedLibraryRoot;
+
   const prefs = getPreferenceValues<Prefs>();
   const configured =
     prefs.libraryPath && prefs.libraryPath.trim().length > 0 ? expandUserPath(prefs.libraryPath) : undefined;
@@ -38,9 +45,19 @@ export function getLibraryRoot(): string {
         mkdirSync(environment.supportPath, { recursive: true });
       } catch {}
     }
-    return environment.supportPath;
+    cachedLibraryRoot = environment.supportPath;
+    return cachedLibraryRoot;
   }
-  return base;
+  cachedLibraryRoot = base;
+  return cachedLibraryRoot;
+}
+
+/**
+ * Invalidate the memoized library root. Intended for tests or for callers that
+ * mutate the `libraryPath` preference mid-process (not a current use case).
+ */
+export function resetLibraryRootCache(): void {
+  cachedLibraryRoot = undefined;
 }
 
 export function getShapesDir(): string {

@@ -5,7 +5,7 @@
  * added, renamed, or deleted by the user.
  */
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, statSync } from "fs";
 import { join } from "path";
 import { getLibraryRoot, getShapesDir } from "./paths";
 
@@ -41,9 +41,17 @@ function getCategoriesFilePath(): string {
   return join(getLibraryRoot(), "categories.json");
 }
 
+// Memoized categories. Keyed on (filePath, mtimeMs) so external mutations to
+// `categories.json` (import-library, manual edits) invalidate naturally.
+// Writes through `saveCategories` self-refresh the cache.
+let cachedCategories: CategoryConfig[] | null = null;
+let cachedCategoriesPath: string | null = null;
+let cachedCategoriesMtimeMs = 0;
+
 /**
  * Load categories from Library folder
- * If file doesn't exist, creates it with default categories
+ * If file doesn't exist, creates it with default categories.
+ * Callers receive a shallow copy, so `push`/`splice` in mutators stays safe.
  */
 export function loadCategories(): CategoryConfig[] {
   const filePath = getCategoriesFilePath();
@@ -51,21 +59,33 @@ export function loadCategories(): CategoryConfig[] {
   if (!existsSync(filePath)) {
     // First run - create with defaults
     saveCategories(DEFAULT_CATEGORIES);
-    return DEFAULT_CATEGORIES;
+    return [...DEFAULT_CATEGORIES];
   }
 
   try {
+    const mtimeMs = statSync(filePath).mtimeMs;
+    if (cachedCategories !== null && cachedCategoriesPath === filePath && mtimeMs === cachedCategoriesMtimeMs) {
+      return [...cachedCategories];
+    }
+
     const content = readFileSync(filePath, "utf-8");
     const data: CategoriesFile = JSON.parse(content);
-    return data.categories || DEFAULT_CATEGORIES;
+    const categories = data.categories || DEFAULT_CATEGORIES;
+
+    cachedCategories = categories;
+    cachedCategoriesPath = filePath;
+    cachedCategoriesMtimeMs = mtimeMs;
+
+    return [...categories];
   } catch (error) {
     console.error("[CategoryManager] Failed to load categories:", error);
-    return DEFAULT_CATEGORIES;
+    return [...DEFAULT_CATEGORIES];
   }
 }
 
 /**
- * Save categories to Library folder
+ * Save categories to Library folder.
+ * Updates the memoized cache after a successful write.
  */
 export function saveCategories(categories: CategoryConfig[]): void {
   const filePath = getCategoriesFilePath();
@@ -73,11 +93,35 @@ export function saveCategories(categories: CategoryConfig[]): void {
 
   try {
     writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+
+    // Keep the cache coherent with what we just wrote.
+    cachedCategories = [...categories];
+    cachedCategoriesPath = filePath;
+    try {
+      cachedCategoriesMtimeMs = statSync(filePath).mtimeMs;
+    } catch {
+      // If stat fails right after write (unusual), drop the cache so the next
+      // read re-parses the file.
+      cachedCategories = null;
+      cachedCategoriesPath = null;
+      cachedCategoriesMtimeMs = 0;
+    }
+
     console.log(`[CategoryManager] Saved ${categories.length} categories to ${filePath}`);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to save categories: ${msg}`);
   }
+}
+
+/**
+ * Invalidate the memoized categories list. Intended for tests and any external
+ * flow that mutates `categories.json` outside of `saveCategories` (e.g. import).
+ */
+export function invalidateCategoriesCache(): void {
+  cachedCategories = null;
+  cachedCategoriesPath = null;
+  cachedCategoriesMtimeMs = 0;
 }
 
 /**
