@@ -5,8 +5,8 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Backlog consolidated. Phases 7 (strict TS), 8 (no-op), 9 (memoization) verified in-sandbox after solving the bindfs-over-virtiofs staleness problem (write to `outputs/` virtiofs, then `cp` into the bindfs mount, which refreshes the bindfs view immediately). **Gates green:** `tsc --noEmit` → 0 errors under `strict: true`; `eslint src/**/*.{ts,tsx}` → 40 errors (pre-existing baseline: `no-empty`, `no-case-declarations`); `prettier --check` → clean. Three commits staged for host execution via `.audit/commit-backlog.ps1` (Phase 7, Phase 9, audit artifacts). Phase 8 folded into the Phase 7 commit message as a no-op.
-- **Next phase:** Phase 10 — TDD base (vitest + 80% thresholds)
+- **Current phase:** Phase 10 (TDD base) verified in-sandbox. `vitest.config.ts` with v8 coverage + 80% global thresholds, `tests/` tree with 69 tests across 5 files, `@raycast/api` aliased to a pure in-memory mock. Sandbox run: 5/5 files, 69/69 tests green, coverage 97.04% stmts / 90.75% branches / 100% funcs / 97.04% lines over the included set (escape, cache, categoryManager, paths, svgPreview). Three staged commits from prior sessions still pending on host: Phase 7 (strict TS), Phase 9 (memoization), audit artifacts — plus the Phase 10 bundle below. Phase 8 folded into the Phase 7 commit as a no-op.
+- **Next phase:** Phase 11 — Contract tests (extractor parsing fixtures)
 - **Last updated:** 2026-04-21
 
 ## How to resume the backlog
@@ -80,7 +80,7 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 7 — TS strict | DONE (commit pending — run `.audit/commit-backlog.ps1`) | (pending commit) | `tsconfig.strict: true`, `noImplicitAny: true`. Removed all 13 `any` usages: capture-shape.tsx (5: `__tempPng` hack replaced by `tempPng` prop/state; `ExtractionResult` typed; `as unknown as number` for `getShapeTypeName`), generator/pptxGenerator.ts (3: `pptx.SHAPE_NAME`/`pptx.ShapeProps` via `typeof pptxgen` namespace types; added guard for `!shapeDef`), utils/cache.ts (1: `ShapeCategory = string` already, cast was noop), utils/previewGenerator.ts (1: same), utils/shapeMapper.ts (3: `extracted.isGroup` already on `ExtractedShape`, `pptxType ?? "rectangle"` discriminated against `"roundRectangle"` literal). New TS18048 errors surfaced by strict fixed with: (a) `pptxGenerator.ts` throw-guard when `shape.pptxDefinition` missing; (b) `svgPreview.ts` default-to-rectangle fallback. **tsc: 0 errors** (under strict). **Lint: 56 → 40 errors** (−16, `@typescript-eslint/no-explicit-any` class eliminated). Bundled hotfix: truncated 171 trailing NULs in `src/features/shape-picker/ShapeGridItem.tsx` (Phase 6 leftover; caused 171 TS1127 "Invalid character" errors — unrelated to Phase 7 scope but blocked a clean baseline). |
 | 8 — ESM imports | DONE (no-op) | (no code change) | Verification-only. `grep -rE "\brequire\s*\(\|createRequire\|module\.exports\|exports\."` across `src/` returns 0 matches; only a literal `// ALWAYS require native PPTX` comment in `utils/previewGenerator.ts:30`. All 16 baseline `no-var-requires` sites were collaterally resolved by Phases 1 (V2/V3 extractor delete), 3/4 (PS runner extraction), 6 (shape-picker split), 7 (strict-mode). `phase7-lint.txt` already shows 0 `no-var-requires` errors. No files modified in Phase 8. |
 | 9 — Memoization | DONE (commit pending — run `.audit/commit-backlog.ps1`) | (pending commit) | Module-level cache in `getLibraryRoot()` (paths.ts) + mtime-keyed cache in `loadCategories()` (categoryManager.ts). Cache self-refresh on `saveCategories`. Explicit `invalidateCategoriesCache()` wired into `importLibraryZip()` both branches. Shallow-clone returns protect the cache from caller mutations. Exports `resetLibraryRootCache()` and `invalidateCategoriesCache()` for Phase 10 tests. Three files edited: `src/utils/paths.ts`, `src/utils/categoryManager.ts`, `src/features/shape-picker/libraryZip.ts`. **Verified in-sandbox:** `tsc --noEmit` → 0 errors under strict; `eslint` → 40 (baseline); `prettier --check` → clean. Sandbox mount staleness resolved via virtiofs→bindfs `cp` refresh pattern. |
-| 10 — TDD base | PENDING | — | vitest + 80% thresholds. |
+| 10 — TDD base | DONE (commit pending on host) | (pending commit) | `vitest.config.ts` (v8 coverage, 80% thresholds on lines/stmts/funcs/branches, `@raycast/api` aliased to `tests/mocks/raycast-api.ts`). `tests/` tree: `setup.ts`, `mocks/raycast-api.ts`, `infra/powershell/escape.test.ts` (12), `utils/cache.test.ts` (8), `utils/categoryManager.test.ts` (25), `utils/paths.test.ts` (12), `utils/svgPreview.test.ts` (12) = 69 tests. `coverage/` added to `.gitignore`. **Sandbox run:** 5/5 files, 69/69 tests green in 5.26s. Coverage over the included set: 97.04% stmts, 90.75% branches, 100% funcs, 97.04% lines — all four thresholds satisfied. Known uncovered regions (paths.ts 43-50 double-fallback, categoryManager.ts 105-108 post-write statSync race, svgPreview.ts 16-17 missing-dim coalesce) are documented in `.audit/phase10-coverage.txt` and left for Phase 11 contract tests. **Sandbox linux binaries:** `@rollup/rollup-linux-x64-gnu@4.60.2` and `@esbuild/linux-x64@0.27.7` hand-placed into `node_modules/` because the host-generated lockfile only ships win32 binaries. These are unpacked tarballs — a host `npm ci` will replace them cleanly. `tsc --noEmit` still 0 errors (tests excluded from `src/**/*` include; vitest uses esbuild). |
 | 11 — Contract tests | PENDING | — | Extractor parsing fixtures. |
 | 12 — Zip security | PENDING | — | Zip Slip + zipbomb guards. |
 | 13 — CI/CD | PENDING | — | Workflows, CODEOWNERS, husky. |
@@ -264,3 +264,76 @@ If tsc reports regressions, diff against the expected shapes documented in the
 
 After commit, resume Cowork with:
 > Retome o plano shapes-library a partir da Fase 10.
+
+## Phase 10 — host verification + commit pending
+
+Vitest scaffolding landed in-sandbox and runs green. Because `package-lock.json`
+was generated on Windows, the sandbox needed linux-native shims for rollup and
+esbuild that are NOT in the lockfile; those were placed by hand in `node_modules/`
+and must NOT be committed. A host `npm install` (or `npm ci`) will restore the
+canonical tree.
+
+**Files modified / added:**
+
+- `vitest.config.ts` (A — v8 coverage, 80% thresholds, scoped `include`)
+- `tests/setup.ts` (A)
+- `tests/mocks/raycast-api.ts` (A)
+- `tests/infra/powershell/escape.test.ts` (A)
+- `tests/utils/cache.test.ts` (A)
+- `tests/utils/categoryManager.test.ts` (A)
+- `tests/utils/paths.test.ts` (A)
+- `tests/utils/svgPreview.test.ts` (A)
+- `.gitignore` (M — add `coverage/`)
+- `.audit/phase10-test.txt` (A)
+- `.audit/phase10-coverage.txt` (A)
+- `.audit/progress.md` (M)
+
+**Why `tests/` as a top-level folder (not `src/**/*.test.ts`):**
+
+`tsconfig.json` includes `src/**/*` and rootDir-locks compilation under `src/`.
+Co-locating tests with source would either leak into `dist/` on `ray build`
+or require a second tsconfig. A separate `tests/` tree keeps the production
+compile graph clean — vitest uses its own esbuild transform and does not
+depend on `tsc`.
+
+**Why coverage is scoped (`coverage.include`):**
+
+The 80% bar targets the pure, unit-testable surface: PS escape helpers,
+the path/category memo layer, the SVG preview generator, the shape cache.
+Raycast view components, PowerShell adapters, and the pptx generator are
+out-of-scope until Phase 11 (contract tests) and Phase 15 (temp/deck
+integration). Widening the `include` before those phases would force
+shallow tests that game the metric without catching real bugs.
+
+From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
+
+```powershell
+# 0. Clear any stale git/index lock.
+Remove-Item .git/index.lock -ErrorAction SilentlyContinue
+
+# 1. Refresh node_modules so Windows binaries are canonical and the
+#    sandbox-placed linux shims are removed. This is the right moment to
+#    cycle the lock (phases 7 and 9 were also waiting on this).
+npm install
+
+# 2. Format (tests + config).
+npx prettier --write vitest.config.ts tests/
+
+# 3. Typecheck — tsc only sees src/**/*, so this is unchanged from Phase 9.
+npx tsc --noEmit 2>&1 | Out-File .audit/phase10-tsc.txt -Encoding utf8
+
+# 4. Run tests with coverage. Expected: 5 files, 69 tests, all thresholds pass.
+npm test 2>&1 | Out-File .audit/phase10-test.txt -Encoding utf8
+
+# 5. Lint the new files. Expected: no new errors (40 baseline unchanged).
+npx eslint src tests --ext .ts,.tsx 2>&1 | Out-File .audit/phase10-lint.txt -Encoding utf8
+
+# 6. Stage + commit. Do NOT add `coverage/` or `node_modules/` — the
+#    sandbox-placed linux rollup/esbuild shims must not be tracked.
+git add vitest.config.ts tests/ .gitignore `
+       .audit/phase10-test.txt .audit/phase10-coverage.txt .audit/progress.md
+git commit -m "test(phase10): vitest + 80% coverage thresholds (pure modules)"
+```
+
+After commit, resume Cowork with:
+> Retome o plano shapes-library a partir da Fase 11.

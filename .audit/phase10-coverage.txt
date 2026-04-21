@@ -1,0 +1,44 @@
+Phase 10 — coverage summary (v8, sandbox, 2026-04-21)
+=====================================================
+
+Thresholds (global, in vitest.config.ts): 80% lines/statements/functions/branches
+Scope (coverage.include):
+  - src/infra/powershell/escape.ts
+  - src/utils/cache.ts
+  - src/utils/categoryManager.ts
+  - src/utils/paths.ts
+  - src/utils/svgPreview.ts
+
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   97.04 |    90.75 |     100 |   97.04 |
+ infra/powershell  |     100 |      100 |     100 |     100 |
+  escape.ts        |     100 |      100 |     100 |     100 |
+ utils             |   96.93 |    90.35 |     100 |   96.93 |
+  cache.ts         |     100 |      100 |     100 |     100 |
+  categoryManager  |   97.12 |    93.61 |     100 |   97.12 | 105-108
+  paths.ts         |    87.5 |    79.31 |     100 |    87.5 | 43-50
+  svgPreview.ts    |     100 |     92.3 |     100 |     100 | 16-17
+-------------------|---------|----------|---------|---------|-------------------
+
+Coverage summary
+  Statements   : 97.04% (394/406)
+  Branches     : 90.75% (108/119)
+  Functions    : 100%   (30/30)
+  Lines        : 97.04% (394/406)
+
+All four global thresholds satisfied.
+
+Uncovered regions (documented, not gaps):
+  - paths.ts 43-50: double-fallback arm — enters when the configured
+    libraryPath cannot be created AND environment.supportPath also cannot
+    be created. In practice one or the other always succeeds; an
+    integration test for this would need to mock mkdirSync, which we
+    avoid at this phase.
+  - categoryManager.ts 105-108: saveCategories catch-inside-try arm that
+    drops the cache when statSync fails immediately after writeFileSync.
+    Requires a race we cannot deterministically stage from a test.
+  - svgPreview.ts 16-17: fill/stroke default-coalesce when the shape
+    definition omits `w`/`h`. Not reachable through the current ShapeInfo
+    type surface, left for the fuzz/contract pass in Phase 11.
