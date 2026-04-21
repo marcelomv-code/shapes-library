@@ -1,10 +1,9 @@
-import { spawn } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
-import { tmpdir } from "os";
 import { ShapeInfo } from "../types/shapes";
 import { getLibraryRoot } from "./paths";
 import { updateShapeInLibrary } from "./shapeSaver";
+import { runPowerShellFile, resolvePsScript } from "../infra/powershell";
 
 /**
  * Generate a PNG preview for a shape and update its JSON entry with the preview path.
@@ -55,51 +54,16 @@ export async function generatePreview(shape: ShapeInfo): Promise<string | null> 
 }
 
 async function exportPptxToPngWindows(pptxPath: string, pngPath: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const script = `
-$ErrorActionPreference = "Stop"
-try {
-  $pptPath = '${pptxPath.replace(/'/g, "''")}'
-  $pngPath = '${pngPath.replace(/'/g, "''")}'
-  $pngDir = Split-Path -Parent $pngPath
-  if (-not (Test-Path $pngDir)) { New-Item -ItemType Directory -Force -Path $pngDir | Out-Null }
-
-  $created = $false
-  try { $app = [Runtime.InteropServices.Marshal]::GetActiveObject('PowerPoint.Application') } catch { $app = New-Object -ComObject PowerPoint.Application; $created = $true }
-  $app.DisplayAlerts = 0
-  $pres = $app.Presentations.Open($pptPath, $true, $false, $false)
-  $slide = $pres.Slides.Item(1)
-  $slide.Export($pngPath, 'PNG', 1600, 900)
-  $pres.Close()
-  if ($created) { $app.Visible = $true }
-  Write-Output 'OK'
-} catch {
-  Write-Output "ERROR:$($_.Exception.Message)"; exit 1
-}
-`;
-
-    const temp = join(tmpdir(), `preview-${Date.now()}.ps1`);
-    try {
-      require("fs").writeFileSync(temp, script, "utf-8");
-    } catch (e) {
-      return reject(e as Error);
-    }
-
-    const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", temp]);
-    let stdout = "";
-    let stderr = "";
-    ps.stdout.on("data", (d) => (stdout += d.toString()));
-    ps.stderr.on("data", (d) => (stderr += d.toString()));
-    ps.on("error", (e) => done(e));
-    ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code}). ${stderr || stdout}`)));
-
-    function done(err: Error | null) {
-      try {
-        require("fs").unlinkSync(temp);
-      } catch {}
-      if (err) return reject(err);
-      if (stdout.trim().startsWith("ERROR:")) return reject(new Error(stdout.trim().slice(6)));
-      resolve();
-    }
+  // Phase 4: assets/ps/export-pptx-to-png.ps1 handles the COM lifecycle
+  // (attach or spawn, Export, close) and emits 'OK' on success. Errors
+  // bubble through the runner's message -- the legacy "PowerShell failed"
+  // prefix is no longer synthesized here because the runner itself
+  // produces a consistent error message that includes the exit code.
+  const result = await runPowerShellFile(resolvePsScript("export-pptx-to-png"), {
+    PptPath: pptxPath,
+    PngPath: pngPath,
   });
+  if (result.ok === false) {
+    throw new Error(result.message);
+  }
 }

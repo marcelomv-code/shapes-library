@@ -4,8 +4,8 @@ import { writeFileSync, unlinkSync, existsSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { ShapeInfo, Preferences, ShapeFill, ShapeLine } from "../types/shapes";
-import { spawn } from "child_process";
 import { getLibraryRoot } from "../utils/paths";
+import { runPowerShellFile, resolvePsScript } from "../infra/powershell";
 
 /**
  * Active temporary files that need cleanup
@@ -220,65 +220,12 @@ export function exportShapeDefinition(shape: ShapeInfo, outputPath: string): voi
 }
 
 async function insertIntoActivePresentationWindows(srcPptx: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const safeSrc = srcPptx.replace(/'/g, "''");
-    const script = `
-$ErrorActionPreference = "Stop"
-try {
-  $ppt = [Runtime.InteropServices.Marshal]::GetActiveObject('PowerPoint.Application')
-  if ($ppt.Presentations.Count -eq 0) { Write-Output 'ERROR:No presentation is open'; exit 1 }
-  $dest = $ppt.ActiveWindow.View.Slide
-  if ($null -eq $dest) { $dest = $ppt.ActivePresentation.Slides.Item(1) }
-
-  $src = $ppt.Presentations.Open('${safeSrc}', $true, $false, $false)
-  $s1 = $src.Slides.Item(1)
-  if ($s1.Shapes.Count -eq 0) { Write-Output 'ERROR:Source slide has no shapes'; $src.Close(); exit 1 }
-  # Filter out footer/slide number/date placeholders and copyright text
-  $validNames = @()
-  foreach ($shape in $s1.Shapes) {
-    $skip = $false
-    try {
-      $phType = $shape.PlaceholderFormat.Type
-      if ($phType -eq 6 -or $phType -eq 13 -or $phType -eq 16) { $skip = $true }
-    } catch {}
-    if (-not $skip) {
-      try {
-        $txt = $shape.TextFrame.TextRange.Text
-        if ($txt -match 'Copyright|©') { $skip = $true }
-      } catch {}
-    }
-    if (-not $skip) { $validNames += $shape.Name }
+  // Phase 4: delegates to assets/ps/insert-active.ps1 via runPowerShellFile.
+  // The `ERROR:` sentinel used by the legacy inline script is still honored
+  // by the runner (maps to `reason: "protocol-error"`), so the error surface
+  // here stays identical -- Error.message is the post-"ERROR:" text.
+  const result = await runPowerShellFile(resolvePsScript("insert-active"), { SrcPptx: srcPptx });
+  if (result.ok === false) {
+    throw new Error(result.message);
   }
-  if ($validNames.Count -eq 0) { Write-Output 'ERROR:No valid shapes to copy'; $src.Close(); exit 1 }
-  $s1.Shapes.Range($validNames).Copy()
-  $dest.Shapes.Paste() | Out-Null
-  $src.Close()
-  Write-Output 'OK'
-} catch {
-  Write-Output "ERROR:$($_.Exception.Message)"; exit 1
-}
-`;
-
-    const tmpPath = join(tmpdir(), `raycast-insert-${Date.now()}.ps1`);
-    try {
-      writeFileSync(tmpPath, script, "utf-8");
-    } catch (e) {
-      return reject(e as Error);
-    }
-    const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", tmpPath]);
-    let stdout = "";
-    let stderr = "";
-    ps.stdout.on("data", (d) => (stdout += d.toString()));
-    ps.stderr.on("data", (d) => (stderr += d.toString()));
-    ps.on("error", (err) => done(err));
-    ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code}). ${stderr || stdout}`)));
-    function done(err: Error | null) {
-      try {
-        unlinkSync(tmpPath);
-      } catch {}
-      if (err) return reject(err);
-      if (stdout.trim().startsWith("ERROR:")) return reject(new Error(stdout.trim().slice(6)));
-      resolve();
-    }
-  });
 }

@@ -20,19 +20,27 @@
  *   - -InputFormat None to guarantee stdin is empty (belt-and-suspenders).
  *   - Strict `script` input validation.
  *
- * Scaffolding only in Phase 3 -- no existing file imports this. Phase 4
- * migrates call sites using RELATIVE imports (path alias `@/` is not
- * wired up in the Raycast bundler):
- *   import { runPowerShellScript } from "../infra/powershell";
+ * Phase 4 adds `runPowerShellFile` for bundled scripts under `assets/ps/`.
+ * Call sites use RELATIVE imports (path alias `@/` is not wired up in the
+ * Raycast bundler):
+ *   import { runPowerShellFile, resolvePsScript } from "../infra/powershell";
  */
 
 import { spawn } from "child_process";
 import { randomBytes } from "crypto";
-import { unlink, writeFile } from "fs/promises";
+import { access, unlink, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 
 import type { PSDroppedBytes, PSFailureReason, PSResult, PSRunOptions } from "./types";
+
+/**
+ * Parameter value passed to a .ps1 `param()` block. Booleans are converted
+ * to PS switch syntax (`-Foo` with no value when true, omitted when false).
+ * `null`/`undefined` values are skipped so call sites can pass optional
+ * args without conditional arg-array building.
+ */
+export type PSParamValue = string | number | boolean | null | undefined;
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 const DEFAULT_MAX_STDOUT = 5 * 1024 * 1024;
@@ -105,9 +113,69 @@ export async function runPowerShellScript(script: string, options: PSRunOptions 
 }
 
 /**
- * Low-level spawn + output collection. Split out so a future
- * `runPowerShellFile` overload (Phase 4, once scripts live in
- * `scripts/ps/*.ps1`) can reuse the same state machine.
+ * Execute a pre-existing `.ps1` file with named parameters. The file is
+ * expected to live under `assets/ps/` (use `resolvePsScript` to build the
+ * absolute path) and to start with a `param(...)` block that accepts the
+ * keys in `params`.
+ *
+ * `params` values are serialized as `-<Name> <value>` pairs appended after
+ * `-File <scriptPath>`. Booleans render as PS switch flags: `true` emits
+ * `-Name` (switch present), `false` omits the arg (switch absent). Strings
+ * are passed verbatim -- PowerShell receives them as separate argv entries
+ * so no escaping of quotes/spaces is needed (no shell interpolation).
+ *
+ * Unlike `runPowerShellScript`, this does NOT write a temp file or prepend
+ * a BOM -- the .ps1 in `assets/ps/` already ships with its BOM, so there's
+ * no encoding issue. It also means the line numbers in error messages
+ * point at the real script, not a tmpdir copy.
+ *
+ * NEVER rejects. Check `result.ok`.
+ */
+export async function runPowerShellFile(
+  scriptPath: string,
+  params: Record<string, PSParamValue> = {},
+  options: PSRunOptions = {},
+): Promise<PSResult> {
+  if (process.platform !== "win32") {
+    return fail("unsupported-platform", "PowerShell is only available on Windows hosts.", null);
+  }
+
+  if (typeof scriptPath !== "string" || scriptPath.trim().length === 0) {
+    return fail("invalid-input", "runPowerShellFile requires a non-empty scriptPath.", null);
+  }
+
+  try {
+    await access(scriptPath);
+  } catch {
+    // Surface as invalid-input rather than spawn-failed -- the runner's
+    // contract says spawn-failed means PATH/permissions, not "the
+    // caller-supplied path doesn't exist". This also lets callers choose
+    // between "script missing" (likely a packaging bug) and "PS failed".
+    return fail("invalid-input", `PS script not found: ${scriptPath}`, null);
+  }
+
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const maxStdout = options.maxStdoutBytes ?? DEFAULT_MAX_STDOUT;
+  const maxStderr = options.maxStderrBytes ?? DEFAULT_MAX_STDERR;
+
+  const extraArgs: string[] = [];
+  for (const [key, value] of Object.entries(params)) {
+    if (value === null || value === undefined) continue;
+    if (typeof value === "boolean") {
+      if (value) extraArgs.push(`-${key}`);
+      continue;
+    }
+    extraArgs.push(`-${key}`, String(value));
+  }
+
+  return spawnAndCollect(scriptPath, timeoutMs, maxStdout, maxStderr, options.signal, extraArgs);
+}
+
+/**
+ * Low-level spawn + output collection. Shared state machine for both
+ * `runPowerShellScript` (temp-file path) and `runPowerShellFile`
+ * (bundled-asset path). `extraArgs` are appended after the `-File` arg
+ * for the file-based overload; the script-based overload passes `[]`.
  */
 function spawnAndCollect(
   scriptPath: string,
@@ -115,6 +183,7 @@ function spawnAndCollect(
   maxStdout: number,
   maxStderr: number,
   signal: AbortSignal | undefined,
+  extraArgs: readonly string[] = [],
 ): Promise<PSResult> {
   return new Promise((resolve) => {
     const stdoutChunks: Buffer[] = [];
@@ -124,7 +193,7 @@ function spawnAndCollect(
     const dropped: PSDroppedBytes = { stdout: 0, stderr: 0 };
     let settled = false;
 
-    const child = spawn("powershell", [...PS_DEFAULT_ARGS, scriptPath], { signal });
+    const child = spawn("powershell", [...PS_DEFAULT_ARGS, scriptPath, ...extraArgs], { signal });
 
     const timer =
       timeoutMs > 0

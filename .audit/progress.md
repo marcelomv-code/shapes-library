@@ -5,8 +5,8 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 3 complete
-- **Next phase:** Phase 4 — PS scripts (extract inline PS to `scripts/ps/*.ps1` and migrate call sites to `@/infra/powershell`)
+- **Current phase:** Phase 4 complete
+- **Next phase:** Phase 5 — Ports/Adapters (`PowerPointClient` interface + adapters)
 - **Last updated:** 2026-04-20
 
 ## Baseline findings (Phase 0)
@@ -43,6 +43,8 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 2. **Network egress** from sandbox is limited (observed `EAI_AGAIN www.raycast.com` during `npm run lint`). Schema validation of `package.json` is expected to fail offline; ignore those specific errors when comparing pre/post diffs.
 3. Path for host edits: `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`
 4. Path for sandbox bash: `/sessions/peaceful-dazzling-clarke/mnt/Shapes-libreary-v3/shapes-library`
+5. **Sandbox cleanup needed after Phase 4:** `src/_test_narrow.ts` (a 10-byte `export {};` placeholder left from TS narrowing diagnosis). Cannot delete from sandbox — OneDrive denies `rm` Operation not permitted. Delete from host before commit: `Remove-Item shapes-library/src/_test_narrow.ts`.
+6. **Git index corruption observed during Phase 4:** `fatal: unable to read 960e1615...`. Cannot repair from sandbox (same OneDrive perm block). Fix from host PowerShell before committing: `Remove-Item shapes-library/.git/index; git -C shapes-library reset`.
 
 ## Phase log
 
@@ -52,7 +54,7 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 1 — Dead code | DONE | (see commit below) | Deleted V2/V3 extractors (501 LOC). Removed 20 unused imports + dead `getAssetsDir`/`handleRepairPreviews`. Lint 110→89 errors (-21). tsc 351→350 lines (unchanged JSX-typing baseline). "Log string" fix: no malformed logs found in live code; item was resolved by V2/V3 deletion (30 redundant console calls removed with them). |
 | 2 — Categories | DONE | (see commit below) | Aligned display names to IDs in `src/utils/categoryManager.ts` (arrows→"Arrows", flowchart→"Flowchart", callouts→"Callouts"; basic→"Basic Shapes" kept). Synced seed `assets/categories.json`. tsc 70 errors (=phase1), lint 89 errors (=phase1). No regressions. |
 | 3 — PS hardening | DONE | (see commits below) | Scaffolded `src/infra/powershell/`: `types.ts` (PSResult union with `droppedBytes`, PSRunOptions, PSFailureReason), `escape.ts` (psSingleQuote NUL-safe, psPath, encodePSCommand for -EncodedCommand), `runner.ts` (runPowerShellScript: UTF-8 BOM on temp .ps1 so PS 5.1 reads non-ASCII correctly; byte-accurate output caps via Buffer[] to avoid mid-codepoint truncation; 60s timeout; AbortSignal; `-InputFormat None`; validates non-empty script; collision-proof temp name), `index.ts` barrel. Zero call-site migration — Phase 4 flips 8 spawn("powershell", …) invocations across 7 files: extractor/windowsExtractor.ts, generator/pptxGenerator.ts, import-library.tsx, shape-picker.tsx (x3), utils/deck.ts, utils/previewGenerator.ts. Bundled hotfix: removed stray `}` left in `src/utils/categoryManager.ts` by the Phase 2 commit. tsc 70 errors (=phase2), lint 89 errors (=phase2). No regressions. |
-| 4 — PS scripts | PENDING | — | Extract inline PS to `scripts/ps/*.ps1`. |
+| 4 — PS scripts | DONE | (see commit below) | Extracted 8 inline PS invocations (across 7 files) into 11 parameterized `.ps1` files bundled under `assets/ps/` (deviation from plan: `scripts/ps/` would not be bundled by `ray build` — Raycast only packages `assets/`). New `runPowerShellFile(scriptPath, params, options)` added to runner — appends `-Key value` pairs after `-File`, treats booleans as switch flags. New `resolvePsScript(name)` helper in `src/infra/powershell/scripts.ts` resolves `environment.assetsPath/ps/<name>.ps1`. All 11 `.ps1` files carry UTF-8 BOM. Migrated call sites: generator/pptxGenerator.ts (insert-active), import-library.tsx (unzip), shape-picker.tsx (export-library, import-library, copy-via-powerpoint), extractor/windowsExtractor.ts (extract-selected-shape — flat 60s timeout replaces streaming 30s→45s→60s ramp), utils/deck.ts (ensure-deck, add-shape-to-deck, copy-from-deck, insert-from-deck — new `throwIfFailed` helper with `asserts result is Extract<PSResult, {ok:true}>`), utils/previewGenerator.ts (export-pptx-to-png). **Narrowing fix:** Since `tsconfig.strict: false`, `if (!result.ok)` fails to narrow the discriminated union (TS widens the literal types). All 8 call sites use `if (result.ok === false)` instead. tsc 70 errors (=phase3), lint 66 errors (< phase3's 89 — dead PS-string noise removed along with the inline spawn bodies). No regressions. |
 | 5 — Ports/Adapters | PENDING | — | `PowerPointClient` interface + adapters. |
 | 6 — Split picker | PENDING | — | 840-line god component. |
 | 7 — TS strict | PENDING | — | Enable strict, remove `any`. |

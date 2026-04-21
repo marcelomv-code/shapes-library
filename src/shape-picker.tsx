@@ -26,8 +26,8 @@ import { getCachedShapes, setCachedShapes, clearCache } from "./utils/cache";
 import { updateShapeInLibrary, removeShapeFromLibrary } from "./utils/shapeSaver";
 import { generateSvgPreview, svgToDataUrl } from "./utils/svgPreview";
 import { spawn } from "child_process";
-import { tmpdir } from "os";
 import { loadCategories, getCategoryDisplayName } from "./utils/categoryManager";
+import { runPowerShellFile, resolvePsScript } from "./infra/powershell";
 
 /**
  * Build category options for dropdown dynamically
@@ -185,55 +185,20 @@ async function exportLibraryZip(): Promise<void> {
     const dest = join(root, `library_export_${ts}.zip`);
 
     if (process.platform === "win32") {
-      // Use staging folder to avoid Compress-Archive quirks with nested folders
-      const ps = `
-$ErrorActionPreference = "Stop"
-$root = '${root.replace(/'/g, "''")}'
-$tmp = Join-Path $env:TEMP ("libexp_" + [guid]::NewGuid().ToString())
-New-Item -ItemType Directory -Force -Path $tmp | Out-Null
-if (Test-Path (Join-Path $root 'shapes')) { Copy-Item (Join-Path $root 'shapes') -Destination (Join-Path $tmp 'shapes') -Recurse -Force }
-if (Test-Path (Join-Path $root 'assets')) { Copy-Item (Join-Path $root 'assets') -Destination (Join-Path $tmp 'assets') -Recurse -Force }
-if (Test-Path (Join-Path $root 'native')) { Copy-Item (Join-Path $root 'native') -Destination (Join-Path $tmp 'native') -Recurse -Force }
-if (Test-Path (Join-Path $root 'library_deck.pptx')) { Copy-Item (Join-Path $root 'library_deck.pptx') -Destination $tmp -Force }
-$dest = '${dest.replace(/'/g, "''")}'
-Compress-Archive -Path (Join-Path $tmp '*') -DestinationPath $dest -Force
-Remove-Item $tmp -Recurse -Force
-Write-Output "OK:$dest"
-`;
-
-      const tmpScript = join(tmpdir(), `export-${Date.now()}.ps1`);
-      require("fs").writeFileSync(tmpScript, ps, "utf-8");
-      const child = spawn("powershell", [
-        "-NoProfile",
-        "-NonInteractive",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        tmpScript,
-      ]);
-      let stdout = "";
-      let stderr = "";
-      child.stdout.on("data", (d) => {
-        const t = d.toString();
-        stdout += t;
-        console.log(`[Export][stdout] ${t.trim()}`);
-      });
-      child.stderr.on("data", (d) => {
-        const t = d.toString();
-        stderr += t;
-        console.error(`[Export][stderr] ${t.trim()}`);
-      });
-      await new Promise<void>((resolve, reject) => {
-        child.on("error", (e) => reject(e));
-        child.on("close", (code) => {
-          try {
-            require("fs").unlinkSync(tmpScript);
-          } catch {}
-          if (code !== 0) return reject(new Error(`PowerShell failed (${code}). ${stderr || stdout}`));
-          if (!/^OK:/m.test(stdout)) return reject(new Error(`Unexpected output: ${stdout}`));
-          resolve();
-        });
-      });
+      // Phase 4: assets/ps/export-library.ps1 keeps the staging-folder
+      // workaround (Compress-Archive misbehaves with multiple -Path inputs)
+      // and emits "OK:<dest>" on success. The [Export] stdout/stderr
+      // breadcrumbs are preserved by logging result.stdout / result.stderr
+      // after the run (no longer streamed, but still captured for triage).
+      const result = await runPowerShellFile(resolvePsScript("export-library"), { Root: root, Dest: dest });
+      if (result.stdout) console.log(`[Export][stdout] ${result.stdout.trim()}`);
+      if (result.stderr) console.error(`[Export][stderr] ${result.stderr.trim()}`);
+      if (result.ok === false) {
+        throw new Error(`PowerShell failed (${result.code ?? "n/a"}). ${result.message}`);
+      }
+      if (!/^OK:/m.test(result.stdout)) {
+        throw new Error(`Unexpected output: ${result.stdout}`);
+      }
     } else {
       // macOS/Linux: zip present directories only
       const include: string[] = [];
@@ -273,46 +238,17 @@ async function importLibraryZip(zipPath: string): Promise<void> {
   console.log(`[Import] root=${root} zip=${zipPath}`);
 
   if (process.platform === "win32") {
-    const ps = `
-$ErrorActionPreference = "Stop"
-$zip='${zipPath.replace(/'/g, "''")}'
-$dest='${root.replace(/'/g, "''")}'
-Expand-Archive -LiteralPath $zip -DestinationPath $dest -Force
-Write-Output "OK:$dest"
-`;
-    const tmpScript = join(tmpdir(), `import-${Date.now()}.ps1`);
-    require("fs").writeFileSync(tmpScript, ps, "utf-8");
-    const child = spawn("powershell", [
-      "-NoProfile",
-      "-NonInteractive",
-      "-ExecutionPolicy",
-      "Bypass",
-      "-File",
-      tmpScript,
-    ]);
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (d) => {
-      const t = d.toString();
-      stdout += t;
-      console.log(`[Import][stdout] ${t.trim()}`);
-    });
-    child.stderr.on("data", (d) => {
-      const t = d.toString();
-      stderr += t;
-      console.error(`[Import][stderr] ${t.trim()}`);
-    });
-    await new Promise<void>((resolve, reject) => {
-      child.on("error", (e) => reject(e));
-      child.on("close", (code) => {
-        try {
-          require("fs").unlinkSync(tmpScript);
-        } catch {}
-        if (code !== 0) return reject(new Error(`PowerShell failed (${code}). ${stderr || stdout}`));
-        if (!/^OK:/m.test(stdout)) return reject(new Error(`Unexpected output: ${stdout}`));
-        resolve();
-      });
-    });
+    // Phase 4: assets/ps/import-library.ps1 does Expand-Archive and emits
+    // "OK:<dest>". Same diagnostic breadcrumbs as the export path above.
+    const result = await runPowerShellFile(resolvePsScript("import-library"), { Zip: zipPath, Dest: root });
+    if (result.stdout) console.log(`[Import][stdout] ${result.stdout.trim()}`);
+    if (result.stderr) console.error(`[Import][stderr] ${result.stderr.trim()}`);
+    if (result.ok === false) {
+      throw new Error(`PowerShell failed (${result.code ?? "n/a"}). ${result.message}`);
+    }
+    if (!/^OK:/m.test(result.stdout)) {
+      throw new Error(`Unexpected output: ${result.stdout}`);
+    }
     return;
   }
 
@@ -605,61 +541,12 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
   }
 
   async function runCopyViaPowerPoint(pptxPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const script = `
-$ErrorActionPreference = "Stop"
-try {
-  $path = '${pptxPath.replace(/'/g, "''")}'
-  $created = $false
-  try { $app = [Runtime.InteropServices.Marshal]::GetActiveObject('PowerPoint.Application') } catch { $app = New-Object -ComObject PowerPoint.Application; $created = $true }
-  $app.DisplayAlerts = 0
-  $pres = $app.Presentations.Open($path, $true, $false, $false)
-  $slide = $pres.Slides.Item(1)
-  # Filter out footer/slide number/date placeholders and copyright text
-  $validNames = @()
-  foreach ($shape in $slide.Shapes) {
-    $skip = $false
-    try {
-      $phType = $shape.PlaceholderFormat.Type
-      if ($phType -eq 6 -or $phType -eq 13 -or $phType -eq 16) { $skip = $true }
-    } catch {}
-    if (-not $skip) {
-      try {
-        $txt = $shape.TextFrame.TextRange.Text
-        if ($txt -match 'Copyright|©') { $skip = $true }
-      } catch {}
-    }
-    if (-not $skip) { $validNames += $shape.Name }
-  }
-  if ($validNames.Count -gt 0) { $slide.Shapes.Range($validNames).Copy() }
-  $pres.Close()
-  Write-Output 'OK'
-} catch {
-  Write-Output "ERROR:$($_.Exception.Message)"; exit 1
-}
-`;
-      const temp = join(tmpdir(), `raycast-copy-${Date.now()}.ps1`);
-      try {
-        require("fs").writeFileSync(temp, script, "utf-8");
-      } catch (e) {
-        return reject(e as Error);
-      }
-      const ps = spawn("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", temp]);
-      let stdout = "";
-      let stderr = "";
-      ps.stdout.on("data", (d) => (stdout += d.toString()));
-      ps.stderr.on("data", (d) => (stderr += d.toString()));
-      ps.on("error", (e) => done(e));
-      ps.on("close", (code) => done(code === 0 ? null : new Error(`PowerShell failed (${code}). ${stderr || stdout}`)));
-      function done(err: Error | null) {
-        try {
-          require("fs").unlinkSync(temp);
-        } catch {}
-        if (err) return reject(err);
-        if (stdout.trim().startsWith("ERROR:")) return reject(new Error(stdout.trim().slice(6)));
-        resolve();
-      }
-    });
+    // Phase 4: delegates to assets/ps/copy-via-powerpoint.ps1. The runner
+    // surfaces the "ERROR:" protocol-error message in result.message, so
+    // the legacy error text (e.g. "No active PowerPoint window") flows
+    // through unchanged for the fallback branch in copyShapeToClipboard.
+    const result = await runPowerShellFile(resolvePsScript("copy-via-powerpoint"), { PptxPath: pptxPath });
+    if (result.ok === false) throw new Error(result.message);
   }
 
   // Load shapes on mount and when category changes
