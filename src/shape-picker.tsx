@@ -21,7 +21,7 @@ import { environment } from "@raycast/api";
 import { getShapesDir as getShapesDirUtil, getLibraryRoot } from "./utils/paths";
 import { ShapeInfo, Preferences, CategoryOption, ShapeCategory } from "./types/shapes";
 import { openShapeInPowerPoint, generateShapePptx } from "./generator/pptxGenerator";
-import { copyFromDeckToClipboard, insertFromDeckIntoActive } from "./utils/deck";
+import { getPowerPointClient, getDeckPath } from "./infra/powerpoint";
 import { getCachedShapes, setCachedShapes, clearCache } from "./utils/cache";
 import { updateShapeInLibrary, removeShapeFromLibrary } from "./utils/shapeSaver";
 import { generateSvgPreview, svgToDataUrl } from "./utils/svgPreview";
@@ -485,7 +485,7 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
     try {
       const prefs = getPreferenceValues<Preferences>();
       if (prefs.useLibraryDeck && typeof shape.deckSlide === "number") {
-        await copyFromDeckToClipboard(shape.deckSlide);
+        await getPowerPointClient().copyDeckSlideToClipboard(getDeckPath(), shape.deckSlide);
         toast.style = Toast.Style.Success;
         toast.title = "Shape copied (deck)";
         toast.message = "Ctrl+V in PowerPoint";
@@ -541,12 +541,12 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
   }
 
   async function runCopyViaPowerPoint(pptxPath: string): Promise<void> {
-    // Phase 4: delegates to assets/ps/copy-via-powerpoint.ps1. The runner
-    // surfaces the "ERROR:" protocol-error message in result.message, so
-    // the legacy error text (e.g. "No active PowerPoint window") flows
-    // through unchanged for the fallback branch in copyShapeToClipboard.
-    const result = await runPowerShellFile(resolvePsScript("copy-via-powerpoint"), { PptxPath: pptxPath });
-    if (result.ok === false) throw new Error(result.message);
+    // Phase 5: delegates through the PowerPointClient port -- the
+    // Windows adapter still drives assets/ps/copy-via-powerpoint.ps1 but
+    // the port's `copyShapeToClipboard` throws on failure so the
+    // surrounding fallback branch in copyShapeToClipboard catches the
+    // original "No active PowerPoint window" message unchanged.
+    await getPowerPointClient().copyShapeToClipboard(pptxPath);
   }
 
   // Load shapes on mount and when category changes
@@ -605,7 +605,7 @@ export default function ShapePicker(props: { arguments: CommandArguments }) {
                     onAction={async () => {
                       const prefs = getPreferenceValues<Preferences>();
                       if (prefs.useLibraryDeck && typeof shape.deckSlide === "number") {
-                        await insertFromDeckIntoActive(shape.deckSlide as number);
+                        await getPowerPointClient().insertSlide(getDeckPath(), shape.deckSlide as number);
                       } else {
                         await openShapeInPowerPoint(shape);
                       }

@@ -5,8 +5,8 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 4 complete
-- **Next phase:** Phase 5 — Ports/Adapters (`PowerPointClient` interface + adapters)
+- **Current phase:** Phase 5 in progress (files written; awaiting host typecheck + commit)
+- **Next phase:** Phase 6 — Split `shape-picker.tsx` (840-line god component)
 - **Last updated:** 2026-04-20
 
 ## Baseline findings (Phase 0)
@@ -55,7 +55,7 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 2 — Categories | DONE | (see commit below) | Aligned display names to IDs in `src/utils/categoryManager.ts` (arrows→"Arrows", flowchart→"Flowchart", callouts→"Callouts"; basic→"Basic Shapes" kept). Synced seed `assets/categories.json`. tsc 70 errors (=phase1), lint 89 errors (=phase1). No regressions. |
 | 3 — PS hardening | DONE | (see commits below) | Scaffolded `src/infra/powershell/`: `types.ts` (PSResult union with `droppedBytes`, PSRunOptions, PSFailureReason), `escape.ts` (psSingleQuote NUL-safe, psPath, encodePSCommand for -EncodedCommand), `runner.ts` (runPowerShellScript: UTF-8 BOM on temp .ps1 so PS 5.1 reads non-ASCII correctly; byte-accurate output caps via Buffer[] to avoid mid-codepoint truncation; 60s timeout; AbortSignal; `-InputFormat None`; validates non-empty script; collision-proof temp name), `index.ts` barrel. Zero call-site migration — Phase 4 flips 8 spawn("powershell", …) invocations across 7 files: extractor/windowsExtractor.ts, generator/pptxGenerator.ts, import-library.tsx, shape-picker.tsx (x3), utils/deck.ts, utils/previewGenerator.ts. Bundled hotfix: removed stray `}` left in `src/utils/categoryManager.ts` by the Phase 2 commit. tsc 70 errors (=phase2), lint 89 errors (=phase2). No regressions. |
 | 4 — PS scripts | DONE | (see commit below) | Extracted 8 inline PS invocations (across 7 files) into 11 parameterized `.ps1` files bundled under `assets/ps/` (deviation from plan: `scripts/ps/` would not be bundled by `ray build` — Raycast only packages `assets/`). New `runPowerShellFile(scriptPath, params, options)` added to runner — appends `-Key value` pairs after `-File`, treats booleans as switch flags. New `resolvePsScript(name)` helper in `src/infra/powershell/scripts.ts` resolves `environment.assetsPath/ps/<name>.ps1`. All 11 `.ps1` files carry UTF-8 BOM. Migrated call sites: generator/pptxGenerator.ts (insert-active), import-library.tsx (unzip), shape-picker.tsx (export-library, import-library, copy-via-powerpoint), extractor/windowsExtractor.ts (extract-selected-shape — flat 60s timeout replaces streaming 30s→45s→60s ramp), utils/deck.ts (ensure-deck, add-shape-to-deck, copy-from-deck, insert-from-deck — new `throwIfFailed` helper with `asserts result is Extract<PSResult, {ok:true}>`), utils/previewGenerator.ts (export-pptx-to-png). **Narrowing fix:** Since `tsconfig.strict: false`, `if (!result.ok)` fails to narrow the discriminated union (TS widens the literal types). All 8 call sites use `if (result.ok === false)` instead. tsc 70 errors (=phase3), lint 66 errors (< phase3's 89 — dead PS-string noise removed along with the inline spawn bodies). No regressions. |
-| 5 — Ports/Adapters | PENDING | — | `PowerPointClient` interface + adapters. |
+| 5 — Ports/Adapters | IN PROGRESS | — | Introduced `PowerPointClient` port in `src/domain/powerpoint/` (`PowerPointClient.ts` + `types.ts`). Adapters in `src/infra/powerpoint/`: `WindowsComPowerPointClient.ts` (folded from `src/extractor/windowsExtractor.ts` + `src/utils/deck.ts`), `MacPowerPointClient.ts` (folded from `src/extractor/macExtractor.ts`; deck/clipboard methods throw platform-unsupported), `MockPowerPointClient.ts` (records calls, default happy-path returns, consumer-overridable `responses`). Factory + barrel at `src/infra/powerpoint/index.ts` exposes `getPowerPointClient()` (lazy-cached singleton, platform-picked), `setPowerPointClient(c)` / `resetPowerPointClient()` for tests, and `getDeckPath()` helper. **Deviation from plan's 5-method interface:** added `copyDeckSlideToClipboard(deckPath, slideIndex)` as 6th method to preserve the `useLibraryDeck` fidelity path in shape-picker (else deck-slide copies would round-trip through an intermediate pptx file). Call sites updated: `src/capture-shape.tsx` (3 replacements: `captureShapeFromPowerPoint()` → `getPowerPointClient().captureSelectedShape()`; 2× `addShapeToDeckFromPptx(src)` → `getPowerPointClient().addSlideFromPptx(getDeckPath(), src)`); `src/shape-picker.tsx` (3 replacements: `copyFromDeckToClipboard` → `copyDeckSlideToClipboard`, `insertFromDeckIntoActive` → `insertSlide`, `runCopyViaPowerPoint` body → client `copyShapeToClipboard`). **Pending host action (bash blocked on stale OneDrive mount):** git rm the now-orphaned `src/extractor/{index,windowsExtractor,macExtractor,types}.ts` + `src/utils/deck.ts`, then tsc+commit. Host commands are listed below the Phase log. |
 | 6 — Split picker | PENDING | — | 840-line god component. |
 | 7 — TS strict | PENDING | — | Enable strict, remove `any`. |
 | 8 — ESM imports | PENDING | — | Replace `require("fs")`. |
@@ -78,3 +78,37 @@ Open a new Cowork session and say:
 > Retome o plano shapes-library a partir da Fase N. O estado atual está em `.audit/progress.md` dentro do projeto.
 
 Cowork will re-mount the folder, read this file, and continue.
+
+## Phase 5 — host action required
+
+Cowork wrote the new port + adapters but the OneDrive-backed Linux mount is
+stale (sees deleted-tracked files that are present on Windows, and a
+phantom `.git/index.lock`) so the `git rm` + typecheck + commit must run
+on the host. From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
+
+```powershell
+# 1. Remove the now-orphaned legacy files (all consumers migrated to infra/powerpoint/).
+git rm src/extractor/index.ts src/extractor/windowsExtractor.ts src/extractor/macExtractor.ts src/extractor/types.ts src/utils/deck.ts
+
+# 2. Stage the new files written by Cowork.
+git add src/domain/powerpoint/PowerPointClient.ts src/domain/powerpoint/types.ts `
+       src/infra/powerpoint/WindowsComPowerPointClient.ts `
+       src/infra/powerpoint/MacPowerPointClient.ts `
+       src/infra/powerpoint/MockPowerPointClient.ts `
+       src/infra/powerpoint/index.ts `
+       src/capture-shape.tsx src/shape-picker.tsx `
+       .audit/progress.md
+
+# 3. Typecheck — expected: no new errors vs phase3-tsc.txt's 70-line baseline.
+npx tsc --noEmit 2>&1 | Tee-Object .audit/phase5-tsc.txt
+
+# 4. Lint — expected: no new errors vs phase3-lint.txt's 66 count.
+npm run lint 2>&1 | Tee-Object .audit/phase5-lint.txt
+
+# 5. Commit.
+git add .audit/phase5-tsc.txt .audit/phase5-lint.txt
+git commit -m "refactor(arch): introduce PowerPointClient port"
+```
+
+If tsc/lint regress, compare against `.audit/phase3-tsc.txt` / `.audit/phase3-lint.txt`
+to isolate Phase 5's contribution.

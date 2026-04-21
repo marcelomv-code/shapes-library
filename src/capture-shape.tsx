@@ -18,7 +18,7 @@ import {
 import { join } from "path";
 import { existsSync, mkdirSync, copyFileSync } from "fs";
 
-import { captureShapeFromPowerPoint } from "./extractor";
+import { getPowerPointClient, getDeckPath } from "./infra/powerpoint";
 import { mapToShapeInfo, getShapeTypeName } from "./utils/shapeMapper";
 import { addShapeToLibrary, shapeExists, updateShapeInLibrary } from "./utils/shapeSaver";
 import { getLibraryRoot } from "./utils/paths";
@@ -87,7 +87,7 @@ function SaveForm({ shape }: { shape: ShapeInfo }) {
           src = await generateShapePptx(updated);
         }
         try {
-          const slide = await (await import("./utils/deck")).addShapeToDeckFromPptx(src);
+          const slide = await getPowerPointClient().addSlideFromPptx(getDeckPath(), src);
           updateShapeInLibrary(updated.id, updated.category, { deckSlide: slide });
         } catch {}
       }
@@ -166,7 +166,7 @@ export default function CaptureShape() {
       message: "Select a shape in PowerPoint",
     });
     try {
-      const result: any = await captureShapeFromPowerPoint();
+      const result: any = await getPowerPointClient().captureSelectedShape();
       if (Array.isArray(result.logs)) setLastLogs(result.logs as string[]);
 
       if (!result.success || !result.shape) {
@@ -195,7 +195,7 @@ export default function CaptureShape() {
             src = await generateShapePptx(shapeInfo);
           }
           try {
-            const slide = await (await import("./utils/deck")).addShapeToDeckFromPptx(src);
+            const slide = await getPowerPointClient().addSlideFromPptx(getDeckPath(), src);
             updateShapeInLibrary(shapeInfo.id, shapeInfo.category, { deckSlide: slide });
           } catch {}
         }
