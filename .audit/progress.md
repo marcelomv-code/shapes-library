@@ -5,8 +5,8 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 5 committed (c14b202 + fixup 3d8b35a). Phase 5.1 diagnostic committed here: realigned React type family (`react`/`@types/react`/`@types/node`) to the versions `@raycast/api@1.102.7` pins — eliminates the 69 TS2786 JSX errors without touching source. Host-side `npm install` required before next `tsc` run.
-- **Next phase:** Phase 6 — Split `shape-picker.tsx` (840-line god component)
+- **Current phase:** Phase 6 done in-session. Host `npm install` already executed (node_modules now ships `@types/react@19.0.10`); Phase 5.1's React-19 realignment is now effective and `tsc --noEmit` exits 0 (was 70 TS2786 errors). Phase 6 split `shape-picker.tsx` (685 → 153 LOC) into `src/features/shape-picker/` (6 files, ~591 LOC). ESLint 62 → 56 errors (-6, side-effect of commenting noop catches in extracted modules).
+- **Next phase:** Phase 7 — Enable TS strict, remove `any`
 - **Last updated:** 2026-04-21
 
 ## Phase 5 post-mortem (tsc/lint dump review)
@@ -64,8 +64,8 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 2 — Categories | DONE | (see commit below) | Aligned display names to IDs in `src/utils/categoryManager.ts` (arrows→"Arrows", flowchart→"Flowchart", callouts→"Callouts"; basic→"Basic Shapes" kept). Synced seed `assets/categories.json`. tsc 70 errors (=phase1), lint 89 errors (=phase1). No regressions. |
 | 3 — PS hardening | DONE | (see commits below) | Scaffolded `src/infra/powershell/`: `types.ts` (PSResult union with `droppedBytes`, PSRunOptions, PSFailureReason), `escape.ts` (psSingleQuote NUL-safe, psPath, encodePSCommand for -EncodedCommand), `runner.ts` (runPowerShellScript: UTF-8 BOM on temp .ps1 so PS 5.1 reads non-ASCII correctly; byte-accurate output caps via Buffer[] to avoid mid-codepoint truncation; 60s timeout; AbortSignal; `-InputFormat None`; validates non-empty script; collision-proof temp name), `index.ts` barrel. Zero call-site migration — Phase 4 flips 8 spawn("powershell", …) invocations across 7 files: extractor/windowsExtractor.ts, generator/pptxGenerator.ts, import-library.tsx, shape-picker.tsx (x3), utils/deck.ts, utils/previewGenerator.ts. Bundled hotfix: removed stray `}` left in `src/utils/categoryManager.ts` by the Phase 2 commit. tsc 70 errors (=phase2), lint 89 errors (=phase2). No regressions. |
 | 4 — PS scripts | DONE | (see commit below) | Extracted 8 inline PS invocations (across 7 files) into 11 parameterized `.ps1` files bundled under `assets/ps/` (deviation from plan: `scripts/ps/` would not be bundled by `ray build` — Raycast only packages `assets/`). New `runPowerShellFile(scriptPath, params, options)` added to runner — appends `-Key value` pairs after `-File`, treats booleans as switch flags. New `resolvePsScript(name)` helper in `src/infra/powershell/scripts.ts` resolves `environment.assetsPath/ps/<name>.ps1`. All 11 `.ps1` files carry UTF-8 BOM. Migrated call sites: generator/pptxGenerator.ts (insert-active), import-library.tsx (unzip), shape-picker.tsx (export-library, import-library, copy-via-powerpoint), extractor/windowsExtractor.ts (extract-selected-shape — flat 60s timeout replaces streaming 30s→45s→60s ramp), utils/deck.ts (ensure-deck, add-shape-to-deck, copy-from-deck, insert-from-deck — new `throwIfFailed` helper with `asserts result is Extract<PSResult, {ok:true}>`), utils/previewGenerator.ts (export-pptx-to-png). **Narrowing fix:** Since `tsconfig.strict: false`, `if (!result.ok)` fails to narrow the discriminated union (TS widens the literal types). All 8 call sites use `if (result.ok === false)` instead. tsc 70 errors (=phase3), lint 66 errors (< phase3's 89 — dead PS-string noise removed along with the inline spawn bodies). No regressions. |
-| 5 — Ports/Adapters | IN PROGRESS | — | Introduced `PowerPointClient` port in `src/domain/powerpoint/` (`PowerPointClient.ts` + `types.ts`). Adapters in `src/infra/powerpoint/`: `WindowsComPowerPointClient.ts` (folded from `src/extractor/windowsExtractor.ts` + `src/utils/deck.ts`), `MacPowerPointClient.ts` (folded from `src/extractor/macExtractor.ts`; deck/clipboard methods throw platform-unsupported), `MockPowerPointClient.ts` (records calls, default happy-path returns, consumer-overridable `responses`). Factory + barrel at `src/infra/powerpoint/index.ts` exposes `getPowerPointClient()` (lazy-cached singleton, platform-picked), `setPowerPointClient(c)` / `resetPowerPointClient()` for tests, and `getDeckPath()` helper. **Deviation from plan's 5-method interface:** added `copyDeckSlideToClipboard(deckPath, slideIndex)` as 6th method to preserve the `useLibraryDeck` fidelity path in shape-picker (else deck-slide copies would round-trip through an intermediate pptx file). Call sites updated: `src/capture-shape.tsx` (3 replacements: `captureShapeFromPowerPoint()` → `getPowerPointClient().captureSelectedShape()`; 2× `addShapeToDeckFromPptx(src)` → `getPowerPointClient().addSlideFromPptx(getDeckPath(), src)`); `src/shape-picker.tsx` (3 replacements: `copyFromDeckToClipboard` → `copyDeckSlideToClipboard`, `insertFromDeckIntoActive` → `insertSlide`, `runCopyViaPowerPoint` body → client `copyShapeToClipboard`). **Pending host action (bash blocked on stale OneDrive mount):** git rm the now-orphaned `src/extractor/{index,windowsExtractor,macExtractor,types}.ts` + `src/utils/deck.ts`, then tsc+commit. Host commands are listed below the Phase log. |
-| 6 — Split picker | PENDING | — | 840-line god component. |
+| 5 — Ports/Adapters | DONE | c14b202 + 3d8b35a | Introduced `PowerPointClient` port in `src/domain/powerpoint/` (`PowerPointClient.ts` + `types.ts`). Adapters in `src/infra/powerpoint/`: `WindowsComPowerPointClient.ts` (folded from `src/extractor/windowsExtractor.ts` + `src/utils/deck.ts`), `MacPowerPointClient.ts` (folded from `src/extractor/macExtractor.ts`; deck/clipboard methods throw platform-unsupported), `MockPowerPointClient.ts` (records calls, default happy-path returns, consumer-overridable `responses`). Factory + barrel at `src/infra/powerpoint/index.ts` exposes `getPowerPointClient()` (lazy-cached singleton, platform-picked), `setPowerPointClient(c)` / `resetPowerPointClient()` for tests, and `getDeckPath()` helper. **Deviation from plan's 5-method interface:** added `copyDeckSlideToClipboard(deckPath, slideIndex)` as 6th method to preserve the `useLibraryDeck` fidelity path in shape-picker (else deck-slide copies would round-trip through an intermediate pptx file). Call sites updated: `src/capture-shape.tsx` (3 replacements: `captureShapeFromPowerPoint()` → `getPowerPointClient().captureSelectedShape()`; 2× `addShapeToDeckFromPptx(src)` → `getPowerPointClient().addSlideFromPptx(getDeckPath(), src)`); `src/shape-picker.tsx` (3 replacements: `copyFromDeckToClipboard` → `copyDeckSlideToClipboard`, `insertFromDeckIntoActive` → `insertSlide`, `runCopyViaPowerPoint` body → client `copyShapeToClipboard`). **Pending host action (bash blocked on stale OneDrive mount):** git rm the now-orphaned `src/extractor/{index,windowsExtractor,macExtractor,types}.ts` + `src/utils/deck.ts`, then tsc+commit. Host commands are listed below the Phase log. |
+| 6 — Split picker | DONE | (pending commit) | `shape-picker.tsx` 685 → 153 LOC. New folder `src/features/shape-picker/` (6 files, 591 LOC): `shapeLoader.ts` (108, seed + load-by-category + load-all), `libraryZip.ts` (104, export/import PS + zip/unzip), `EditShapeForm.tsx` (100, form + category move), `ImportLibraryForm.tsx` (39, zip prompt), `clipboard.ts` (100, copy paths — deck / native / generated fallback), `ShapeGridItem.tsx` (140, Grid.Item + ActionPanel). Root component now owns only category state, `loadShapes`, `handleRefresh`, `handleDeleteShape`, and the outer `<Grid>`. **tsc: 0 errors** (Phase 5.1 React-19 realignment is now in effect — `node_modules/@types/react@19.0.10` — down from 70 TS2786). **Lint: 62 → 56 errors** (-6, from commented noop catches in extracted modules; all remaining errors pre-existing — `no-empty`, `no-explicit-any`, `no-case-declarations`, `no-useless-escape` — none inside the new feature folder). Zero behavior change; all public command entry points unchanged. |
 | 7 — TS strict | PENDING | — | Enable strict, remove `any`. |
 | 8 — ESM imports | PENDING | — | Replace `require("fs")`. |
 | 9 — Memoization | PENDING | — | Category + library-root caches. |
@@ -131,3 +131,47 @@ git commit -m "fix(phase5): repair shapeMapper import, Mac adapter lint, Prettie
 
 If tsc/lint regress, compare against `.audit/phase3-tsc.txt` / `.audit/phase3-lint.txt`
 to isolate Phase 5's contribution.
+
+## Phase 6 — commit pending on host
+
+Phase 6 changes are staged on disk but the sandbox git commit failed with
+`.git/index.lock: Operation not permitted` — same OneDrive lock seen in
+earlier phases. Files are already staged; the user only needs to commit
+from host PowerShell.
+
+**Files staged (added/modified):**
+
+- `src/shape-picker.tsx` (M, 685 → 153 LOC)
+- `src/features/shape-picker/shapeLoader.ts` (A)
+- `src/features/shape-picker/libraryZip.ts` (A)
+- `src/features/shape-picker/EditShapeForm.tsx` (A)
+- `src/features/shape-picker/ImportLibraryForm.tsx` (A)
+- `src/features/shape-picker/clipboard.ts` (A)
+- `src/features/shape-picker/ShapeGridItem.tsx` (A)
+- `.audit/phase6-tsc.txt` (A, empty — tsc exit 0)
+- `.audit/phase6-lint.txt` (A, 56 errors)
+- `.audit/progress.md` (M)
+
+From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
+
+```powershell
+# 1. Clear the stale lock (if it's still there).
+Remove-Item .git/index.lock -ErrorAction SilentlyContinue
+
+# 2. Re-verify staging (should list the 10 files above).
+git status --short
+
+# 3. Format the new feature folder.
+npx prettier --write src/features/shape-picker/ src/shape-picker.tsx
+
+# 4. Re-run tsc + lint just to confirm nothing drifted during prettier.
+npx tsc --noEmit 2>&1 | Out-File .audit/phase6-tsc.txt -Encoding utf8
+npx eslint src --ext .ts,.tsx 2>&1 | Out-File .audit/phase6-lint.txt -Encoding utf8
+
+# 5. Commit.
+git add src/shape-picker.tsx src/features/ .audit/phase6-tsc.txt .audit/phase6-lint.txt .audit/progress.md
+git commit -m "refactor(phase6): split shape-picker.tsx into src/features/shape-picker/"
+```
+
+After commit, resume Cowork with:
+> Retome o plano shapes-library a partir da Fase 7.
