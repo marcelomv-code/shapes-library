@@ -1,4 +1,6 @@
 import pptxgen from "pptxgenjs";
+type PptxShapeName = pptxgen.SHAPE_NAME;
+type PptxShapeProps = pptxgen.ShapeProps;
 import { open, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { writeFileSync, unlinkSync, existsSync } from "fs";
 import { tmpdir } from "os";
@@ -69,26 +71,27 @@ export async function generateShapePptx(shape: ShapeInfo): Promise<string> {
 
   // Add the shape based on the definition
   const shapeDef = shape.pptxDefinition;
+  if (!shapeDef) {
+    throw new Error(`Shape '${shape.id}' has no pptxDefinition. Recapture the shape or provide a native PPTX.`);
+  }
 
   // Normalize colors to ensure absolute RGB format with # prefix
   // This prevents theme color interpretation and ensures consistent colors
-  slide.addShape(
-    shapeDef.type as any,
-    {
-      x: shapeDef.x,
-      y: shapeDef.y,
-      w: shapeDef.w,
-      h: shapeDef.h,
-      fill: normalizeFill(shapeDef.fill),
-      line: normalizeLine(shapeDef.line),
-      shadow: shapeDef.shadow,
-      rotate: shapeDef.rotate,
-      flipH: shapeDef.flipH,
-      flipV: shapeDef.flipV,
-      // carry optional adjustments
-      ...(shapeDef as any),
-    } as any
-  );
+  const shapeOptions: PptxShapeProps = {
+    x: shapeDef.x,
+    y: shapeDef.y,
+    w: shapeDef.w,
+    h: shapeDef.h,
+    fill: normalizeFill(shapeDef.fill) as PptxShapeProps["fill"],
+    line: normalizeLine(shapeDef.line) as PptxShapeProps["line"],
+    shadow: shapeDef.shadow,
+    rotate: shapeDef.rotate,
+    flipH: shapeDef.flipH,
+    flipV: shapeDef.flipV,
+    // carry optional adjustments (rectRadius, etc.)
+    ...(shapeDef as unknown as PptxShapeProps),
+  };
+  slide.addShape(shapeDef.type as unknown as PptxShapeName, shapeOptions);
 
   // Generate unique filename with timestamp
   const timestamp = Date.now();

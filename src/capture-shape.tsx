@@ -24,6 +24,7 @@ import { addShapeToLibrary, shapeExists, updateShapeInLibrary } from "./utils/sh
 import { getLibraryRoot } from "./utils/paths";
 import { ShapeInfo, ShapeCategory, Preferences } from "./types/shapes";
 import { loadCategories } from "./utils/categoryManager";
+import type { ExtractionResult } from "./domain/powerpoint/types";
 
 interface CaptureFormValues {
   shapeName: string;
@@ -32,7 +33,7 @@ interface CaptureFormValues {
   tags: string;
 }
 
-function SaveForm({ shape }: { shape: ShapeInfo }) {
+function SaveForm({ shape, tempPng }: { shape: ShapeInfo; tempPng?: string }) {
   const { pop } = useNavigation();
   const prefs = getPreferenceValues<Preferences>();
 
@@ -57,9 +58,8 @@ function SaveForm({ shape }: { shape: ShapeInfo }) {
 
       const jsonPath = addShapeToLibrary(updated);
 
-      // If picture PNG provided by extractor (carried via __tempPng), move to assets and set preview
+      // If picture PNG provided by extractor, move to assets and set preview
       try {
-        const tempPng: string | undefined = (shape as any).__tempPng;
         if (tempPng && existsSync(tempPng)) {
           const outDir = join(getLibraryRoot(), "assets", updated.category);
           if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
@@ -119,7 +119,7 @@ function SaveForm({ shape }: { shape: ShapeInfo }) {
     >
       <Form.Description
         title="Capture Status"
-        text={`- Extracted from PowerPoint\n- Shape type: ${getShapeTypeName(shape.pptxDefinition?.type as any)}\n- Native PPTX: ${shape.nativePptx ? "OK" : "Missing"}`}
+        text={`- Extracted from PowerPoint\n- Shape type: ${getShapeTypeName(shape.pptxDefinition?.type as unknown as number)}\n- Native PPTX: ${shape.nativePptx ? "OK" : "Missing"}`}
       />
 
       <Form.Separator />
@@ -155,6 +155,7 @@ export default function CaptureShape() {
   const [isCapturing, setIsCapturing] = useState(false);
   const [status, setStatus] = useState<string>("");
   const [captured, setCaptured] = useState<ShapeInfo | null>(null);
+  const [capturedTempPng, setCapturedTempPng] = useState<string | undefined>(undefined);
   const [lastLogs, setLastLogs] = useState<string[]>([]);
 
   async function handleCapture() {
@@ -166,8 +167,8 @@ export default function CaptureShape() {
       message: "Select a shape in PowerPoint",
     });
     try {
-      const result: any = await getPowerPointClient().captureSelectedShape();
-      if (Array.isArray(result.logs)) setLastLogs(result.logs as string[]);
+      const result: ExtractionResult = await getPowerPointClient().captureSelectedShape();
+      if (Array.isArray(result.logs)) setLastLogs(result.logs);
 
       if (!result.success || !result.shape) {
         toast.style = Toast.Style.Failure;
@@ -179,9 +180,7 @@ export default function CaptureShape() {
 
       setStatus("Mapping shape...");
       const shapeInfo = mapToShapeInfo(result.shape);
-      try {
-        (shapeInfo as any).__tempPng = (result.shape as any).pngTempPath;
-      } catch {}
+      const tempPng = result.shape.pngTempPath;
 
       // Optional auto-save
       const prefs = getPreferenceValues<Preferences>();
@@ -207,7 +206,6 @@ export default function CaptureShape() {
         }
         // Move temp PNG preview if provided
         try {
-          const tempPng: string | undefined = (result.shape as any).pngTempPath;
           if (tempPng && existsSync(tempPng)) {
             const outDir = join(getLibraryRoot(), "assets", shapeInfo.category);
             if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
@@ -231,6 +229,7 @@ export default function CaptureShape() {
       toast.message = `${shapeInfo.name} - ${getShapeTypeName(result.shape.type)}`;
       setStatus("Captured. Review and save.");
       setCaptured(shapeInfo);
+      setCapturedTempPng(tempPng);
     } catch (error) {
       toast.style = Toast.Style.Failure;
       toast.title = "Error capturing shape";
@@ -242,7 +241,7 @@ export default function CaptureShape() {
   }
 
   if (captured) {
-    return <SaveForm shape={captured} />;
+    return <SaveForm shape={captured} tempPng={capturedTempPng} />;
   }
 
   const md = `# Capture Selected Shape\n\n**Status:** ${status || "Idle — press Enter to capture."}\n\n**Instructions**\n\n- Open PowerPoint\n- Select the shape you want to capture\n- Press Enter or click \"Capture Selected Shape\"\n\n**Notes**\n\n- Groups and Pictures are saved as native (100% fidelity)\n- Use \"Save to Library\" to save JSON/preview and add to the Deck (if enabled)`;

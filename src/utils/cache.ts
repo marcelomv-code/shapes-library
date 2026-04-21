@@ -52,7 +52,7 @@ export function setCachedShapes(category: string, filePath: string, shapes: Shap
     cache[category] = {
       shapes,
       lastModified,
-      category: category as any,
+      category,
     };
   } catch (error) {
     // Can't cache if file doesn't exist

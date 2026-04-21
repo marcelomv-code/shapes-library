@@ -47,7 +47,7 @@ export async function generatePreview(shape: ShapeInfo): Promise<string | null> 
   // Update JSON preview path (relative to assets)
   const rel = `${shape.category}/${shape.id}.png`;
   try {
-    updateShapeInLibrary(shape.id, shape.category as any, { preview: rel });
+    updateShapeInLibrary(shape.id, shape.category, { preview: rel });
   } catch {}
 
   return outPng;
