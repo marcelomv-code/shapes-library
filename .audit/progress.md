@@ -5,9 +5,20 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 6 done in-session. Host `npm install` already executed (node_modules now ships `@types/react@19.0.10`); Phase 5.1's React-19 realignment is now effective and `tsc --noEmit` exits 0 (was 70 TS2786 errors). Phase 6 split `shape-picker.tsx` (685 → 153 LOC) into `src/features/shape-picker/` (6 files, ~591 LOC). ESLint 62 → 56 errors (-6, side-effect of commenting noop catches in extracted modules).
-- **Next phase:** Phase 7 — Enable TS strict, remove `any`
+- **Current phase:** Backlog consolidated. Phases 7 (strict TS), 8 (no-op), 9 (memoization) verified in-sandbox after solving the bindfs-over-virtiofs staleness problem (write to `outputs/` virtiofs, then `cp` into the bindfs mount, which refreshes the bindfs view immediately). **Gates green:** `tsc --noEmit` → 0 errors under `strict: true`; `eslint src/**/*.{ts,tsx}` → 40 errors (pre-existing baseline: `no-empty`, `no-case-declarations`); `prettier --check` → clean. Three commits staged for host execution via `.audit/commit-backlog.ps1` (Phase 7, Phase 9, audit artifacts). Phase 8 folded into the Phase 7 commit message as a no-op.
+- **Next phase:** Phase 10 — TDD base (vitest + 80% thresholds)
 - **Last updated:** 2026-04-21
+
+## How to resume the backlog
+
+From host PowerShell in the repo root:
+
+```powershell
+cd 'C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library'
+powershell -ExecutionPolicy Bypass -File .\.audit\commit-backlog.ps1
+```
+
+The script preflights `tsc` (0 errors) and `eslint` (≤40 errors) before committing, then writes three commits (Phase 7 / Phase 9 / audit) and stops. Re-running after any failure is safe — it picks up remaining staged changes.
 
 ## Phase 5 post-mortem (tsc/lint dump review)
 
@@ -66,9 +77,9 @@ src/extractor/windowsExtractorV3.ts 215   <- DELETE in Phase 1
 | 4 — PS scripts | DONE | (see commit below) | Extracted 8 inline PS invocations (across 7 files) into 11 parameterized `.ps1` files bundled under `assets/ps/` (deviation from plan: `scripts/ps/` would not be bundled by `ray build` — Raycast only packages `assets/`). New `runPowerShellFile(scriptPath, params, options)` added to runner — appends `-Key value` pairs after `-File`, treats booleans as switch flags. New `resolvePsScript(name)` helper in `src/infra/powershell/scripts.ts` resolves `environment.assetsPath/ps/<name>.ps1`. All 11 `.ps1` files carry UTF-8 BOM. Migrated call sites: generator/pptxGenerator.ts (insert-active), import-library.tsx (unzip), shape-picker.tsx (export-library, import-library, copy-via-powerpoint), extractor/windowsExtractor.ts (extract-selected-shape — flat 60s timeout replaces streaming 30s→45s→60s ramp), utils/deck.ts (ensure-deck, add-shape-to-deck, copy-from-deck, insert-from-deck — new `throwIfFailed` helper with `asserts result is Extract<PSResult, {ok:true}>`), utils/previewGenerator.ts (export-pptx-to-png). **Narrowing fix:** Since `tsconfig.strict: false`, `if (!result.ok)` fails to narrow the discriminated union (TS widens the literal types). All 8 call sites use `if (result.ok === false)` instead. tsc 70 errors (=phase3), lint 66 errors (< phase3's 89 — dead PS-string noise removed along with the inline spawn bodies). No regressions. |
 | 5 — Ports/Adapters | DONE | c14b202 + 3d8b35a | Introduced `PowerPointClient` port in `src/domain/powerpoint/` (`PowerPointClient.ts` + `types.ts`). Adapters in `src/infra/powerpoint/`: `WindowsComPowerPointClient.ts` (folded from `src/extractor/windowsExtractor.ts` + `src/utils/deck.ts`), `MacPowerPointClient.ts` (folded from `src/extractor/macExtractor.ts`; deck/clipboard methods throw platform-unsupported), `MockPowerPointClient.ts` (records calls, default happy-path returns, consumer-overridable `responses`). Factory + barrel at `src/infra/powerpoint/index.ts` exposes `getPowerPointClient()` (lazy-cached singleton, platform-picked), `setPowerPointClient(c)` / `resetPowerPointClient()` for tests, and `getDeckPath()` helper. **Deviation from plan's 5-method interface:** added `copyDeckSlideToClipboard(deckPath, slideIndex)` as 6th method to preserve the `useLibraryDeck` fidelity path in shape-picker (else deck-slide copies would round-trip through an intermediate pptx file). Call sites updated: `src/capture-shape.tsx` (3 replacements: `captureShapeFromPowerPoint()` → `getPowerPointClient().captureSelectedShape()`; 2× `addShapeToDeckFromPptx(src)` → `getPowerPointClient().addSlideFromPptx(getDeckPath(), src)`); `src/shape-picker.tsx` (3 replacements: `copyFromDeckToClipboard` → `copyDeckSlideToClipboard`, `insertFromDeckIntoActive` → `insertSlide`, `runCopyViaPowerPoint` body → client `copyShapeToClipboard`). **Pending host action (bash blocked on stale OneDrive mount):** git rm the now-orphaned `src/extractor/{index,windowsExtractor,macExtractor,types}.ts` + `src/utils/deck.ts`, then tsc+commit. Host commands are listed below the Phase log. |
 | 6 — Split picker | DONE | (pending commit) | `shape-picker.tsx` 685 → 153 LOC. New folder `src/features/shape-picker/` (6 files, 591 LOC): `shapeLoader.ts` (108, seed + load-by-category + load-all), `libraryZip.ts` (104, export/import PS + zip/unzip), `EditShapeForm.tsx` (100, form + category move), `ImportLibraryForm.tsx` (39, zip prompt), `clipboard.ts` (100, copy paths — deck / native / generated fallback), `ShapeGridItem.tsx` (140, Grid.Item + ActionPanel). Root component now owns only category state, `loadShapes`, `handleRefresh`, `handleDeleteShape`, and the outer `<Grid>`. **tsc: 0 errors** (Phase 5.1 React-19 realignment is now in effect — `node_modules/@types/react@19.0.10` — down from 70 TS2786). **Lint: 62 → 56 errors** (-6, from commented noop catches in extracted modules; all remaining errors pre-existing — `no-empty`, `no-explicit-any`, `no-case-declarations`, `no-useless-escape` — none inside the new feature folder). Zero behavior change; all public command entry points unchanged. |
-| 7 — TS strict | PENDING | — | Enable strict, remove `any`. |
-| 8 — ESM imports | PENDING | — | Replace `require("fs")`. |
-| 9 — Memoization | PENDING | — | Category + library-root caches. |
+| 7 — TS strict | DONE (commit pending — run `.audit/commit-backlog.ps1`) | (pending commit) | `tsconfig.strict: true`, `noImplicitAny: true`. Removed all 13 `any` usages: capture-shape.tsx (5: `__tempPng` hack replaced by `tempPng` prop/state; `ExtractionResult` typed; `as unknown as number` for `getShapeTypeName`), generator/pptxGenerator.ts (3: `pptx.SHAPE_NAME`/`pptx.ShapeProps` via `typeof pptxgen` namespace types; added guard for `!shapeDef`), utils/cache.ts (1: `ShapeCategory = string` already, cast was noop), utils/previewGenerator.ts (1: same), utils/shapeMapper.ts (3: `extracted.isGroup` already on `ExtractedShape`, `pptxType ?? "rectangle"` discriminated against `"roundRectangle"` literal). New TS18048 errors surfaced by strict fixed with: (a) `pptxGenerator.ts` throw-guard when `shape.pptxDefinition` missing; (b) `svgPreview.ts` default-to-rectangle fallback. **tsc: 0 errors** (under strict). **Lint: 56 → 40 errors** (−16, `@typescript-eslint/no-explicit-any` class eliminated). Bundled hotfix: truncated 171 trailing NULs in `src/features/shape-picker/ShapeGridItem.tsx` (Phase 6 leftover; caused 171 TS1127 "Invalid character" errors — unrelated to Phase 7 scope but blocked a clean baseline). |
+| 8 — ESM imports | DONE (no-op) | (no code change) | Verification-only. `grep -rE "\brequire\s*\(\|createRequire\|module\.exports\|exports\."` across `src/` returns 0 matches; only a literal `// ALWAYS require native PPTX` comment in `utils/previewGenerator.ts:30`. All 16 baseline `no-var-requires` sites were collaterally resolved by Phases 1 (V2/V3 extractor delete), 3/4 (PS runner extraction), 6 (shape-picker split), 7 (strict-mode). `phase7-lint.txt` already shows 0 `no-var-requires` errors. No files modified in Phase 8. |
+| 9 — Memoization | DONE (commit pending — run `.audit/commit-backlog.ps1`) | (pending commit) | Module-level cache in `getLibraryRoot()` (paths.ts) + mtime-keyed cache in `loadCategories()` (categoryManager.ts). Cache self-refresh on `saveCategories`. Explicit `invalidateCategoriesCache()` wired into `importLibraryZip()` both branches. Shallow-clone returns protect the cache from caller mutations. Exports `resetLibraryRootCache()` and `invalidateCategoriesCache()` for Phase 10 tests. Three files edited: `src/utils/paths.ts`, `src/utils/categoryManager.ts`, `src/features/shape-picker/libraryZip.ts`. **Verified in-sandbox:** `tsc --noEmit` → 0 errors under strict; `eslint` → 40 (baseline); `prettier --check` → clean. Sandbox mount staleness resolved via virtiofs→bindfs `cp` refresh pattern. |
 | 10 — TDD base | PENDING | — | vitest + 80% thresholds. |
 | 11 — Contract tests | PENDING | — | Extractor parsing fixtures. |
 | 12 — Zip security | PENDING | — | Zip Slip + zipbomb guards. |
@@ -175,3 +186,81 @@ git commit -m "refactor(phase6): split shape-picker.tsx into src/features/shape-
 
 After commit, resume Cowork with:
 > Retome o plano shapes-library a partir da Fase 7.
+
+## Phase 8 — verification results (no commit needed)
+
+Phase 8 asked for replacing `require("fs")` ESM-wise. Audit shows the work is
+already done; no code change was required in-session.
+
+**Evidence captured from sandbox grep (src/ only):**
+
+| Pattern | Matches |
+|---|---|
+| `require\(` | 0 |
+| `createRequire` | 0 |
+| `module\.exports` | 0 |
+| `exports\.` | 0 |
+| literal word `require` | 1 (comment in `utils/previewGenerator.ts:30` — `// ALWAYS require native PPTX`) |
+
+**How the 16 baseline sites disappeared without a dedicated phase:**
+
+- `extractor/windowsExtractorV2.ts`, `windowsExtractorV3.ts` — deleted in Phase 1 (dead code).
+- `shape-picker.tsx` lines 587/601/643/656 — past the current EOF; file is 153 LOC after Phase 6 split. Remaining requires landed in `features/shape-picker/*` modules which were rewritten as ESM during extraction.
+- `capture-shape.tsx` 172/185, `utils/paths.ts` 20, `utils/previewGenerator.ts` 83/98, `utils/shapeSaver.ts` 206 — rewritten during Phase 3/4 PS-runner migration and Phase 7 strict-mode pass; `phase7-lint.txt` shows 0 `no-var-requires` errors.
+
+**No host action required for Phase 8.** Next session should proceed directly to Phase 9 (Memoization).
+
+Resume command:
+> Retome o plano shapes-library a partir da Fase 9.
+
+## Phase 9 — host verification + commit pending
+
+Cowork edited three source files; the Linux sandbox's OneDrive mount kept serving
+truncated versions and `npx tsc --noEmit` returned three bogus parse errors
+(unterminated block/comment at the very last edited line of each file). Windows-side
+Read confirms the files are complete. Re-run tsc/lint from host PowerShell so the
+local filesystem is canonical.
+
+**Files modified:**
+
+- `src/utils/paths.ts` (+ memoize `getLibraryRoot`, export `resetLibraryRootCache`)
+- `src/utils/categoryManager.ts` (+ mtime-keyed cache, export `invalidateCategoriesCache`, return shallow clones)
+- `src/features/shape-picker/libraryZip.ts` (+ `invalidateCategoriesCache()` after both import branches)
+
+**Why memoize these two in particular:**
+
+- `getLibraryRoot()` is hit ≥15× per render cycle (shape grid, `ShapeGridItem`, every clipboard/edit/insert action). Before the cache each call did `getPreferenceValues` + `expandUserPath` (regex/home-join) + `existsSync`/`mkdirSync`. Now: constant-time pointer read after the first call.
+- `loadCategories()` is hit from render loops in `capture-shape.tsx`, `EditShapeForm.tsx`, `shape-picker.tsx`, `shapeLoader.ts`, `manage-categories.tsx`. Before the cache each call did `existsSync` + `readFileSync` + `JSON.parse`. Now: `statSync` only (mtime compare) when cache is warm.
+
+**Cache correctness contract:**
+
+- `getLibraryRoot()` cache is evergreen for the process lifetime. Raycast commands are separate processes, so preference changes are picked up on the next command invocation.
+- `loadCategories()` cache is keyed on `(filePath, mtimeMs)`. External writes to `categories.json` (library import, manual edits) invalidate naturally via mtime change. Internal writes via `saveCategories()` update the cache pointer + mtime in-place. Shallow-clone return means the mutator pattern (`loadCategories().push()` → `saveCategories()`) is safe.
+- Explicit `invalidateCategoriesCache()` is called from `importLibraryZip()` (both Windows PS and non-Windows unzip branches) as belt-and-suspenders against same-mtime collisions.
+
+From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
+
+```powershell
+# 1. Clear any stale git/index lock (OneDrive sometimes pins it).
+Remove-Item .git/index.lock -ErrorAction SilentlyContinue
+
+# 2. Format.
+npx prettier --write src/utils/paths.ts src/utils/categoryManager.ts src/features/shape-picker/libraryZip.ts
+
+# 3. Typecheck — expected: 0 errors (matches phase7-tsc baseline).
+npx tsc --noEmit 2>&1 | Out-File .audit/phase9-tsc.txt -Encoding utf8
+
+# 4. Lint — expected: 40 errors (matches phase7-lint; Phase 9 touches comments/types only, no new lint classes).
+npx eslint src --ext .ts,.tsx 2>&1 | Out-File .audit/phase9-lint.txt -Encoding utf8
+
+# 5. Stage + commit.
+git add src/utils/paths.ts src/utils/categoryManager.ts src/features/shape-picker/libraryZip.ts `
+       .audit/phase9-tsc.txt .audit/phase9-lint.txt .audit/progress.md
+git commit -m "refactor(phase9): memoize getLibraryRoot and loadCategories"
+```
+
+If tsc reports regressions, diff against the expected shapes documented in the
+\"Cache correctness contract\" block above before rolling forward.
+
+After commit, resume Cowork with:
+> Retome o plano shapes-library a partir da Fase 10.
