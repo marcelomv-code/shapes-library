@@ -5,7 +5,7 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 5 in progress (files written; awaiting host typecheck + commit)
+- **Current phase:** Phase 5 committed (c14b202); fixup pending on host (shapeMapper import + Mac adapter lint + Prettier)
 - **Next phase:** Phase 6 — Split `shape-picker.tsx` (840-line god component)
 - **Last updated:** 2026-04-20
 
@@ -79,35 +79,45 @@ Open a new Cowork session and say:
 
 Cowork will re-mount the folder, read this file, and continue.
 
-## Phase 5 — host action required
+## Phase 5 — fixup pending on host
 
-Cowork wrote the new port + adapters but the OneDrive-backed Linux mount is
-stale (sees deleted-tracked files that are present on Windows, and a
-phantom `.git/index.lock`) so the `git rm` + typecheck + commit must run
-on the host. From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
+Phase 5 committed as `c14b202`. Post-commit tsc/lint surfaced three classes of issues,
+two already patched on disk (Cowork edits on Windows), one blocked by a stale OneDrive
+mount that prevented Prettier from parsing the files from the sandbox.
+
+**Patched by Cowork on disk (unstaged):**
+
+1. `src/utils/shapeMapper.ts` — fixed orphan import `../extractor/types` → `../domain/powerpoint/types`.
+2. `src/infra/powerpoint/MacPowerPointClient.ts` — removed `_`-prefixed unused params;
+   params are now referenced inside the thrown error messages (satisfies
+   `@typescript-eslint/no-unused-vars` and gives richer platform-unsupported errors).
+
+**Deferred to host (sandbox can't see the full file bytes via OneDrive mount):**
+
+3. Prettier on `src/infra/powerpoint/index.ts`, `WindowsComPowerPointClient.ts`,
+   `src/infra/powershell/runner.ts` (last one is pre-existing from Phase 3).
+
+From `C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library`:
 
 ```powershell
-# 1. Remove the now-orphaned legacy files (all consumers migrated to infra/powerpoint/).
-git rm src/extractor/index.ts src/extractor/windowsExtractor.ts src/extractor/macExtractor.ts src/extractor/types.ts src/utils/deck.ts
+# 1. Format.
+npx prettier --write src/infra/powerpoint/ src/utils/shapeMapper.ts src/infra/powershell/runner.ts
 
-# 2. Stage the new files written by Cowork.
-git add src/domain/powerpoint/PowerPointClient.ts src/domain/powerpoint/types.ts `
-       src/infra/powerpoint/WindowsComPowerPointClient.ts `
-       src/infra/powerpoint/MacPowerPointClient.ts `
-       src/infra/powerpoint/MockPowerPointClient.ts `
-       src/infra/powerpoint/index.ts `
-       src/capture-shape.tsx src/shape-picker.tsx `
-       .audit/progress.md
-
-# 3. Typecheck — expected: no new errors vs phase3-tsc.txt's 70-line baseline.
+# 2. Typecheck — expected: no regression vs the 70-line JSX/ReactNode baseline.
 npx tsc --noEmit 2>&1 | Tee-Object .audit/phase5-tsc.txt
 
-# 4. Lint — expected: no new errors vs phase3-lint.txt's 66 count.
+# 3. Lint — expected: no regression vs phase4-lint.txt's 66 count.
 npm run lint 2>&1 | Tee-Object .audit/phase5-lint.txt
 
-# 5. Commit.
-git add .audit/phase5-tsc.txt .audit/phase5-lint.txt
-git commit -m "refactor(arch): introduce PowerPointClient port"
+# 4. Stage + commit the fixup.
+git add src/utils/shapeMapper.ts `
+       src/infra/powerpoint/MacPowerPointClient.ts `
+       src/infra/powerpoint/index.ts `
+       src/infra/powerpoint/WindowsComPowerPointClient.ts `
+       src/infra/powershell/runner.ts `
+       .audit/phase5-tsc.txt .audit/phase5-lint.txt `
+       .audit/progress.md
+git commit -m "fix(phase5): repair shapeMapper import, Mac adapter lint, Prettier"
 ```
 
 If tsc/lint regress, compare against `.audit/phase3-tsc.txt` / `.audit/phase3-lint.txt`

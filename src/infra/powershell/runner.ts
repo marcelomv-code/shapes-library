@@ -134,7 +134,7 @@ export async function runPowerShellScript(script: string, options: PSRunOptions 
 export async function runPowerShellFile(
   scriptPath: string,
   params: Record<string, PSParamValue> = {},
-  options: PSRunOptions = {},
+  options: PSRunOptions = {}
 ): Promise<PSResult> {
   if (process.platform !== "win32") {
     return fail("unsupported-platform", "PowerShell is only available on Windows hosts.", null);
@@ -183,7 +183,7 @@ function spawnAndCollect(
   maxStdout: number,
   maxStderr: number,
   signal: AbortSignal | undefined,
-  extraArgs: readonly string[] = [],
+  extraArgs: readonly string[] = []
 ): Promise<PSResult> {
   return new Promise((resolve) => {
     const stdoutChunks: Buffer[] = [];
@@ -211,8 +211,8 @@ function spawnAndCollect(
                 null,
                 decode(stdoutChunks),
                 decode(stderrChunks),
-                dropped,
-              ),
+                dropped
+              )
             );
           }, timeoutMs)
         : null;
@@ -251,9 +251,7 @@ function spawnAndCollect(
 
     child.on("error", (err: NodeJS.ErrnoException) => {
       if (err.name === "AbortError") {
-        settle(
-          fail("aborted", "PowerShell run aborted.", null, decode(stdoutChunks), decode(stderrChunks), dropped),
-        );
+        settle(fail("aborted", "PowerShell run aborted.", null, decode(stdoutChunks), decode(stderrChunks), dropped));
         return;
       }
       settle(
@@ -263,8 +261,8 @@ function spawnAndCollect(
           null,
           decode(stdoutChunks),
           decode(stderrChunks),
-          dropped,
-        ),
+          dropped
+        )
       );
     });
 
@@ -285,8 +283,8 @@ function spawnAndCollect(
               0,
               stdout,
               stderr,
-              dropped,
-            ),
+              dropped
+            )
           );
           return;
         }
@@ -301,8 +299,8 @@ function spawnAndCollect(
           code ?? null,
           stdout,
           stderr,
-          dropped,
-        ),
+          dropped
+        )
       );
     });
 
@@ -329,7 +327,7 @@ function fail(
   code: number | null,
   stdout = "",
   stderr = "",
-  droppedBytes: PSDroppedBytes = { stdout: 0, stderr: 0 },
+  droppedBytes: PSDroppedBytes = { stdout: 0, stderr: 0 }
 ): PSResult {
   return { ok: false, reason, message, code, stdout, stderr, droppedBytes };
 }

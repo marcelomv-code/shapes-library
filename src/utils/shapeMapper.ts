@@ -3,7 +3,7 @@
  */
 
 import { ShapeInfo, ShapeType, ShapeCategory } from "../types/shapes";
-import { ExtractedShape } from "../extractor/types";
+import { ExtractedShape } from "../domain/powerpoint/types";
 
 /**
  * PowerPoint AutoShapeType constants mapped to PptxGenJS types

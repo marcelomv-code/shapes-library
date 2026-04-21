@@ -42,9 +42,7 @@ export function getPowerPointClient(): PowerPointClient {
   } else if (process.platform === "darwin") {
     cachedClient = new MacPowerPointClient();
   } else {
-    throw new Error(
-      `Unsupported operating system: ${process.platform}. Only Windows and macOS are supported.`,
-    );
+    throw new Error(`Unsupported operating system: ${process.platform}. Only Windows and macOS are supported.`);
   }
   return cachedClient;
 }

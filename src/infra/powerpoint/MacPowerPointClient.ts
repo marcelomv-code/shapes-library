@@ -85,23 +85,25 @@ export class MacPowerPointClient implements PowerPointClient {
     }
   }
 
-  async copyShapeToClipboard(_pptxPath: string): Promise<void> {
-    throw new Error("copyShapeToClipboard is not supported on macOS");
+  async copyShapeToClipboard(pptxPath: string): Promise<void> {
+    throw new Error(`copyShapeToClipboard is not supported on macOS (attempted: ${pptxPath})`);
   }
 
-  async copyDeckSlideToClipboard(_deckPath: string, _slideIndex: number): Promise<void> {
-    throw new Error("copyDeckSlideToClipboard is not supported on macOS");
+  async copyDeckSlideToClipboard(deckPath: string, slideIndex: number): Promise<void> {
+    throw new Error(
+      `copyDeckSlideToClipboard is not supported on macOS (attempted deck=${deckPath} slide=${slideIndex})`
+    );
   }
 
-  async insertSlide(_deckPath: string, _slideIndex: number): Promise<void> {
-    throw new Error("insertSlide is not supported on macOS");
+  async insertSlide(deckPath: string, slideIndex: number): Promise<void> {
+    throw new Error(`insertSlide is not supported on macOS (attempted deck=${deckPath} slide=${slideIndex})`);
   }
 
-  async addSlideFromPptx(_deckPath: string, _sourcePath: string): Promise<number> {
-    throw new Error("addSlideFromPptx is not supported on macOS");
+  async addSlideFromPptx(deckPath: string, sourcePath: string): Promise<number> {
+    throw new Error(`addSlideFromPptx is not supported on macOS (attempted deck=${deckPath} source=${sourcePath})`);
   }
 
-  async createDeck(_templatePath?: string): Promise<string> {
-    throw new Error("createDeck is not supported on macOS");
+  async createDeck(templatePath?: string): Promise<string> {
+    throw new Error(`createDeck is not supported on macOS (attempted template=${templatePath ?? "<default>"})`);
   }
 }

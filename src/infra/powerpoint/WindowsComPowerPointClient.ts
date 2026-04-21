@@ -44,7 +44,7 @@ export class WindowsComPowerPointClient implements PowerPointClient {
     const result = await runPowerShellFile(
       resolvePsScript("extract-selected-shape"),
       { DestPath: absNative, TemplatePath: templatePath, RelNative: relNative },
-      { timeoutMs: 60_000 },
+      { timeoutMs: 60_000 }
     );
 
     const stdout = result.stdout;
