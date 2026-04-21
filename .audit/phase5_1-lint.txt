@@ -1,0 +1,101 @@
+﻿
+> shapes-library@2.0.1 lint
+> ray lint
+
+[32mready[39m  - validate package.json file
+[32mready[39m  - validate extension icons
+node.exe : 
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\m.vieira\AppData\Roami ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\capture-shape.tsx
+   62:55   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:15   error  Empty block statement                     no-empty
+   77:17   error  Empty block statement                     no-empty
+   92:17   error  Empty block statement                     no-empty
+  101:15   error  Empty block statement                     no-empty
+  122:108  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  169:21   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:23   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:57   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:15   error  Empty block statement                     no-empty
+  200:19   error  Empty block statement                     no-empty
+  206:19   error  Empty block statement                     no-empty
+  210:64   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:17   error  Empty block statement                     no-empty
+  248:206  error  Unnecessary escape character: \"          no-useless-escape
+  248:230  error  Unnecessary escape character: \"          no-useless-escape
+  248:314  error  Unnecessary escape character: \"          no-useless-escape
+  248:331  error  Unnecessary escape character: \"          no-useless-escape
+  266:23   error  Empty block statement                     no-empty
+
+C:\Users\m.vieira\OneDrive - 
+Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\generator\pptxGenerator.ts
+  76:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  90:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\import-library.tsx
+  42:13  error  Empty block statement  no-empty
+  45:13  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\shape-picker.tsx
+  273:13  error  Empty block statement                           no-empty
+  285:15  error  Empty block statement                           no-empty
+  287:11  error  Empty block statement                           no-empty
+  523:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  524:17  error  Empty block statement                           no-empty
+  537:11  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+  538:17  error  Empty block statement                           no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\cache.ts
+  55:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\paths.ts
+  39:15  error  Empty block statement  no-empty
+  50:11  error  Empty block statement  no-empty
+  58:11  error  Empty block statement  no-empty
+  66:11  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\previewGenerator.ts
+  26:11  error  Empty block statement                     no-empty
+  50:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  51:11  error  Empty block statement                     no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeMapper.ts
+  249:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  262:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  274:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  301:11  error  Empty block statement                     no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeSaver.ts
+  60:13  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\svgPreview.ts
+  45:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  46:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  47:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  48:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  54:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  55:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  56:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  57:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  58:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  59:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  65:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  66:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  67:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  68:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  69:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  70:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  71:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  72:7  error  Unexpected lexical declaration in case block  no-case-declarations
+
+Γ£û 62 problems (62 errors, 0 warnings)
+
+[31merror[39m  - run ESLint
+[32mready[39m  - run Prettier 3.8.3
+ ┬╗   Error: linting issues found (tip: try re-running with '--fix')

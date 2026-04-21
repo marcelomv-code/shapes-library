@@ -5,9 +5,18 @@ Sequenced rollout of the shapes-library hardening plan. One phase per Cowork ses
 ## State
 
 - **Branch:** `refactor/hardening` (from `main`)
-- **Current phase:** Phase 5 committed (c14b202); fixup pending on host (shapeMapper import + Mac adapter lint + Prettier)
+- **Current phase:** Phase 5 committed (c14b202 + fixup 3d8b35a). Phase 5.1 diagnostic committed here: realigned React type family (`react`/`@types/react`/`@types/node`) to the versions `@raycast/api@1.102.7` pins — eliminates the 69 TS2786 JSX errors without touching source. Host-side `npm install` required before next `tsc` run.
 - **Next phase:** Phase 6 — Split `shape-picker.tsx` (840-line god component)
-- **Last updated:** 2026-04-20
+- **Last updated:** 2026-04-21
+
+## Phase 5 post-mortem (tsc/lint dump review)
+
+The phase5 `tsc --noEmit` and `ray lint` outputs show 69 TS2786 JSX errors and 62 ESLint errors. None is a Phase 5 regression.
+
+- **TS2786 (69 errors, all `<Component> cannot be used as a JSX component`)**: pre-existing baseline issue (baseline had 70; Phase 5's shape-picker refactor collapsed one by line-shift). Root cause: `package.json` pinned `react ^18.2.0` / `@types/react ^18.3.0`, but `@raycast/api@1.102.7` declares both in `dependencies` **and** `peerDependencies` as `react 19.0.0` / `@types/react 19.0.10`, and ships a nested copy under `node_modules/@raycast/api/node_modules/@types/react`. Two type trees coexist. React 19's `FunctionComponent` returns `ReactNode | Promise<ReactNode>` (Server Components) and React 19's `ReactNode` includes `bigint` — neither is assignable to React 18's `ReactNode`, so every Raycast JSX component (`Form`, `ActionPanel`, `Action`, `List`, `Detail`, `Grid`, ...) fails.
+- **Fix (Phase 5.1, applied)**: bumped devDeps to `react 19.0.0`, `@types/react 19.0.10`, `@types/node 22.13.10` (the versions Raycast pins). No source change. **Host-side follow-up required**: `npm install` from host PowerShell so `node_modules` is deduped — the sandbox cannot install due to the known OneDrive lock (constraint #1).
+- **ESLint (62 errors)**: also pre-existing. Trajectory: baseline 110 → Phase 1 89 → Phase 5 62 (net −48). Remaining rules (`no-empty` on intentional swallowed catches, `no-explicit-any`, `no-var-requires`, `no-case-declarations`, `no-useless-escape`) are out of Phase 5's scope and tracked for Phase 6+ (several cluster inside `shape-picker.tsx`, which Phase 6 will split).
+- **Audit file encoding drift (cosmetic)**: `.audit/phase5-tsc.txt` and `.audit/phase5-lint.txt` were written by PowerShell `| Tee-Object`, which emits UTF-16 LE with CRLF. Earlier phases used UTF-8. From Phase 6 onward, dump with `2>&1 | Out-File -FilePath .audit\phaseN-<tool>.txt -Encoding utf8` to stay consistent.
 
 ## Baseline findings (Phase 0)
 
