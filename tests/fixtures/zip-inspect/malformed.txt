@@ -1,0 +1,3 @@
+0|shapes/
+not-a-size|shapes/bad.json
+OK:2

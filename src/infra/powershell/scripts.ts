@@ -33,7 +33,8 @@ export type PsScriptName =
   | "add-shape-to-deck"
   | "copy-from-deck"
   | "insert-from-deck"
-  | "export-pptx-to-png";
+  | "export-pptx-to-png"
+  | "inspect-zip";
 
 /**
  * Absolute path to a bundled .ps1 script. Caller passes the raw base name

@@ -1,0 +1,6 @@
+0|shapes/
+1234|shapes/rectangle.json
+5678|assets/preview.png
+0|native/
+9100|native/shape_captured_1.pptx
+OK:5
