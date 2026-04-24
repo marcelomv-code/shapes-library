@@ -5,6 +5,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 ## Features
 
 ### Browse & Insert Shapes
+
 - **Visual Grid Browser**: Browse shapes with high-quality PNG thumbnail previews
 - **Customizable Categories**: Organize shapes into categories with custom names (managed via "Manage Categories" command)
 - **Search & Filter**: Quickly find shapes by name, tags, or category
@@ -17,6 +18,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 - **Smart Preview System**: PNG previews with SVG fallback for instant display
 
 ### Capture Shapes
+
 - **Extract from PowerPoint**: Capture any shape from existing presentations
 - **Auto-Detection**: Automatically detects shape type and suggests tags
 - **Preserve Properties**: Maintains colors, sizes, formatting, and all visual properties
@@ -26,6 +28,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 - **Native PPTX Storage**: Stores original PPTX files for 100% fidelity
 
 ### Shape Management
+
 - **Edit Shapes**: Change name, category, and tags
 - **Move Between Categories**: Reorganize your library by changing shape categories (preview files move automatically)
 - **Delete Shapes**: Remove unwanted shapes with confirmation
@@ -35,6 +38,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 ## How It Works
 
 ### Using Shapes from Library
+
 1. Open Raycast and search for "Search Shapes"
 2. Browse or search for the shape you want
 3. Press Enter to open the shape in PowerPoint
@@ -42,6 +46,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 5. Paste into your presentation - the shape is fully editable!
 
 ### Capturing Shapes
+
 1. Open PowerPoint with your presentation
 2. Select a shape you want to capture
 3. Open Raycast and search for "Capture Shape from PowerPoint"
@@ -51,6 +56,7 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 ## Keyboard Shortcuts
 
 ### In Shape Browser
+
 - **Enter**: Insert shape into active PowerPoint or open in PowerPoint
 - **Ctrl + C**: Copy shape to clipboard
 - **Ctrl + O**: Open shape in PowerPoint (new window)
@@ -62,12 +68,14 @@ Browse and insert editable PowerPoint shapes into your presentations with ease. 
 - **Ctrl + F**: Show shape file in File Explorer
 
 ### In Manage Categories
+
 - **Enter**: Rename selected category
 - **Ctrl + N**: Add new category
 - **Ctrl + O**: Open Shape Picker filtered by selected category
 - **Ctrl + X**: Delete category (only if empty)
 
 ### In Shape Capture
+
 - **Ctrl + S**: Save captured shape to library
 - **Esc**: Cancel capture
 
@@ -126,6 +134,7 @@ Categories can be fully customized using the **Manage Categories** command:
 2. Or press `Ctrl+M` from the Shape Picker
 
 **Available actions:**
+
 - **Add New Category**: Create categories with custom names and IDs
 - **Rename Category**: Change the display name of any category
 - **Delete Category**: Remove empty categories (categories with shapes cannot be deleted)
@@ -201,12 +210,21 @@ Or use the PowerShell script directly:
 **Shape Storage**: Shapes are stored as JSON files in category-specific directories (`shapes/basic/`, `shapes/arrows/`, etc.). Each shape JSON contains metadata, PptxGenJS definition, and references to preview files.
 
 **Preview System**: Dual-mode preview system:
+
 1. **PNG Previews** (High Quality): Generated using PowerPoint COM API on Windows
 2. **SVG Previews** (Instant Fallback): Generated on-the-fly for basic shapes
 
 **Platform Support**:
+
 - **Windows**: Full support including direct insertion via COM API
 - **macOS**: Search, browse, and open shapes (manual paste required)
+
+## Security and Architecture
+
+- [`docs/SECURITY.md`](docs/SECURITY.md) — threat model, zip-slip and zip-bomb guards, PowerShell injection resistance, PII redaction policy, temp file lifecycle.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layer map (domain / infra / features / UI), port–adapter pattern for PowerPoint automation, end-to-end data flows for capture, insert, and library import, and the test strategy.
+
+Security-sensitive surfaces — `assets/ps/`, `src/infra/powershell/`, `src/domain/zip/`, `src/infra/zip/`, CI configuration, and top-level manifests — are routed through dedicated blocks in `.github/CODEOWNERS`.
 
 ## Contributing
 
@@ -223,7 +241,9 @@ Arthur Andrade
 ## Changelog
 
 ### Version 1.3.3
+
 - 🔧 **Thumbnail display**: Fixed issue where PNG previews were not loading on Raycast Windows v0.44+. The fix converts Windows file paths to `file:///` URLs with forward slashes, which is now required by Raycast.
 
 ### Version 1.3.2
+
 - 🚀 **Initial tracked version**: Full shape capture and library management features
