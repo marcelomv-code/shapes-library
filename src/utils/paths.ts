@@ -1,6 +1,6 @@
 import { environment, getPreferenceValues } from "@raycast/api";
 import { existsSync, mkdirSync } from "fs";
-import { join, isAbsolute } from "path";
+import { join, isAbsolute, normalize } from "path";
 import { homedir } from "os";
 
 type Prefs = { libraryPath?: string };
@@ -21,7 +21,11 @@ function expandUserPath(p: string): string {
   if (!isAbsolute(out)) {
     out = join(homedir(), out);
   }
-  return out;
+  // Users can type forward slashes on Windows ("C:/foo/bar" or
+  // "%VAR%/subdir"). `path.normalize` collapses them to the platform
+  // separator so the returned path is consistent with what the rest of
+  // the code expects (and with what `join` produces elsewhere).
+  return normalize(out);
 }
 
 // Memoized library root. Raycast command processes are short-lived and the

@@ -13,24 +13,9 @@ C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shape
   247:331  error  Unnecessary escape character: \"  no-useless-escape
   265:23   error  Empty block statement             no-empty
 
-C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\features\shape-picker\libraryZip.ts
-  117:74  error  Parsing error: ')' expected
-
-C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\features\shape-picker\shapeLoader.ts
-  107:32  error  Parsing error: Unterminated template literal
-
-C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\generator\pptxGenerator.ts
-  234:41  error  Parsing error: ')' expected
-
 C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\import-library.tsx
-  46:13  error  Empty block statement  no-empty
-  49:13  error  Empty block statement  no-empty
-
-C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\cache.ts
-  89:88  error  Parsing error: '}' expected
-
-C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\categoryManager.ts
-  258:7  error  Parsing error: '}' expected
+  42:13  error  Empty block statement  no-empty
+  45:13  error  Empty block statement  no-empty
 
 C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\paths.ts
   46:15  error  Empty block statement  no-empty
@@ -43,10 +28,10 @@ C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shape
   51:11  error  Empty block statement  no-empty
 
 C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeMapper.ts
-  337:46  error  Parsing error: '*/' expected
+  301:11  error  Empty block statement  no-empty
 
 C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeSaver.ts
-  64:13  error  Empty block statement  no-empty
+  60:13  error  Empty block statement  no-empty
 
 C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\svgPreview.ts
   45:7  error  Unexpected lexical declaration in case block  no-case-declarations
@@ -68,5 +53,5 @@ C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shape
   71:7  error  Unexpected lexical declaration in case block  no-case-declarations
   72:7  error  Unexpected lexical declaration in case block  no-case-declarations
 
-Γ£û 45 problems (45 errors, 0 warnings)
+Γ£û 40 problems (40 errors, 0 warnings)
 

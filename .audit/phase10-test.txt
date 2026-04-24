@@ -8,167 +8,21 @@
 
  [32mΓ£ô[39m tests/infra/powershell/escape.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 7[2mms[22m[39m
  [32mΓ£ô[39m tests/utils/svgPreview.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
-node.exe : [90mstderr[2m | tests/utils/cache.test.ts[2m > [22m[2mcache[2m > [22m[2mdoes not cache when setCachedShapes is called against a missing 
-file
-At line:1 char:1
-+ & "C:\Program Files\nodejs/node.exe" "C:\Users\m.vieira\AppData\Roami ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ([90mstderr[2m... a missing file:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-[22m[39mFailed to cache shapes for basic: Error: ENOENT: no such file or directory, stat 
-'C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cache-amWJsu\no-such.json'
-[90m    at statSync (node:fs:1725:25)[39m
-    at setCachedShapes [90m(C:\Users\m.vieira\OneDrive - 
-Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39msrc\utils\cache.ts:49:19[90m)[39m
-    at [90mC:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39mtests\utils\cache.test.ts:76:5
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:155:11
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:752:26
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:1897:20
-    at new Promise (<anonymous>)
-    at runWithTimeout [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vi
-test/runner[24m/dist/chunk-hooks.js:1863:10[90m)[39m
-    at runTest [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/ru
-nner[24m/dist/chunk-hooks.js:1574:12[90m)[39m
-[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
-  errno: [33m-4058[39m,
-  code: [32m'ENOENT'[39m,
-  syscall: [32m'stat'[39m,
-  path: [32m'C:\\Users\\M9F72~1.VIE\\AppData\\Local\\Temp\\shapes-cache-amWJsu\\no-such.json'[39m
-}
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mseeds defaults on first run and persists categories.json
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-y1qDc1\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns a shallow copy (mutations do not leak into the cache)
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-PawVZc\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mpicks up external mtime changes
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-WcbXV0\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns defaults on malformed JSON without throwing
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-VVM8gJ\categories.json
-
- [32mΓ£ô[39m tests/utils/cache.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 55[2mms[22m[39m
-[90mstderr[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns defaults on malformed JSON without throwing
-[22m[39m[CategoryManager] Failed to load categories: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
-    at JSON.parse (<anonymous>)
-    at loadCategories [90m(C:\Users\m.vieira\OneDrive - 
-Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39msrc\utils\categoryManager.ts:72:39[90m)[39m
-    at [90mC:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39mtests\utils\categoryManager.test.ts:82:18
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:155:11
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:752:26
-    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m
-/dist/chunk-hooks.js:1897:20
-    at new Promise (<anonymous>)
-    at runWithTimeout [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vi
-test/runner[24m/dist/chunk-hooks.js:1863:10[90m)[39m
-    at runTest [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/ru
-nner[24m/dist/chunk-hooks.js:1574:12[90m)[39m
-[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
-
- [31mΓ¥»[39m tests/utils/paths.test.ts [2m([22m[2m12 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 66[2mms[22m[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22mfalls back to supportPath when libraryPath is empty[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/infra/logger/redact.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/zip/zipSafety.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/zip/parseZipInspection.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/powerpoint/parseExtraction.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [31mΓ¥»[39m tests/utils/paths.test.ts [2m([22m[2m12 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 72[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mfalls back to supportPath when libraryPath is empty[32m 10[2mms[22m[39m
    [32mΓ£ô[39m getLibraryRoot[2m > [22muses libraryPath when provided (absolute)[32m 4[2mms[22m[39m
    [32mΓ£ô[39m getLibraryRoot[2m > [22mmemoizes the resolution across calls[32m 4[2mms[22m[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22mresetLibraryRootCache() forces re-resolution[32m 5[2mms[22m[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding double quotes from libraryPath[32m 4[2mms[22m[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding single quotes from libraryPath[32m 4[2mms[22m[39m
-[31m   [31m├ù[31m getLibraryRoot[2m > [22mexpands %VAR% style environment references[39m[32m 13[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mresetLibraryRootCache() forces re-resolution[32m 6[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding double quotes from libraryPath[32m 6[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding single quotes from libraryPath[32m 6[2mms[22m[39m
+[31m   [31m├ù[31m getLibraryRoot[2m > [22mexpands %VAR% style environment references[39m[32m 14[2mms[22m[39m
 [31m     ΓåÆ expected 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' to be 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' // Object.is equality[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22mexpands ~ to the home directory[32m 4[2mms[22m[39m
-   [32mΓ£ô[39m getLibraryRoot[2m > [22manchors a relative libraryPath to the home directory[32m 3[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mexpands ~ to the home directory[32m 3[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22manchors a relative libraryPath to the home directory[32m 4[2mms[22m[39m
    [32mΓ£ô[39m derived directories[2m > [22mgetShapesDir returns <root>/shapes and creates it[32m 5[2mms[22m[39m
    [32mΓ£ô[39m derived directories[2m > [22mgetAssetsDir returns <root>/assets and creates it[32m 5[2mms[22m[39m
    [32mΓ£ô[39m derived directories[2m > [22mgetNativeDir returns <root>/native and creates it[32m 4[2mms[22m[39m
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2msaveCategories[2m > [22m[2mwrites and updates the in-process cache
-[22m[39m[CategoryManager] Saved 1 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-3jI60F\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2msaveCategories[2m > [22m[2mthrows with a readable message on write failure
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-N7rEPR\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryIds returns the current id list
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-KkYHfk\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryDisplayName returns the display name, falls back to the id
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-w0bNiC\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryById returns the record or undefined
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-qqi6PU\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mcategoryExists reflects the current list
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-gQfbmy\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2maddCategory[2m > [22m[2mrejects duplicate ids
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-4PnufF\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2maddCategory[2m > [22m[2madds a new category and seeds an empty shapes json
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-Pyaqcl\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-Pyaqcl\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mrenameCategory[2m > [22m[2mchanges the display name
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-nTAWHT\categories.json
-[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-nTAWHT\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mrenameCategory[2m > [22m[2mthrows when the id is unknown
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-kZQem8\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mthrows when the id is unknown
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-4obNuA\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mrefuses to delete a category that still contains shapes
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-GOHK3I\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-GOHK3I\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mdeletes an empty category
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-q1C6Zs\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-q1C6Zs\categories.json
-[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-q1C6Zs\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mreturns 0 for malformed shapes file
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-AKkDtD\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-AKkDtD\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mreturns 0 when shapes file holds a non-array payload
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-1vkbJ6\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-1vkbJ6\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mcounts array entries
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-hREw54\categories.json
-[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-hREw54\categories.json
-
-[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2minvalidateCategoriesCache[2m > [22m[2mdrops the memo so the next load re-reads the file
-[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-juCThN\categories.json
-
- [32mΓ£ô[39m tests/utils/categoryManager.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 147[2mms[22m[39m
-
-[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m[1m[41m Failed Tests 1 [49m[22m[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
-
-[41m[1m FAIL [22m[49m tests/utils/paths.test.ts[2m > [22mgetLibraryRoot[2m > [22mexpands %VAR% style environment references
-[31m[1mAssertionError[22m: expected 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' to be 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' // Object.is 
-equality[39m
-
-Expected: [32m"C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-paths-dUoamg[7m\[27menvlib"[39m
-Received: [31m"C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-paths-dUoamg[7m/[27menvlib"[39m
-
-[36m [2mΓ¥»[22m tests/utils/paths.test.ts:[2m80:20[22m[39m
-    [90m 78| [39m      __raycast.setPrefs({ libraryPath: "%__SHAPES_TEST_ROOT%/envlib" ΓÇª
-    [90m 79| [39m      [35mconst[39m root [33m=[39m [34mgetLibraryRoot[39m()[33m;[39m
-    [90m 80| [39m      [34mexpect[39m(root)[33m.[39m[34mtoBe[39m([34mjoin[39m(tmpRoot[33m,[39m [32m"envlib"[39m))[33m;[39m
-    [90m   | [39m                   [31m^[39m
-    [90m 81| [39m    } [35mfinally[39m {
-    [90m 82| [39m      [35mdelete[39m process[33m.[39menv[33m.[39m__SHAPES_TEST_ROOT[33m;[39m
-
-[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»[22m[39m
-
-
-[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m68 passed[39m[22m[90m (69)[39m
-[2m   Start at [22m 16:23:43
-[2m   Duration [22m 6.24s[2m (transform 259ms, setup 273ms, collect 423ms, tests 283ms, environment 1ms, prepare 1.17s)[22m
-
