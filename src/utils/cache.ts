@@ -1,5 +1,8 @@
 import { statSync } from "fs";
 import { ShapeCache, ShapeInfo } from "../types/shapes";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("Cache");
 
 /**
  * In-memory cache for shape data
@@ -56,7 +59,7 @@ export function setCachedShapes(category: string, filePath: string, shapes: Shap
     };
   } catch (error) {
     // Can't cache if file doesn't exist
-    console.error(`Failed to cache shapes for ${category}:`, error);
+    log.error(`Failed to cache shapes for ${category}:`, error);
   }
 }
 

@@ -4,6 +4,9 @@
 
 import { ShapeInfo, ShapeType, ShapeCategory } from "../types/shapes";
 import { ExtractedShape } from "../domain/powerpoint/types";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("Mapper");
 
 /**
  * PowerPoint AutoShapeType constants mapped to PptxGenJS types
@@ -293,8 +296,8 @@ export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): 
   };
 
   try {
-    console.log(
-      `[Mapper] AutoShapeType=${extracted.type} Name=${extracted.autoShapeName || "(n/a)"} -> ${
+    log.info(
+      `AutoShapeType=${extracted.type} Name=${extracted.autoShapeName || "(n/a)"} -> ${
         isNativeOnly ? "Native-only" : `PptxType=${pptxType}`
       }`
     );

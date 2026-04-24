@@ -629,12 +629,16 @@ After commit, resume Cowork with:
 
 > Retome o plano shapes-library a partir da Fase 14.
 
-## Phase 14 — host verification + commit pending
+## Phase 14 — committed
 
 PII-safe logger landed: a pure redaction module, a scoped logger wrapper with a
 pluggable sink, and eight call-site migrations off `console.*`. Sandbox `npm test`
 is gated by the same linux-native binaries that Phases 10/11/12/13 already queued
 for the deferred host `npm install`; host PowerShell flushes everything in one go.
+
+Host verification on 2026-04-24: `tsc --noEmit` clean, `npm test` 202/202 passing
+(including the 20-test `tests/infra/logger/redact.test.ts` suite), eslint held at
+the 40-error pre-existing baseline (no regressions in touched files).
 
 **Files added:**
 

@@ -5,6 +5,9 @@ import { getShapesDir as getShapesDirUtil } from "../../utils/paths";
 import { ShapeInfo, ShapeCategory } from "../../types/shapes";
 import { getCachedShapes, setCachedShapes } from "../../utils/cache";
 import { loadCategories } from "../../utils/categoryManager";
+import { createLogger } from "../../infra/logger";
+
+const log = createLogger("ShapeLoader");
 
 /**
  * Ensure the support shapes folder exists and seed it from packaged defaults
@@ -55,7 +58,7 @@ export async function loadShapesFromCategory(category: ShapeCategory, useCache: 
   const filePath = join(shapesDir, `${category}.json`);
 
   if (!existsSync(filePath)) {
-    console.warn(`Shapes file not found: ${filePath}`);
+    log.warn(`Shapes file not found: ${filePath}`);
     return [];
   }
 
@@ -76,7 +79,7 @@ export async function loadShapesFromCategory(category: ShapeCategory, useCache: 
 
     return shapes;
   } catch (error) {
-    console.error(`Failed to load shapes from ${category}:`, error);
+    log.error(`Failed to load shapes from ${category}:`, error);
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to load shapes",
@@ -100,7 +103,7 @@ export async function loadAllShapes(useCache: boolean): Promise<ShapeInfo[]> {
     if (result.status === "fulfilled") {
       allShapes.push(...result.value);
     } else {
-      console.error(`Failed to load ${categoryIds[index]} shapes:`, result.reason);
+      log.error(`Failed to load ${categoryIds[index]} shapes:`, result.reason);
     }
   });
 

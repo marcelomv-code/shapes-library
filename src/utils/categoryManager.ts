@@ -8,6 +8,9 @@
 import { readFileSync, writeFileSync, existsSync, statSync } from "fs";
 import { join } from "path";
 import { getLibraryRoot, getShapesDir } from "./paths";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("CategoryManager");
 
 /**
  * Category configuration
@@ -78,7 +81,7 @@ export function loadCategories(): CategoryConfig[] {
 
     return [...categories];
   } catch (error) {
-    console.error("[CategoryManager] Failed to load categories:", error);
+    log.error("Failed to load categories:", error);
     return [...DEFAULT_CATEGORIES];
   }
 }
@@ -107,7 +110,7 @@ export function saveCategories(categories: CategoryConfig[]): void {
       cachedCategoriesMtimeMs = 0;
     }
 
-    console.log(`[CategoryManager] Saved ${categories.length} categories to ${filePath}`);
+    log.info(`Saved ${categories.length} categories to ${filePath}`);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to save categories: ${msg}`);

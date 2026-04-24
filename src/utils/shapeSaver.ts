@@ -7,6 +7,9 @@ import { join } from "path";
 import { getShapesDir as getShapesDirUtil, getAssetsDir, getLibraryRoot } from "./paths";
 import { ShapeInfo, ShapeCategory } from "../types/shapes";
 import { getCategoryIds } from "./categoryManager";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("ShapeSaver");
 
 /**
  * Get path to shapes directory
@@ -37,7 +40,7 @@ function loadCategoryShapes(category: ShapeCategory): ShapeInfo[] {
     const content = readFileSync(filePath, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.error(`Failed to load ${category} shapes:`, error);
+    log.error(`Failed to load ${category} shapes:`, error);
     return [];
   }
 }
@@ -56,7 +59,7 @@ function saveCategoryShapes(category: ShapeCategory, shapes: ShapeInfo[]): void 
     const json = JSON.stringify(sortedShapes, null, 2);
     writeFileSync(filePath, json, "utf-8");
     try {
-      console.log(`[ShapeSaver] Saved ${category}.json to ${filePath}`);
+      log.info(`Saved ${category}.json to ${filePath}`);
     } catch {}
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -184,15 +187,15 @@ export function movePreviewToCategory(
   if (existsSync(oldPreviewPath)) {
     try {
       renameSync(oldPreviewPath, newPreviewPath);
-      console.log(`[ShapeSaver] Moved preview from ${oldPreviewPath} to ${newPreviewPath}`);
+      log.info(`Moved preview from ${oldPreviewPath} to ${newPreviewPath}`);
     } catch (error) {
       // If rename fails (maybe cross-device), try copy + delete
       try {
         copyFileSync(oldPreviewPath, newPreviewPath);
         // Don't delete old file to be safe - user can clean up manually
-        console.log(`[ShapeSaver] Copied preview from ${oldPreviewPath} to ${newPreviewPath}`);
+        log.info(`Copied preview from ${oldPreviewPath} to ${newPreviewPath}`);
       } catch (copyError) {
-        console.error(`[ShapeSaver] Failed to move preview:`, copyError);
+        log.error(`Failed to move preview:`, copyError);
       }
     }
   }
@@ -215,11 +218,11 @@ export function repairOrphanedPreviews(force = false): number {
   // Check if repair already ran (create a marker file)
   const repairMarker = join(getLibraryRoot(), ".preview_repair_done");
   if (!force && existsSync(repairMarker)) {
-    console.log("[ShapeSaver] Preview repair already completed");
+    log.info("Preview repair already completed");
     return 0;
   }
 
-  console.log("[ShapeSaver] Starting orphaned preview repair...");
+  log.info("Starting orphaned preview repair...");
 
   // For each category, check if previews are in correct location
   for (const category of categories) {
@@ -236,7 +239,7 @@ export function repairOrphanedPreviews(force = false): number {
 
       // If preview doesn't exist at expected location, search for it
       if (!existsSync(expectedPath)) {
-        console.log(`[ShapeSaver] Preview missing for ${shape.id} at ${expectedPath}`);
+        log.info(`Preview missing for ${shape.id} at ${expectedPath}`);
 
         // Search in all category folders
         for (const searchCategory of categories) {
@@ -246,18 +249,18 @@ export function repairOrphanedPreviews(force = false): number {
             // Found it in wrong folder! Move it
             try {
               renameSync(searchPath, expectedPath);
-              console.log(`[ShapeSaver] ✓ Moved ${shape.id}.png from ${searchCategory}/ to ${category}/`);
+              log.info(`✓ Moved ${shape.id}.png from ${searchCategory}/ to ${category}/`);
               repairedCount++;
               break;
             } catch (error) {
               // Try copy instead
               try {
                 copyFileSync(searchPath, expectedPath);
-                console.log(`[ShapeSaver] ✓ Copied ${shape.id}.png from ${searchCategory}/ to ${category}/`);
+                log.info(`✓ Copied ${shape.id}.png from ${searchCategory}/ to ${category}/`);
                 repairedCount++;
                 break;
               } catch (copyError) {
-                console.error(`[ShapeSaver] Failed to repair ${shape.id}:`, copyError);
+                log.error(`Failed to repair ${shape.id}:`, copyError);
               }
             }
           }
@@ -269,9 +272,9 @@ export function repairOrphanedPreviews(force = false): number {
   // Mark repair as done
   try {
     writeFileSync(repairMarker, new Date().toISOString(), "utf-8");
-    console.log(`[ShapeSaver] Preview repair completed. Fixed ${repairedCount} previews.`);
+    log.info(`Preview repair completed. Fixed ${repairedCount} previews.`);
   } catch (error) {
-    console.error("[ShapeSaver] Failed to write repair marker:", error);
+    log.error("Failed to write repair marker:", error);
   }
 
   return repairedCount;

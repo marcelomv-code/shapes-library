@@ -15,6 +15,9 @@ import { getNativeDir, getLibraryRoot } from "../../utils/paths";
 import { runPowerShellFile, resolvePsScript, PSResult } from "../powershell";
 import type { PowerPointClient } from "../../domain/powerpoint/PowerPointClient";
 import type { ExtractedShape, ExtractionResult } from "../../domain/powerpoint/types";
+import { createLogger } from "../logger";
+
+const log = createLogger("PowerShell");
 
 /**
  * Canonical library deck filename. Centralised here so both the factory
@@ -56,14 +59,14 @@ export class WindowsComPowerPointClient implements PowerPointClient {
     for (const line of stdout.split(/\r?\n/)) {
       const l = line.trim();
       if (l.length > 0) {
-        console.log("[PowerShell STDOUT]:", l);
+        log.info("STDOUT:", l);
         logs.push(l);
       }
     }
     for (const line of stderr.split(/\r?\n/)) {
       const l = line.trim();
       if (l.length > 0) {
-        console.error("[PowerShell STDERR]:", l);
+        log.error("STDERR:", l);
         logs.push(`[stderr] ${l}`);
       }
     }
@@ -93,7 +96,7 @@ export class WindowsComPowerPointClient implements PowerPointClient {
     const output = stdout.trim();
     const jsonLine = output.split("\n").find((l) => l.trim().startsWith("{"));
     if (!jsonLine) {
-      console.error("No JSON found. Full output:", output);
+      log.error("No JSON found. Full output:", output);
       return { success: false, error: "No JSON data in PowerShell output", logs, stdout, stderr };
     }
 

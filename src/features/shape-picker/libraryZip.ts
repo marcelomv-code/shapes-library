@@ -5,6 +5,10 @@ import { showToast, Toast } from "@raycast/api";
 import { getLibraryRoot } from "../../utils/paths";
 import { runPowerShellFile, resolvePsScript } from "../../infra/powershell";
 import { invalidateCategoriesCache } from "../../utils/categoryManager";
+import { createLogger } from "../../infra/logger";
+
+const exportLog = createLogger("Export");
+const importLog = createLogger("Import");
 
 /**
  * Export the library (shapes, assets, native, deck) into a timestamped ZIP
@@ -18,10 +22,8 @@ export async function exportLibraryZip(): Promise<void> {
   const hasNative = existsSync(join(root, "native"));
   const hasDeck = existsSync(join(root, "library_deck.pptx"));
 
-  console.log(`[Export] Root: ${root}`);
-  console.log(
-    `[Export] Folders present -> shapes:${hasShapes} assets:${hasAssets} native:${hasNative} deck:${hasDeck}`
-  );
+  exportLog.info(`Root: ${root}`);
+  exportLog.info(`Folders present -> shapes:${hasShapes} assets:${hasAssets} native:${hasNative} deck:${hasDeck}`);
 
   const toast = await showToast({ style: Toast.Style.Animated, title: "Exporting library..." });
 
@@ -34,8 +36,8 @@ export async function exportLibraryZip(): Promise<void> {
       // workaround (Compress-Archive misbehaves with multiple -Path inputs)
       // and emits "OK:<dest>" on success.
       const result = await runPowerShellFile(resolvePsScript("export-library"), { Root: root, Dest: dest });
-      if (result.stdout) console.log(`[Export][stdout] ${result.stdout.trim()}`);
-      if (result.stderr) console.error(`[Export][stderr] ${result.stderr.trim()}`);
+      if (result.stdout) exportLog.info(`[stdout] ${result.stdout.trim()}`);
+      if (result.stderr) exportLog.error(`[stderr] ${result.stderr.trim()}`);
       if (result.ok === false) {
         throw new Error(`PowerShell failed (${result.code ?? "n/a"}). ${result.message}`);
       }
@@ -51,11 +53,11 @@ export async function exportLibraryZip(): Promise<void> {
       if (hasDeck) include.push("library_deck.pptx");
       if (include.length === 0) throw new Error("Nothing to export");
       const args = ["-r", dest, ...include];
-      console.log(`[Export] Running: zip ${args.join(" ")}`);
+      exportLog.info(`Running: zip ${args.join(" ")}`);
       await new Promise<void>((resolve, reject) => {
         const zip = spawn("zip", args, { cwd: root });
-        zip.stdout.on("data", (d) => console.log(`[Export][zip] ${d.toString().trim()}`));
-        zip.stderr.on("data", (d) => console.error(`[Export][zip-err] ${d.toString().trim()}`));
+        zip.stdout.on("data", (d) => exportLog.info(`[zip] ${d.toString().trim()}`));
+        zip.stderr.on("data", (d) => exportLog.error(`[zip-err] ${d.toString().trim()}`));
         zip.on("error", (e) => reject(e));
         zip.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`zip failed (${code})`))));
       });
@@ -65,7 +67,7 @@ export async function exportLibraryZip(): Promise<void> {
     toast.title = "Library exported";
     toast.message = root;
   } catch (e) {
-    console.error("[Export] Failed:", e);
+    exportLog.error("Failed:", e);
     toast.style = Toast.Style.Failure;
     toast.title = "Export failed";
     toast.message = e instanceof Error ? e.message : "Unknown error";
@@ -80,12 +82,12 @@ export async function exportLibraryZip(): Promise<void> {
 export async function importLibraryZip(zipPath: string): Promise<void> {
   const root = getLibraryRoot();
   if (!zipPath || !existsSync(zipPath)) throw new Error("ZIP not found");
-  console.log(`[Import] root=${root} zip=${zipPath}`);
+  importLog.info(`root=${root} zip=${zipPath}`);
 
   if (process.platform === "win32") {
     const result = await runPowerShellFile(resolvePsScript("import-library"), { Zip: zipPath, Dest: root });
-    if (result.stdout) console.log(`[Import][stdout] ${result.stdout.trim()}`);
-    if (result.stderr) console.error(`[Import][stderr] ${result.stderr.trim()}`);
+    if (result.stdout) importLog.info(`[stdout] ${result.stdout.trim()}`);
+    if (result.stderr) importLog.error(`[stderr] ${result.stderr.trim()}`);
     if (result.ok === false) {
       throw new Error(`PowerShell failed (${result.code ?? "n/a"}). ${result.message}`);
     }
@@ -99,8 +101,8 @@ export async function importLibraryZip(zipPath: string): Promise<void> {
 
   await new Promise<void>((resolve, reject) => {
     const unzip = spawn("unzip", ["-o", zipPath, "-d", root]);
-    unzip.stdout.on("data", (d) => console.log(`[Import][unzip] ${d.toString().trim()}`));
-    unzip.stderr.on("data", (d) => console.error(`[Import][unzip-err] ${d.toString().trim()}`));
+    unzip.stdout.on("data", (d) => importLog.info(`[unzip] ${d.toString().trim()}`));
+    unzip.stderr.on("data", (d) => importLog.error(`[unzip-err] ${d.toString().trim()}`));
     unzip.on("error", (e) => reject(e));
     unzip.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`unzip failed (${code})`))));
   });

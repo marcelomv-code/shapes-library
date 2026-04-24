@@ -8,6 +8,9 @@ import { join } from "path";
 import { ShapeInfo, Preferences, ShapeFill, ShapeLine } from "../types/shapes";
 import { getLibraryRoot } from "../utils/paths";
 import { runPowerShellFile, resolvePsScript } from "../infra/powershell";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("PptxGen");
 
 /**
  * Active temporary files that need cleanup
@@ -192,7 +195,7 @@ export function cleanupTempFile(filePath: string): void {
     }
   } catch (error) {
     // Silently fail - file might be in use by PowerPoint
-    console.error(`Failed to cleanup temp file: ${filePath}`, error);
+    log.error(`Failed to cleanup temp file: ${filePath}`, error);
   }
 }
 
