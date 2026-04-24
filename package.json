@@ -5,9 +5,23 @@
   "description": "Browse, capture, and insert editable PowerPoint shapes into your presentations.",
   "icon": "icon.png",
   "author": "marcelo_vieira",
-  "platforms": ["Windows"],
-  "categories": ["Design Tools", "Productivity"],
-  "keywords": ["powerpoint", "ppt", "pptx", "shape", "shapes", "library", "presentation", "slides"],
+  "platforms": [
+    "Windows"
+  ],
+  "categories": [
+    "Design Tools",
+    "Productivity"
+  ],
+  "keywords": [
+    "powerpoint",
+    "ppt",
+    "pptx",
+    "shape",
+    "shapes",
+    "library",
+    "presentation",
+    "slides"
+  ],
   "license": "MIT",
   "version": "2.0.1",
   "engines": {
@@ -20,7 +34,15 @@
       "title": "Search Shapes",
       "description": "Browse and insert PowerPoint shapes.",
       "mode": "view",
-      "keywords": ["search", "shape", "shapes", "powerpoint", "ppt", "pptx", "library"],
+      "keywords": [
+        "search",
+        "shape",
+        "shapes",
+        "powerpoint",
+        "ppt",
+        "pptx",
+        "library"
+      ],
       "arguments": [
         {
           "name": "category",
@@ -35,14 +57,28 @@
       "title": "Capture Shape from PowerPoint",
       "description": "Extract the selected shape and add it to the library.",
       "mode": "view",
-      "keywords": ["capture", "extract", "shape", "powerpoint", "ppt", "pptx", "library"]
+      "keywords": [
+        "capture",
+        "extract",
+        "shape",
+        "powerpoint",
+        "ppt",
+        "pptx",
+        "library"
+      ]
     },
     {
       "name": "manage-categories",
       "title": "Manage Categories",
       "description": "Add, rename, or delete shape categories.",
       "mode": "view",
-      "keywords": ["categories", "taxonomy", "shape", "shapes", "library"]
+      "keywords": [
+        "categories",
+        "taxonomy",
+        "shape",
+        "shapes",
+        "library"
+      ]
     }
   ],
   "preferences": [
@@ -141,6 +177,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:strict": "vitest run --coverage && ray lint && tsc --noEmit",
     "audit": "npm audit --audit-level=moderate",
     "audit:fix": "npm audit fix",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run audit",

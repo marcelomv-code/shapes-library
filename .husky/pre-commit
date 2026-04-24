@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# Phase 13 pre-commit hook.
+# 1) Format staged files via lint-staged.
+# 2) Typecheck the whole project.
+set -e
+npx lint-staged
+npx tsc --noEmit
