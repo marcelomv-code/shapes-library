@@ -1,0 +1,11 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 2
+STEP5: Getting shape
+STEP6: Shape name: Decision 1
+STEP7: Building data
+STEP8: Converting to JSON
+STEP9: Outputting JSON
+{"name":"Decision 1","type":111,"autoShapeName":"msoShapeFlowchartDecision","left":1,"top":1,"width":2,"height":1.5,"rotation":0,"adjustments":[],"nativePptxRelPath":"native/shape_captured_1700000000003.pptx","fillColor":"#4472C4","fillTransparency":0,"lineColor":"#2E528F","lineWeight":1}
+STEP10: Done

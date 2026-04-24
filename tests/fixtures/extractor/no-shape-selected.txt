@@ -1,0 +1,5 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 0
+ERROR:No shape selected (Selection.Type=0 None). Click the shape border (not the text), ensure only one shape is selected.

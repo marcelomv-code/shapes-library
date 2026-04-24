@@ -1,0 +1,5 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP9: Outputting JSON
+{"name":"Broken","type":1,"left":1,"top":1,"width":2,"height":
+STEP10: Done

@@ -1,0 +1,13 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 2
+STEP5: Getting shape
+STEP5a: Detected picture
+STEP5b: Picture exported
+STEP6: Shape name: Picture 5
+STEP7: Building data
+STEP8: Converting to JSON
+STEP9: Outputting JSON
+{"isPicture":true,"pngTempPath":"C:\\Users\\u\\AppData\\Local\\Temp\\raycast-cap-abc.png","name":"Picture 5","type":13,"left":2,"top":2,"width":4,"height":3,"rotation":0,"adjustments":[],"nativePptxRelPath":"native/shape_captured_1700000000005.pptx"}
+STEP10: Done

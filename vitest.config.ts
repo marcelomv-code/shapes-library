@@ -2,13 +2,15 @@ import { defineConfig } from "vitest/config";
 import { resolve } from "path";
 
 /**
- * Vitest configuration — Phase 10 TDD base.
+ * Vitest configuration — Phase 0 (fix plan) TDD base.
  *
- * Coverage is scoped (`include`) to the pure, unit-testable modules the
- * refactor exposed. UI (Raycast views), PowerShell I/O adapters, and
- * generators are intentionally excluded until contract tests (Phase 11)
- * and integration fixtures are in place. The 80% thresholds apply to
- * the included set and will be extended phase-by-phase.
+ * Phase 0 widens `coverage.include` from the original five hand-picked
+ * modules to cover the whole non-UI surface (infra, domain, utils,
+ * features/shape-picker, generator). `.tsx` files are excluded at this
+ * phase because React/Raycast UI contract tests do not land until
+ * Phase 4/6. Thresholds are relaxed to a realistic 30% baseline; each
+ * subsequent phase raises them per the FIX_PLAN gate table:
+ *   F0=30 → F1=35 → F2=45 → F3=55 → F4=60 → F5=65 → F6=70 → F7=80.
  *
  * `@raycast/api` is aliased to a lightweight mock so tests can exercise
  * `paths.ts` / `categoryManager.ts` without a Raycast runtime.
@@ -31,18 +33,18 @@ export default defineConfig({
       reporter: ["text", "text-summary", "html", "json-summary"],
       reportsDirectory: "coverage",
       include: [
-        "src/infra/powershell/escape.ts",
-        "src/utils/cache.ts",
-        "src/utils/categoryManager.ts",
-        "src/utils/paths.ts",
-        "src/utils/svgPreview.ts",
+        "src/infra/**/*.ts",
+        "src/domain/**/*.ts",
+        "src/utils/**/*.ts",
+        "src/features/shape-picker/**/*.ts",
+        "src/generator/**/*.ts",
       ],
-      exclude: ["**/*.d.ts", "**/node_modules/**", "**/dist/**"],
+      exclude: ["**/*.d.ts", "**/*.tsx", "**/node_modules/**", "**/dist/**", "src/**/index.ts"],
       thresholds: {
-        lines: 80,
-        statements: 80,
-        functions: 80,
-        branches: 80,
+        lines: 30,
+        statements: 30,
+        functions: 30,
+        branches: 30,
       },
     },
   },

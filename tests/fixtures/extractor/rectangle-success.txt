@@ -1,0 +1,19 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 2
+STEP5: Getting shape
+STEP6: Shape name: Rectangle 1
+STEP7: Building data
+STEP8: Converting to JSON
+STEP8a: Saving native PPTX for accurate color preservation
+STEP8a1: No template provided, creating blank presentation with Office default theme
+STEP8a2: Adding blank slide
+STEP8a3: Pasting selected shape
+STEP8a3: Shape pasted successfully
+STEP8b: Saving native PPTX (temp)
+STEP8c: Copying native PPTX to target
+STEP8d: Native PPTX saved (theme from template or default)
+STEP9: Outputting JSON
+{"name":"Rectangle 1","type":1,"autoShapeName":"msoShapeRectangle","left":1.25,"top":2.5,"width":3,"height":1.5,"rotation":0,"adjustments":[],"nativePptxRelPath":"native/shape_captured_1700000000000.pptx","fillColor":"#4472C4","fillTransparency":0,"lineColor":"#2E528F","lineWeight":0.75,"lineTransparency":0}
+STEP10: Done

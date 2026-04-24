@@ -1,0 +1,23 @@
+ Test Files  7 passed (7)
+      Tests  118 passed (118)
+   Start at  19:45:22
+   Duration  1.86s (transform 145ms, setup 69ms, collect 193ms, tests 94ms, environment 1ms, prepare 504ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   98.34 |    93.47 |     100 |   98.34 |                   
+ domain/powerpoint |     100 |      100 |     100 |     100 |                   
+  ...Extraction.ts |     100 |      100 |     100 |     100 |                   
+ infra/powershell  |     100 |      100 |     100 |     100 |                   
+  escape.ts        |     100 |      100 |     100 |     100 |                   
+ utils             |   98.15 |    91.52 |     100 |   98.15 |                   
+  cache.ts         |     100 |      100 |     100 |     100 |                   
+  ...oryManager.ts |   97.12 |    93.61 |     100 |   97.12 | 105-108           
+  paths.ts         |    87.5 |    79.31 |     100 |    87.5 | 43-50             
+  shapeMapper.ts   |     100 |    93.65 |     100 |     100 | 176,253,286,301   
+  svgPreview.ts    |     100 |     92.3 |     100 |     100 | 16-17             
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================

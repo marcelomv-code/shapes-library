@@ -1,0 +1,12 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 2
+STEP5: Getting shape
+STEP6: Shape name: Right Arrow 3
+STEP7: Building data
+STEP8: Converting to JSON
+STEP8a: Saving native PPTX for accurate color preservation
+STEP9: Outputting JSON
+{"name":"Right Arrow 3","type":39,"autoShapeName":"msoShapeRightArrow","left":2.0,"top":3.0,"width":2.5,"height":0.75,"rotation":0,"adjustments":[0.5,0.5],"nativePptxRelPath":"native/shape_captured_1700000000002.pptx","fillColor":"#ED7D31","lineColor":"#B45D20","lineWeight":1}
+STEP10: Done
