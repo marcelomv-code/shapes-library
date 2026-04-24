@@ -1,0 +1,9 @@
+﻿
+> shapes-library@2.0.1 build
+> ray build -e dist
+
+[36minfo[39m  - entry points ["src\\shape-picker.tsx","src\\capture-shape.tsx","src\\manage-categories.tsx"]
+[36minfo[39m  - compiled entry points
+[36minfo[39m  - generated extension's TypeScript definitions
+[36minfo[39m  - checked TypeScript
+[32mready[39m  - built extension successfully
