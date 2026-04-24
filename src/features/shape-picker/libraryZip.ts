@@ -4,6 +4,7 @@ import { spawn } from "child_process";
 import { showToast, Toast } from "@raycast/api";
 import { getLibraryRoot } from "../../utils/paths";
 import { runPowerShellFile, resolvePsScript } from "../../infra/powershell";
+import { assertZipIsSafe } from "../../infra/zip/inspectZip";
 import { invalidateCategoriesCache } from "../../utils/categoryManager";
 import { createLogger } from "../../infra/logger";
 
@@ -83,6 +84,12 @@ export async function importLibraryZip(zipPath: string): Promise<void> {
   const root = getLibraryRoot();
   if (!zipPath || !existsSync(zipPath)) throw new Error("ZIP not found");
   importLog.info(`root=${root} zip=${zipPath}`);
+
+  // Phase 12 defense-in-depth: refuse zip-slip / zipbomb payloads
+  // before any extraction tool touches the filesystem. Throws with a
+  // human-readable message on any violation.
+  const safety = await assertZipIsSafe(zipPath);
+  importLog.info(`zip guard ok entries=${safety.entryCount} bytes=${safety.totalBytes}`);
 
   if (process.platform === "win32") {
     const result = await runPowerShellFile(resolvePsScript("import-library"), { Zip: zipPath, Dest: root });

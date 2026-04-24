@@ -53,9 +53,10 @@ Limits enforced via `DEFAULT_ZIP_LIMITS` (`src/domain/zip/zipSafety.ts`):
 
 Entry listing uses `[System.IO.Compression.ZipFile]::OpenRead` on
 Windows (no extraction) via `assets/ps/inspect-zip.ps1`, and `unzip -l`
-elsewhere. Both call sites (`src/import-library.tsx` and
-`src/features/shape-picker/libraryZip.ts::importLibraryZip`) funnel
-through `assertZipIsSafe` before `Expand-Archive` / `unzip -o`.
+elsewhere. The sole import entry point
+(`src/features/shape-picker/libraryZip.ts::importLibraryZip`, invoked
+by `ImportLibraryForm` from the shape-picker) funnels through
+`assertZipIsSafe` before `Expand-Archive` / `unzip -o`.
 
 ### 2. PowerShell runner — injection resistance (Phases 3, 4)
 

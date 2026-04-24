@@ -9,7 +9,7 @@
 ┌───────────────────────────────────────────────────────────────┐
 │ Raycast UI — entry commands (.tsx)                            │
 │   capture-shape.tsx     manage-categories.tsx                 │
-│   import-library.tsx    shape-picker.tsx                      │
+│   shape-picker.tsx                                            │
 └────────────────────┬──────────────────────────────────────────┘
                      │
 ┌────────────────────▼──────────────────────────────────────────┐
@@ -124,7 +124,10 @@ PowerPoint.
 ## Data flow: library import
 
 ```
- import-library.tsx (Raycast no-view command)
+ ImportLibraryForm (pushed from ShapeGridItem)
+   │  submit → importLibraryZip(zipPath)
+   ▼
+ libraryZip.ts :: importLibraryZip
    │
    ├─ assertZipIsSafe(zipPath)   →  Phase 12 guard
    │     │
@@ -135,13 +138,10 @@ PowerPoint.
    │   domain/zip/zipSafety.assertZipEntries
    │   (slip + bomb violations throw here — nothing extracted yet)
    │
-   ├─ createTempDir("libimp")    →  tracked staging folder (Phase 15)
+   ├─ Windows:   assets/ps/import-library.ps1 (Expand-Archive + merge)
+   │   non-Win:  spawn("unzip", ["-o", …])
    │
-   ├─ unzipCrossPlatform(zip, staging)
-   │
-   ├─ copy shapes/, assets/, native/, library_deck.pptx → LibraryRoot
-   │
-   └─ finally: cleanupTemp(staging)    →  no leak on failure
+   └─ invalidateCategoriesCache()  →  next load re-reads categories.json
 ```
 
 ## Test strategy
