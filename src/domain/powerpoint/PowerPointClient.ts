@@ -70,4 +70,19 @@ export interface PowerPointClient {
    * returns the deck path unchanged if the deck already exists.
    */
   createDeck(templatePath?: string): Promise<string>;
+
+  /**
+   * Compact the deck at `deckPath` by reopening and saving through
+   * PowerPoint — reclaims space left behind by orphan media refs and
+   * revision metadata once the deck has absorbed many captures.
+   *
+   * Returns slide count and final on-disk size in bytes. Idempotent:
+   * calling twice in a row is a cheap no-op because the second pass
+   * has nothing to prune.
+   *
+   * Phase 15 addition. Mac / Mock adapters should throw or return a
+   * test-configurable result; live Windows COM is the only runtime
+   * that can actually round-trip through PowerPoint.
+   */
+  compactDeck(deckPath: string): Promise<{ slideCount: number; bytes: number }>;
 }

@@ -2,9 +2,9 @@ import { showToast, Toast, showInFinder, Clipboard } from "@raycast/api";
 import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync } from "fs";
 import { join } from "path";
 import { spawn } from "child_process";
-import { tmpdir } from "os";
 import { getLibraryRoot } from "./utils/paths";
 import { runPowerShellFile, resolvePsScript } from "./infra/powershell";
+import { createTempDir, cleanupTemp } from "./infra/temp";
 
 interface Args {
   zipPath: string;
@@ -22,16 +22,22 @@ export default async function ImportLibrary(props: { arguments: Args }) {
     }
 
     const root = getLibraryRoot();
-    const temp = join(tmpdir(), `libimp_${Date.now()}`);
+    // Phase 15: tracked temp staging dir — cleanup in the finally
+    // block below avoids the previous leak-per-import behaviour.
+    const temp = createTempDir("libimp");
 
-    await unzipCrossPlatform(zip, temp);
+    try {
+      await unzipCrossPlatform(zip, temp);
 
-    // Copy folders if present
-    copyDirIfExists(join(temp, "shapes"), join(root, "shapes"));
-    copyDirIfExists(join(temp, "assets"), join(root, "assets"));
-    copyDirIfExists(join(temp, "native"), join(root, "native"));
-    if (existsSync(join(temp, "library_deck.pptx"))) {
-      copyFileSync(join(temp, "library_deck.pptx"), join(root, "library_deck.pptx"));
+      // Copy folders if present
+      copyDirIfExists(join(temp, "shapes"), join(root, "shapes"));
+      copyDirIfExists(join(temp, "assets"), join(root, "assets"));
+      copyDirIfExists(join(temp, "native"), join(root, "native"));
+      if (existsSync(join(temp, "library_deck.pptx"))) {
+        copyFileSync(join(temp, "library_deck.pptx"), join(root, "library_deck.pptx"));
+      }
+    } finally {
+      cleanupTemp(temp);
     }
 
     toast.style = Toast.Style.Success;

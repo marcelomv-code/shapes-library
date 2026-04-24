@@ -25,6 +25,9 @@ export interface MockResponses {
   insertSlide?: (deckPath: string, slideIndex: number) => Promise<void> | void;
   addSlideFromPptx?: (deckPath: string, sourcePath: string) => Promise<number> | number;
   createDeck?: (templatePath?: string) => Promise<string> | string;
+  compactDeck?: (
+    deckPath: string
+  ) => Promise<{ slideCount: number; bytes: number }> | { slideCount: number; bytes: number };
 }
 
 export class MockPowerPointClient implements PowerPointClient {
@@ -89,6 +92,14 @@ export class MockPowerPointClient implements PowerPointClient {
       return await this.responses.createDeck(templatePath);
     }
     return "/tmp/mock_deck.pptx";
+  }
+
+  async compactDeck(deckPath: string): Promise<{ slideCount: number; bytes: number }> {
+    this.calls.push({ method: "compactDeck", args: [deckPath] });
+    if (this.responses.compactDeck) {
+      return await this.responses.compactDeck(deckPath);
+    }
+    return { slideCount: 0, bytes: 0 };
   }
 
   /** Reset recorded calls. Useful between test cases. */

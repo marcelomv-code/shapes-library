@@ -8,13 +8,15 @@
  * only the API shape changed to match the `PowerPointClient` port.
  */
 
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, renameSync, copyFileSync, unlinkSync } from "fs";
 import { join } from "path";
 import { getPreferenceValues } from "@raycast/api";
 import { getNativeDir, getLibraryRoot } from "../../utils/paths";
 import { runPowerShellFile, resolvePsScript, PSResult } from "../powershell";
 import type { PowerPointClient } from "../../domain/powerpoint/PowerPointClient";
 import type { ExtractedShape, ExtractionResult } from "../../domain/powerpoint/types";
+import { parseCompactDeckStdout } from "../../domain/powerpoint/parseCompactDeck";
+import { buildTempName, cleanupTemp } from "../temp";
 import { createLogger } from "../logger";
 
 const log = createLogger("PowerShell");
@@ -200,6 +202,43 @@ export class WindowsComPowerPointClient implements PowerPointClient {
     });
     throwIfFailed(result);
     return deck;
+  }
+
+  async compactDeck(deckPath: string): Promise<{ slideCount: number; bytes: number }> {
+    if (!existsSync(deckPath)) {
+      throw new Error(`Deck not found: ${deckPath}`);
+    }
+    // Phase 15: PowerPoint SaveAs a temp path, then atomically move the
+    // temp over the original. The PS script does not overwrite the deck
+    // in place because COM's SaveAs against the currently-open path is
+    // unreliable on some Windows builds.
+    const tempDeck = buildTempName("compact-deck", "pptx");
+    try {
+      const psResult = await runPowerShellFile(resolvePsScript("compact-deck"), {
+        DeckPath: deckPath,
+        TempPath: tempDeck,
+      });
+      throwIfFailed(psResult);
+      const parsed = parseCompactDeckStdout(psResult.stdout);
+      if (parsed.ok === false) {
+        throw new Error(`compact-deck parser: ${parsed.message}`);
+      }
+      // Windows' `renameSync` fails cross-volume; fall back to copy+unlink
+      // when the temp dir and library root live on different drives.
+      try {
+        renameSync(tempDeck, deckPath);
+      } catch {
+        copyFileSync(tempDeck, deckPath);
+        try {
+          unlinkSync(tempDeck);
+        } catch {
+          /* leave the copy for the cleanup pass below */
+        }
+      }
+      return { slideCount: parsed.slideCount, bytes: parsed.bytes };
+    } finally {
+      cleanupTemp(tempDeck);
+    }
   }
 }
 

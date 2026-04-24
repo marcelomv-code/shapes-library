@@ -1,0 +1,57 @@
+﻿
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\capture-shape.tsx
+   70:15   error  Empty block statement             no-empty
+   77:17   error  Empty block statement             no-empty
+   92:17   error  Empty block statement             no-empty
+  101:15   error  Empty block statement             no-empty
+  199:19   error  Empty block statement             no-empty
+  205:19   error  Empty block statement             no-empty
+  218:17   error  Empty block statement             no-empty
+  247:206  error  Unnecessary escape character: \"  no-useless-escape
+  247:230  error  Unnecessary escape character: \"  no-useless-escape
+  247:314  error  Unnecessary escape character: \"  no-useless-escape
+  247:331  error  Unnecessary escape character: \"  no-useless-escape
+  265:23   error  Empty block statement             no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\import-library.tsx
+  48:13  error  Empty block statement  no-empty
+  51:13  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\paths.ts
+  50:15  error  Empty block statement  no-empty
+  71:11  error  Empty block statement  no-empty
+  79:11  error  Empty block statement  no-empty
+  87:11  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\previewGenerator.ts
+  26:11  error  Empty block statement  no-empty
+  51:11  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeMapper.ts
+  304:11  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\shapeSaver.ts
+  63:13  error  Empty block statement  no-empty
+
+C:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\src\utils\svgPreview.ts
+  45:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  46:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  47:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  48:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  54:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  55:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  56:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  57:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  58:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  59:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  65:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  66:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  67:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  68:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  69:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  70:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  71:7  error  Unexpected lexical declaration in case block  no-case-declarations
+  72:7  error  Unexpected lexical declaration in case block  no-case-declarations
+
+Γ£û 40 problems (40 errors, 0 warnings)
+

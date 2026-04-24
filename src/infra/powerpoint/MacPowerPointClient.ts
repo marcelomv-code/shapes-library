@@ -106,4 +106,8 @@ export class MacPowerPointClient implements PowerPointClient {
   async createDeck(templatePath?: string): Promise<string> {
     throw new Error(`createDeck is not supported on macOS (attempted template=${templatePath ?? "<default>"})`);
   }
+
+  async compactDeck(deckPath: string): Promise<{ slideCount: number; bytes: number }> {
+    throw new Error(`compactDeck is not supported on macOS (attempted deck=${deckPath})`);
+  }
 }

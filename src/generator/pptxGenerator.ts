@@ -2,20 +2,12 @@ import pptxgen from "pptxgenjs";
 type PptxShapeName = pptxgen.SHAPE_NAME;
 type PptxShapeProps = pptxgen.ShapeProps;
 import { open, showToast, Toast, getPreferenceValues } from "@raycast/api";
-import { writeFileSync, unlinkSync, existsSync } from "fs";
-import { tmpdir } from "os";
+import { writeFileSync } from "fs";
 import { join } from "path";
 import { ShapeInfo, Preferences, ShapeFill, ShapeLine } from "../types/shapes";
 import { getLibraryRoot } from "../utils/paths";
 import { runPowerShellFile, resolvePsScript } from "../infra/powershell";
-import { createLogger } from "../infra/logger";
-
-const log = createLogger("PptxGen");
-
-/**
- * Active temporary files that need cleanup
- */
-const activeTempFiles: Set<string> = new Set();
+import { writeTempFile, scheduleCleanup as scheduleTempCleanup } from "../infra/temp";
 
 /**
  * Normalize color format to ensure it starts with #
@@ -96,20 +88,12 @@ export async function generateShapePptx(shape: ShapeInfo): Promise<string> {
   };
   slide.addShape(shapeDef.type as unknown as PptxShapeName, shapeOptions);
 
-  // Generate unique filename with timestamp
-  const timestamp = Date.now();
+  // Phase 15: delegate path generation + tracking to tempManager.
+  // The `shape_<safeName>` prefix keeps filenames grep-friendly in
+  // logs; tempManager appends `_<timestamp>-<counter>` for uniqueness.
   const safeName = shape.id.replace(/[^a-z0-9-]/gi, "_");
-  const filename = `shape_${safeName}_${timestamp}.pptx`;
-  const tempPath = join(tmpdir(), filename);
-
-  // Write file to temp directory
   const data = (await pres.write({ outputType: "nodebuffer" })) as Buffer;
-  writeFileSync(tempPath, data);
-
-  // Track temp file for cleanup
-  activeTempFiles.add(tempPath);
-
-  return tempPath;
+  return writeTempFile(`shape_${safeName}`, "pptx", data);
 }
 
 /**
@@ -162,7 +146,7 @@ export async function openShapeInPowerPoint(shape: ShapeInfo): Promise<void> {
     // Schedule cleanup if enabled
     const preferences = getPreferenceValues<Preferences>();
     if (preferences.autoCleanup && tempPath) {
-      scheduleCleanup(tempPath, 60000); // 60 seconds
+      scheduleTempCleanup(tempPath, 60000); // 60 seconds
     }
   } catch (error) {
     toast.style = Toast.Style.Failure;
@@ -170,49 +154,6 @@ export async function openShapeInPowerPoint(shape: ShapeInfo): Promise<void> {
     toast.message = error instanceof Error ? error.message : "Unknown error";
     throw error;
   }
-}
-
-/**
- * Schedule cleanup of a temporary file
- * @param filePath - Path to the file to clean up
- * @param delayMs - Delay in milliseconds before cleanup
- */
-function scheduleCleanup(filePath: string, delayMs: number): void {
-  setTimeout(() => {
-    cleanupTempFile(filePath);
-  }, delayMs);
-}
-
-/**
- * Clean up a temporary file
- * @param filePath - Path to the file to clean up
- */
-export function cleanupTempFile(filePath: string): void {
-  try {
-    if (existsSync(filePath)) {
-      unlinkSync(filePath);
-      activeTempFiles.delete(filePath);
-    }
-  } catch (error) {
-    // Silently fail - file might be in use by PowerPoint
-    log.error(`Failed to cleanup temp file: ${filePath}`, error);
-  }
-}
-
-/**
- * Clean up all active temporary files
- */
-export function cleanupAllTempFiles(): void {
-  activeTempFiles.forEach((filePath) => {
-    cleanupTempFile(filePath);
-  });
-}
-
-/**
- * Get count of active temporary files
- */
-export function getActiveTempFilesCount(): number {
-  return activeTempFiles.size;
 }
 
 /**
