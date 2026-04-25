@@ -301,7 +301,9 @@ export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): 
         isNativeOnly ? "Native-only" : `PptxType=${pptxType}`
       }`
     );
-  } catch {}
+  } catch {
+    // Logger sink may throw under sandboxed tests; never let telemetry break the mapper.
+  }
 
   return shapeInfo;
 }

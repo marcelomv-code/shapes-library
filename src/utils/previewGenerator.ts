@@ -23,7 +23,9 @@ export async function generatePreview(shape: ShapeInfo): Promise<string | null> 
   const outDir = join(libRoot, "assets", shape.category);
   try {
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
-  } catch {}
+  } catch {
+    // Best-effort: if mkdir fails, the subsequent PPTX export will surface a usable error.
+  }
 
   const outPng = join(outDir, `${shape.id}.png`);
 
@@ -48,7 +50,9 @@ export async function generatePreview(shape: ShapeInfo): Promise<string | null> 
   const rel = `${shape.category}/${shape.id}.png`;
   try {
     updateShapeInLibrary(shape.id, shape.category, { preview: rel });
-  } catch {}
+  } catch {
+    // Library write is best-effort; the PNG itself is already on disk.
+  }
 
   return outPng;
 }

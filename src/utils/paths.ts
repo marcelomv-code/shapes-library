@@ -57,7 +57,7 @@ function safeRealPath(p: string): string {
   } catch {
     let current = abs;
     let tail = "";
-    while (true) {
+    for (;;) {
       const parent = dirname(current);
       if (parent === current) return abs;
       const segment = current.slice(parent.length).replace(/^[\\/]+/, "");
@@ -97,12 +97,14 @@ export function getLibraryRoot(): string {
   const base = configured || environment.supportPath;
   try {
     if (!existsSync(base)) mkdirSync(base, { recursive: true });
-  } catch (e) {
+  } catch {
     // Fallback to supportPath if creation failed
     if (!existsSync(environment.supportPath)) {
       try {
         mkdirSync(environment.supportPath, { recursive: true });
-      } catch {}
+      } catch {
+        // supportPath also unwriteable — surface the original error path below.
+      }
     }
     cachedLibraryRoot = environment.supportPath;
     return cachedLibraryRoot;
@@ -131,7 +133,9 @@ export function getShapesDir(): string {
   const dir = join(getLibraryRoot(), "shapes");
   try {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  } catch {}
+  } catch {
+    // Best-effort directory creation; getLibraryRoot already validated the parent.
+  }
   return dir;
 }
 
@@ -139,7 +143,9 @@ export function getAssetsDir(): string {
   const dir = join(getLibraryRoot(), "assets");
   try {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  } catch {}
+  } catch {
+    // Best-effort directory creation; getLibraryRoot already validated the parent.
+  }
   return dir;
 }
 
@@ -147,6 +153,8 @@ export function getNativeDir(): string {
   const dir = join(getLibraryRoot(), "native");
   try {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  } catch {}
+  } catch {
+    // Best-effort directory creation; getLibraryRoot already validated the parent.
+  }
   return dir;
 }

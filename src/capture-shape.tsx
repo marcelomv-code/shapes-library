@@ -67,14 +67,18 @@ function SaveForm({ shape, tempPng }: { shape: ShapeInfo; tempPng?: string }) {
           copyFileSync(tempPng, outPng);
           updateShapeInLibrary(updated.id, updated.category, { preview: `${updated.category}/${updated.id}.png` });
         }
-      } catch {}
+      } catch {
+        // Preview-from-extractor is opportunistic; the SVG fallback covers it.
+      }
 
       // Generate preview (Windows)
       if (process.platform === "win32") {
         try {
           const { generatePreview } = await import("./utils/previewGenerator");
           await generatePreview(updated);
-        } catch {}
+        } catch {
+          // Preview generation never blocks capture; SVG fallback is acceptable.
+        }
       }
 
       // Add to deck if enabled
@@ -89,7 +93,9 @@ function SaveForm({ shape, tempPng }: { shape: ShapeInfo; tempPng?: string }) {
         try {
           const slide = await getPowerPointClient().addSlideFromPptx(getDeckPath(), src);
           updateShapeInLibrary(updated.id, updated.category, { deckSlide: slide });
-        } catch {}
+        } catch {
+          // Deck augmentation is opportunistic; the JSON shape is already saved.
+        }
       }
 
       toast.style = Toast.Style.Success;
@@ -98,7 +104,9 @@ function SaveForm({ shape, tempPng }: { shape: ShapeInfo; tempPng?: string }) {
 
       try {
         await launchCommand({ name: "shape-picker", type: LaunchType.UserInitiated });
-      } catch {}
+      } catch {
+        // launchCommand fails outside Raycast (tests, dev) — popToRoot below still runs.
+      }
 
       await popToRoot({ clearSearchBar: true });
     } catch (err) {
@@ -196,13 +204,17 @@ export default function CaptureShape() {
           try {
             const slide = await getPowerPointClient().addSlideFromPptx(getDeckPath(), src);
             updateShapeInLibrary(shapeInfo.id, shapeInfo.category, { deckSlide: slide });
-          } catch {}
+          } catch {
+            // Auto-save deck augmentation is opportunistic; JSON shape is already saved.
+          }
         }
         if (process.platform === "win32") {
           try {
             const { generatePreview } = await import("./utils/previewGenerator");
             await generatePreview(shapeInfo);
-          } catch {}
+          } catch {
+            // Preview generation never blocks capture; SVG fallback is acceptable.
+          }
         }
         // Move temp PNG preview if provided
         try {
@@ -215,7 +227,9 @@ export default function CaptureShape() {
               preview: `${shapeInfo.category}/${shapeInfo.id}.png`,
             });
           }
-        } catch {}
+        } catch {
+          // Preview-from-extractor is opportunistic; the SVG fallback covers it.
+        }
 
         toast.style = Toast.Style.Success;
         toast.title = "Shape saved!";
@@ -244,7 +258,7 @@ export default function CaptureShape() {
     return <SaveForm shape={captured} tempPng={capturedTempPng} />;
   }
 
-  const md = `# Capture Selected Shape\n\n**Status:** ${status || "Idle — press Enter to capture."}\n\n**Instructions**\n\n- Open PowerPoint\n- Select the shape you want to capture\n- Press Enter or click \"Capture Selected Shape\"\n\n**Notes**\n\n- Groups and Pictures are saved as native (100% fidelity)\n- Use \"Save to Library\" to save JSON/preview and add to the Deck (if enabled)`;
+  const md = `# Capture Selected Shape\n\n**Status:** ${status || "Idle — press Enter to capture."}\n\n**Instructions**\n\n- Open PowerPoint\n- Select the shape you want to capture\n- Press Enter or click "Capture Selected Shape"\n\n**Notes**\n\n- Groups and Pictures are saved as native (100% fidelity)\n- Use "Save to Library" to save JSON/preview and add to the Deck (if enabled)`;
 
   return (
     <Detail
@@ -262,7 +276,9 @@ export default function CaptureShape() {
                 const text = lastLogs.length ? lastLogs.join("\n") : status || "No log";
                 Clipboard.copy(text);
                 showToast({ style: Toast.Style.Success, title: "Copied" });
-              } catch {}
+              } catch {
+                // Copy is best-effort; clipboard may be denied in tests.
+              }
             }}
           />
           <Action title="Open Library Folder" icon={Icon.Folder} onAction={() => showInFinder(getLibraryRoot())} />
