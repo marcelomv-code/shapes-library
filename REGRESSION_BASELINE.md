@@ -111,11 +111,20 @@ Cada cenário tem um resultado esperado. Se qualquer passo falhar ou divergir do
 
 ### 3.10 Path seguro
 
-1. Definir `libraryPath` como `C:\Users\<user>\Documents\ShapesLibrary`.
+1. Definir `libraryPath` como `C:\Users\<user>\Documents\ShapesLibrary` (via picker do Raycast).
 2. Executar `Search Shapes`.
 3. Esperado: funciona normalmente.
-4. Definir `libraryPath` como `..\..\..\Windows\System32`.
-5. Esperado (após F2.1): erro amigável "Library path out of sandbox". Hoje: comportamento indefinido.
+4. Tentar definir `libraryPath` como `..\..\..\Windows\System32` ou `C:\Windows\System32`.
+5. **Vetor UI bloqueado na origem**: a preference é `"type": "directory"` (`package.json`),
+   logo o Raycast abre o picker nativo de pasta, que não aceita string digitada nem
+   permite navegar para `C:\Windows\System32`. Não há como injetar um caminho fora do
+   sandbox pela UI hoje.
+6. **Defense-in-depth (F2.1)**: caso uma versão futura da preference passe a aceitar
+   texto livre, ou um caminho malicioso seja injetado por outra rota (export/import,
+   API), `getLibraryRoot()` aborta com `Library path out of sandbox: <path>` antes de
+   qualquer escrita. Coberto por `tests/utils/paths.test.ts > sandbox` (5 casos:
+   absoluto fora rejeita, `..` traversal rejeita, absoluto dentro aceita, supportPath
+   aceita, homedir aceita).
 
 ---
 

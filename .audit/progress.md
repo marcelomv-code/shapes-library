@@ -759,7 +759,7 @@ After commit, resume Cowork with:
 
 > Retome o plano shapes-library a partir da Fase 15.
 
-## Phase 18 — acceptance findings (in progress)
+## Phase 18 — acceptance findings (closed 2026-04-25)
 
 Manual `ray develop` session running on host since 2026-04-24. Findings
 recorded here as scenarios pass; gaps not blocking the phase are logged
@@ -779,6 +779,7 @@ for follow-up rather than fixed inline.
 | 3.7 Manage Categories                               | PASS       | Create/rename/delete cycle round-tripped through `categories.json` (`[CategoryManager] Saved 4` → `Saved 5` → `Saved 4`). Block-delete-on-non-empty assertion not separately exercised — covered by code review.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 3.8 Export library (ZIP)                            | PASS w/gap | Three successful exports after the export-library.ps1 hardening (defensive `$env:TEMP` resolution, OK emitted before cleanup, best-effort Remove-Item). Toast shows "Library exported"; zips land at `<libraryRoot>\library_export_<ts>.zip`. Producer also moved off `Compress-Archive` to `[System.IO.Compression.ZipFile]::CreateFromDirectory` so new exports use spec-compliant forward-slash entries. Residual `EXPORT-CLEANUP-WARN: An object at the specified path C:\Users\<REDACTED> does not exist.` is cosmetic — the cleanup tries to walk a temp tree the runner has already released; non-fatal, but noisy in the dev console. Track as Polish-P2.                                                                                                                                      |
 | 3.9 Import library (ZIP)                            | PASS       | First attempt failed because PS 5.1 `Compress-Archive` writes entry names with `\` separators that the Phase 12 zip-slip guard rejected outright. Fix: `validateEntryPath` now normalizes `\` to `/` before all structural checks (UNC, absolute, drive-letter, parent-escape) so legit Windows-built zips pass while every traversal defense runs against the canonical form. Round-trip verified: legacy backslash zip imports (`zip guard ok entries=13 bytes=828570`), new forward-slash zip imports identically. `categories.json` and shape JSONs land in the live library; `invalidateCategoriesCache` triggers a fresh read on the next grid refresh. Diagnostic `importLog.error("zip guard rejected: ...")` added so future violations show in the dev console without waiting on the toast. |
+| 3.10 Path seguro (sandbox)                          | PASS       | Happy path: `libraryPath` apontando para `~\Downloads` aceito; saves migraram corretamente para o novo root (`[ShapeSaver] Saved basic.json to C:\Users\<REDACTED>\Downloads\shapes\basic.json`). Vetor de erro (step 4 do baseline — `..\..\..\Windows\System32`) **não é exercitável via UI**: a preference é `"type": "directory"` (`package.json:105`), o Raycast renderiza picker nativo de pasta, que não aceita string digitada nem permite navegar para `C:\Windows\System32`. Defesa F2.1 (`assertWithinSandbox` em `src/utils/paths.ts`) fica como defense-in-depth para futuras rotas (preference text-field, injeção via import/API) e está coberta pelos 5 cenários em `tests/utils/paths.test.ts > sandbox`. `REGRESSION_BASELINE.md` 3.10 atualizado para refletir o achado.            |
 
 ### Gap F3.9 — friendly error when PowerPoint is not running
 
@@ -837,7 +838,7 @@ natively, so the cleanest fix is to drop the `shortcut` prop entirely.
 pop the form via Raycast's built-in navigation. Bundled with F3.9 in the
 Phase 18 polish commit.
 
-## Phase 19 — F2.1 libraryPath sandbox (in progress)
+## Phase 19 — F2.1 libraryPath sandbox (closed 2026-04-25, commit `36c50f6`)
 
 Closes the only baseline scenario without code coverage —
 `REGRESSION_BASELINE.md:112-118` (3.10): setting `libraryPath` to
@@ -893,13 +894,16 @@ throw as a Failure toast carrying the message
   sandbox. `__setSandboxRoots()` is exported with the `__` prefix to
   signal "test surface, do not import from production code".
 
-### Host commit block (after Phase 18 host re-validation closes)
+### Host validation outcome (2026-04-25)
 
-```powershell
-cd shapes-library
-npx prettier --write src/utils/paths.ts tests/utils/paths.test.ts .audit/progress.md
-npx tsc --noEmit
-npx vitest run tests/utils/paths.test.ts
-git add src/utils/paths.ts tests/utils/paths.test.ts .audit/progress.md
-git commit -m "feat(phase19): sandbox libraryPath under homedir/supportPath (F2.1)"
-```
+Code shipped via commit `36c50f6 feat(phase19): sandbox libraryPath under
+homedir/supportPath (F2.1)`. Host smoke for `REGRESSION_BASELINE.md` 3.10
+revealed that the malicious-path UI vector is already closed by the
+preference's `"type": "directory"` declaration in `package.json:105`:
+the Raycast picker is a native folder browser and refuses both arbitrary
+typed strings and navigation into `C:\Windows\System32`. The sandbox
+assertion therefore guards against future routes (text-field preference,
+import/API injection) rather than today's UI — see scenario 3.10 in the
+Phase 18 table for the full finding. Unit coverage in
+`tests/utils/paths.test.ts > sandbox` (5 cases) is the canonical proof
+of the rejection branch.
