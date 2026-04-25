@@ -1,0 +1,266 @@
+﻿
+> shapes-library@2.0.1 test
+> vitest run --coverage
+
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/m.vieira/OneDrive - Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mΓ£ô[39m tests/infra/powershell/escape.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m tests/utils/svgPreview.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes a rectangle to the 'basic' category
+[22m[39m[Mapper] AutoShapeType=1 Name=msoShapeRectangle -> PptxType=rectangle
+
+node.exe : [90mstderr[2m | tests/utils/cache.test.ts[2m > [22m[2mcache[2m > [22m[2mdoes not cache when setCachedShapes is called against a missing 
+file
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\m.vieira\AppData\Roami ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90mstderr[2m... a missing file:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[22m[39mFailed to cache shapes for basic: Error: ENOENT: no such file or directory, stat 
+'C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cache-7gkgyN\no-such.json'
+[90m    at statSync (node:fs:1725:25)[39m
+    at setCachedShapes [90m(C:\Users\m.vieira\OneDrive - 
+Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39msrc\utils\cache.ts:49:19[90m)[39m
+    at [90mC:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39mtests\utils\cache.test.ts:76:5
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:155:11
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:752:26
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vite
+st/runner[24m/dist/chunk-hooks.js:1863:10[90m)[39m
+    at runTest [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runn
+er[24m/dist/chunk-hooks.js:1574:12[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+  errno: [33m-4058[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'stat'[39m,
+  path: [32m'C:\\Users\\M9F72~1.VIE\\AppData\\Local\\Temp\\shapes-cache-7gkgyN\\no-such.json'[39m
+}
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes a rounded rectangle to 'basic' and wires rectRadius from adj[0]
+[22m[39m[Mapper] AutoShapeType=5 Name=msoShapeRoundedRectangle -> PptxType=roundRectangle
+
+ [32mΓ£ô[39m tests/domain/zip/zipSafety.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes right arrow (type 39) to 'arrows'
+[22m[39m[Mapper] AutoShapeType=39 Name=msoShapeRightArrow -> PptxType=rightArrow
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes flowchart decision (type 111) to 'flowchart'
+[22m[39m[Mapper] AutoShapeType=111 Name=msoShapeFlowchartDecision -> PptxType=flowChartDecision
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes a callout (type 56, msoShapeRectangularCallout) to 'callouts'
+[22m[39m[Mapper] AutoShapeType=56 Name=msoShapeRectangularCallout -> PptxType=wedgeRectCallout
+
+ [32mΓ£ô[39m tests/infra/logger/redact.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö category routing[2m > [22m[2mroutes chevron (type 55) to 'arrows' via string-match branch
+[22m[39m[Mapper] AutoShapeType=55 Name=(n/a) -> PptxType=chevron
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö native-only paths[2m > [22m[2mmarks groups as nativeOnly and drops pptx type hints to rectangle
+[22m[39m[Mapper] AutoShapeType=6 Name=(n/a) -> Native-only
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö native-only paths[2m > [22m[2mmarks pictures as nativeOnly
+[22m[39m[Mapper] AutoShapeType=13 Name=(n/a) -> Native-only
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö native-only paths[2m > [22m[2mleaves nativeOnly undefined (not false) for regular shapes
+[22m[39m[Mapper] AutoShapeType=1 Name=msoShapeRectangle -> PptxType=rectangle
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö chooseType precedence[2m > [22m[2mprefers autoShapeName over the numeric map
+[22m[39m[Mapper] AutoShapeType=9999 Name=msoShapeOval -> PptxType=ellipse
+
+ [32mΓ£ô[39m tests/domain/zip/parseZipInspection.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö chooseType precedence[2m > [22m[2mfalls back to the numeric map when autoShapeName is absent
+[22m[39m[Mapper] AutoShapeType=9 Name=(n/a) -> PptxType=ellipse
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö chooseType precedence[2m > [22m[2muses the 'tag'/'label'/'etiqueta' heuristic for unmapped types
+[22m[39m[Mapper] AutoShapeType=9999 Name=(n/a) -> PptxType=roundRectangle
+[Mapper] AutoShapeType=9999 Name=(n/a) -> PptxType=roundRectangle
+[Mapper] AutoShapeType=9999 Name=(n/a) -> PptxType=roundRectangle
+
+ [32mΓ£ô[39m tests/domain/powerpoint/parseExtraction.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö chooseType precedence[2m > [22m[2mfalls back to rectangle when nothing matches
+[22m[39m[Mapper] AutoShapeType=9999 Name=(n/a) -> PptxType=rectangle
+
+ [32mΓ£ô[39m tests/utils/cache.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mseeds defaults on first run and persists categories.json
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-4kqDnh\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö pptx definition wiring[2m > [22m[2momits rotate when rotation is zero
+[22m[39m[Mapper] AutoShapeType=1 Name=msoShapeRectangle -> PptxType=rectangle
+
+ [32mΓ£ô[39m tests/utils/paths.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns a shallow copy (mutations do not leak into the cache)
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-ijNFhz\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö pptx definition wiring[2m > [22m[2momits fill when no color is present
+[22m[39m[Mapper] AutoShapeType=6 Name=(n/a) -> Native-only
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mpicks up external mtime changes
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-rvaJHV\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö pptx definition wiring[2m > [22m[2mwires fill + line objects when colors are present
+[22m[39m[Mapper] AutoShapeType=5 Name=msoShapeRoundedRectangle -> PptxType=roundRectangle
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns defaults on malformed JSON without throwing
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-NmCtjn\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö pptx definition wiring[2m > [22m[2mdoes not set rectRadius for non-roundRectangle shapes even with adj
+[22m[39m[Mapper] AutoShapeType=39 Name=msoShapeRightArrow -> PptxType=rightArrow
+
+[90mstderr[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mloadCategories[2m > [22m[2mreturns defaults on malformed JSON without throwing
+[22m[39m[CategoryManager] Failed to load categories: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+    at JSON.parse (<anonymous>)
+    at loadCategories [90m(C:\Users\m.vieira\OneDrive - 
+Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39msrc\utils\categoryManager.ts:72:39[90m)[39m
+    at [90mC:\Users\m.vieira\OneDrive - Accenture\Desenvolvimentos\Shapes-libreary-v3\shapes-library\[39mtests\utils\categoryManager.test.ts:82:18
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:155:11
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:752:26
+    at [90mfile:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runner[24m/d
+ist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2mgenerates an id prefixed with 'captured-' and sanitized from the name
+[22m[39m[Mapper] AutoShapeType=1 Name=(n/a) -> PptxType=rectangle
+    at runWithTimeout [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vite
+st/runner[24m/dist/chunk-hooks.js:1863:10[90m)[39m
+    at runTest [90m(file:///C:/Users/m.vieira/OneDrive%20-%20Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library/[39mnode_modules/[4m@vitest/runn
+er[24m/dist/chunk-hooks.js:1574:12[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2msaveCategories[2m > [22m[2mwrites and updates the in-process cache
+[22m[39m[CategoryManager] Saved 1 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-BHCvdZ\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2mcollapses non-alphanumeric runs into single dashes (trailing punctuation is preserved as a dash)
+[22m[39m[Mapper] AutoShapeType=1 Name=(n/a) -> PptxType=rectangle
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2msaveCategories[2m > [22m[2mthrows with a readable message on write failure
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-xfyxpK\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2muses customName over extracted.name when provided
+[22m[39m[Mapper] AutoShapeType=1 Name=(n/a) -> PptxType=rectangle
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryIds returns the current id list
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-DdS4FE\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2mtags include 'captured', category, expanded type parts, and name parts >2 chars
+[22m[39m[Mapper] AutoShapeType=111 Name=(n/a) -> PptxType=flowChartDecision
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryDisplayName returns the display name, falls back to the id
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-MrfD8g\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2mdeduplicates tags
+[22m[39m[Mapper] AutoShapeType=111 Name=(n/a) -> PptxType=flowChartDecision
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mgetCategoryById returns the record or undefined
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-1TnGyp\categories.json
+
+[90mstdout[2m | tests/utils/shapeMapper.test.ts[2m > [22m[2mmapToShapeInfo ΓÇö identity + tags[2m > [22m[2msets preview path under the resolved category
+[22m[39m[Mapper] AutoShapeType=39 Name=(n/a) -> PptxType=rightArrow
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mlookup helpers[2m > [22m[2mcategoryExists reflects the current list
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-4nfEKX\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2maddCategory[2m > [22m[2mrejects duplicate ids
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-0oMYf9\categories.json
+
+ [32mΓ£ô[39m tests/utils/shapeMapper.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2maddCategory[2m > [22m[2madds a new category and seeds an empty shapes json
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-zUGdQj\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-zUGdQj\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mrenameCategory[2m > [22m[2mchanges the display name
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-JeEc8M\categories.json
+[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-JeEc8M\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mrenameCategory[2m > [22m[2mthrows when the id is unknown
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-c9JSQf\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mthrows when the id is unknown
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-YEeGCg\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mrefuses to delete a category that still contains shapes
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-E8ekEb\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-E8ekEb\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mdeleteCategory[2m > [22m[2mdeletes an empty category
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-acUAGi\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-acUAGi\categories.json
+[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-acUAGi\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mreturns 0 for malformed shapes file
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-11PDYH\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-11PDYH\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mreturns 0 when shapes file holds a non-array payload
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-hWu1Tz\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-hWu1Tz\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2mgetShapeCountInCategory[2m > [22m[2mcounts array entries
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-58UeXf\categories.json
+[CategoryManager] Saved 5 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-58UeXf\categories.json
+
+[90mstdout[2m | tests/utils/categoryManager.test.ts[2m > [22m[2minvalidateCategoriesCache[2m > [22m[2mdrops the memo so the next load re-reads the file
+[22m[39m[CategoryManager] Saved 4 categories to C:\Users\M9F72~1.VIE\AppData\Local\Temp\shapes-cats-k9Nlff\categories.json
+
+ [32mΓ£ô[39m tests/utils/categoryManager.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 165[2mms[22m[39m
+ [32mΓ£ô[39m tests/helpers/helpers.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m202 passed[39m[22m[90m (202)[39m
+[2m   Start at [22m 17:24:05
+[2m   Duration [22m 8.60s[2m (transform 2.50s, setup 986ms, collect 5.13s, tests 517ms, environment 3ms, prepare 5.31s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   30.42 |    89.77 |   75.75 |   30.42 |                   
+ domain/powerpoint |   30.04 |       96 |   66.66 |   30.04 |                   
+  ...ointClient.ts |       0 |        0 |       0 |       0 | 1-73              
+  ...Extraction.ts |     100 |      100 |     100 |     100 |                   
+  types.ts         |       0 |        0 |       0 |       0 | 1-69              
+ domain/zip        |   96.31 |    94.93 |     100 |   96.31 |                   
+  ...Inspection.ts |   94.87 |    91.42 |     100 |   94.87 | 117-118,137-138   
+  zipSafety.ts     |   97.64 |    97.72 |     100 |   97.64 | 117-118           
+ ...s/shape-picker |       0 |        0 |       0 |       0 |                   
+  clipboard.ts     |       0 |        0 |       0 |       0 | 1-100             
+  libraryZip.ts    |       0 |        0 |       0 |       0 | 1-109             
+  shapeLoader.ts   |       0 |        0 |       0 |       0 | 1-108             
+ generator         |       0 |        0 |       0 |       0 |                   
+  pptxGenerator.ts |       0 |        0 |       0 |       0 | 1-234             
+ infra/logger      |   42.26 |    92.85 |      75 |   42.26 |                   
+  logger.ts        |       0 |        0 |       0 |       0 | 1-97              
+  redact.ts        |     100 |    96.29 |     100 |     100 | 116               
+ infra/powerpoint  |       0 |        0 |       0 |       0 |                   
+  ...ointClient.ts |       0 |        0 |       0 |       0 | 1-109             
+  ...ointClient.ts |       0 |        0 |       0 |       0 | 1-98              
+  ...ointClient.ts |       0 |        0 |       0 |       0 | 1-223             
+ infra/powershell  |    2.83 |     62.5 |      50 |    2.83 |                   
+  escape.ts        |     100 |      100 |     100 |     100 |                   
+  runner.ts        |       0 |        0 |       0 |       0 | 1-333             
+  scripts.ts       |       0 |        0 |       0 |       0 | 1-45              
+  types.ts         |       0 |        0 |       0 |       0 | 1-101             
+ infra/zip         |       0 |        0 |       0 |       0 |                   
+  inspectZip.ts    |       0 |        0 |       0 |       0 | 1-90              
+ utils             |   64.02 |     90.5 |   94.59 |   64.02 |                   
+  cache.ts         |     100 |      100 |     100 |     100 |                   
+  ...oryManager.ts |   97.12 |    93.61 |     100 |   97.12 | 105-108           
+  paths.ts         |    87.5 |    79.31 |     100 |    87.5 | 47-54             
+  ...wGenerator.ts |       0 |        0 |       0 |       0 | 1-69              
+  shapeMapper.ts   |     100 |    93.65 |     100 |     100 | 176,253,286,301   
+  shapeSaver.ts    |       0 |        0 |       0 |       0 | 1-278             
+  svgPreview.ts    |     100 |     92.3 |     100 |     100 | 16-17             
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 30.42% ( 942/3096 )
+Branches     : 89.77% ( 316/352 )
+Functions    : 75.75% ( 50/66 )
+Lines        : 30.42% ( 942/3096 )
+================================================================================

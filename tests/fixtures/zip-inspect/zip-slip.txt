@@ -1,0 +1,4 @@
+0|shapes/
+100|shapes/a.json
+50|../../../Windows/System32/evil.dll
+OK:3

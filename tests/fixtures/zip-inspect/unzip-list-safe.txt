@@ -1,0 +1,8 @@
+Archive:  example.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2024-01-01 12:34   shapes/
+     1234  2024-01-01 12:34   shapes/rectangle.json
+     5678  2024-01-01 12:34   assets/preview name.png
+---------                     -------
+     6912                     3 files

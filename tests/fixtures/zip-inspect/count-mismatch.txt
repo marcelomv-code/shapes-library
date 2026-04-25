@@ -1,0 +1,3 @@
+0|shapes/
+1234|shapes/rectangle.json
+OK:5

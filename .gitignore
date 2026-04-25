@@ -8,6 +8,9 @@ yarn-error.log*
 dist/
 build/
 
+# Test coverage (vitest)
+coverage/
+
 # Raycast
 .raycast/
 
@@ -29,6 +32,8 @@ Thumbs.db
 # Temp files
 *.tmp
 temp/
+!src/infra/temp/
+!tests/infra/temp/
 tmp_shape.tsx
 test-*.js
 old_block.txt

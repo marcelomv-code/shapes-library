@@ -1,0 +1,7 @@
+Archive:  evil.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     1234  2024-01-01 12:34   shapes/ok.json
+       50  2024-01-01 12:34   ../../etc/passwd
+---------                     -------
+     1284                     2 files

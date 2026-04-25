@@ -1,0 +1,13 @@
+STEP1: Getting PowerPoint
+STEP2: PowerPoint found
+STEP3: Getting selection
+STEP4: Selection type: 2
+STEP5: Getting shape
+STEP5a: Detected grouped or multi selection (4 items)
+STEP6: Shape name: Group 42
+STEP7: Building data
+STEP8: Converting to JSON
+STEP8a: Saving native PPTX for accurate color preservation
+STEP9: Outputting JSON
+{"isGroup":true,"name":"Group 42","type":6,"left":0.5,"top":0.5,"width":5.5,"height":3,"rotation":0,"adjustments":[],"nativePptxRelPath":"native/shape_captured_1700000000004.pptx"}
+STEP10: Done

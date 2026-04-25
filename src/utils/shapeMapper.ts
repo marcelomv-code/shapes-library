@@ -3,7 +3,10 @@
  */
 
 import { ShapeInfo, ShapeType, ShapeCategory } from "../types/shapes";
-import { ExtractedShape } from "../extractor/types";
+import { ExtractedShape } from "../domain/powerpoint/types";
+import { createLogger } from "../infra/logger";
+
+const log = createLogger("Mapper");
 
 /**
  * PowerPoint AutoShapeType constants mapped to PptxGenJS types
@@ -246,24 +249,24 @@ function generateTags(name: string, shapeType: ShapeType, category: ShapeCategor
  * Map extracted PowerPoint shape to ShapeInfo format
  */
 export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): ShapeInfo {
-  const isNativeOnly = !!(extracted as any).isGroup || extracted.isPicture === true;
+  const isNativeOnly = !!extracted.isGroup || extracted.isPicture === true;
 
   // Map using enum-name mapping > numeric mapping > heuristics (only when not native-only)
-  const pptxType = isNativeOnly ? undefined : chooseType(extracted);
-  const category: ShapeCategory = isNativeOnly ? "basic" : getCategoryFromType(pptxType as ShapeType);
+  const pptxType: ShapeType | undefined = isNativeOnly ? undefined : chooseType(extracted);
+  const category: ShapeCategory = isNativeOnly ? "basic" : getCategoryFromType(pptxType ?? "rectangle");
 
   const id = generateShapeId(customName || extracted.name);
-  const tags = generateTags(customName || extracted.name, (pptxType || "rectangle") as ShapeType, category);
+  const tags = generateTags(customName || extracted.name, pptxType ?? "rectangle", category);
 
   const shapeInfo: ShapeInfo = {
     id,
     name: customName || extracted.name,
     category,
-    description: `Captured from PowerPoint${(extracted as any).isGroup ? " (Group)" : extracted.isPicture ? " (Picture)" : ""} (Type: ${extracted.type})`,
+    description: `Captured from PowerPoint${extracted.isGroup ? " (Group)" : extracted.isPicture ? " (Picture)" : ""} (Type: ${extracted.type})`,
     tags,
     preview: `${category}/placeholder.png`,
     pptxDefinition: {
-      type: (pptxType || "rectangle") as ShapeType,
+      type: pptxType ?? "rectangle",
       x: extracted.position.x,
       y: extracted.position.y,
       w: extracted.size.width,
@@ -271,7 +274,7 @@ export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): 
       rotate: extracted.rotation !== 0 ? extracted.rotation : undefined,
       adj: extracted.adjustments,
       rectRadius:
-        (pptxType as any) === "roundRectangle" && extracted.adjustments && extracted.adjustments.length > 0
+        pptxType === "roundRectangle" && extracted.adjustments && extracted.adjustments.length > 0
           ? extracted.adjustments[0]
           : undefined,
       fill: extracted.fill.color
@@ -293,8 +296,8 @@ export function mapToShapeInfo(extracted: ExtractedShape, customName?: string): 
   };
 
   try {
-    console.log(
-      `[Mapper] AutoShapeType=${extracted.type} Name=${extracted.autoShapeName || "(n/a)"} -> ${
+    log.info(
+      `AutoShapeType=${extracted.type} Name=${extracted.autoShapeName || "(n/a)"} -> ${
         isNativeOnly ? "Native-only" : `PptxType=${pptxType}`
       }`
     );

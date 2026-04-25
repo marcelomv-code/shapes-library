@@ -1,0 +1,28 @@
+﻿
+> shapes-library@2.0.1 test
+> vitest run --coverage
+
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/m.vieira/OneDrive - Accenture/Desenvolvimentos/Shapes-libreary-v3/shapes-library[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mΓ£ô[39m tests/infra/powershell/escape.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/utils/svgPreview.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m tests/infra/logger/redact.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/zip/zipSafety.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/zip/parseZipInspection.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32mΓ£ô[39m tests/domain/powerpoint/parseExtraction.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [31mΓ¥»[39m tests/utils/paths.test.ts [2m([22m[2m12 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 72[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mfalls back to supportPath when libraryPath is empty[32m 10[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22muses libraryPath when provided (absolute)[32m 4[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mmemoizes the resolution across calls[32m 4[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mresetLibraryRootCache() forces re-resolution[32m 6[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding double quotes from libraryPath[32m 6[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mstrips surrounding single quotes from libraryPath[32m 6[2mms[22m[39m
+[31m   [31m├ù[31m getLibraryRoot[2m > [22mexpands %VAR% style environment references[39m[32m 14[2mms[22m[39m
+[31m     ΓåÆ expected 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' to be 'C:\Users\M9F72~1.VIE\AppData\Local\TeΓÇª' // Object.is equality[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22mexpands ~ to the home directory[32m 3[2mms[22m[39m
+   [32mΓ£ô[39m getLibraryRoot[2m > [22manchors a relative libraryPath to the home directory[32m 4[2mms[22m[39m
+   [32mΓ£ô[39m derived directories[2m > [22mgetShapesDir returns <root>/shapes and creates it[32m 5[2mms[22m[39m
+   [32mΓ£ô[39m derived directories[2m > [22mgetAssetsDir returns <root>/assets and creates it[32m 5[2mms[22m[39m
+   [32mΓ£ô[39m derived directories[2m > [22mgetNativeDir returns <root>/native and creates it[32m 4[2mms[22m[39m

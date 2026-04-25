@@ -1,0 +1,28 @@
+# CODEOWNERS — shapes-library
+#
+# Solo-maintainer project today. This file exists so GitHub auto-requests
+# review from the maintainer on every PR, and so a future second
+# contributor only has to edit one line to opt in to review routing.
+# Rules later in the file win over earlier ones, so the global owner at
+# the top is the fallback for any path not matched below.
+
+*       @marcelomatosvieira
+
+# --- Security-sensitive areas: require the maintainer's review even if
+# broader rules are relaxed later. Keep these at the BOTTOM so they win.
+
+# PowerShell adapters and runner — run user-provided data through a shell.
+/shapes-library/assets/ps/                       @marcelomatosvieira
+/shapes-library/src/infra/powershell/            @marcelomatosvieira
+
+# Zip inspection / extraction guards — first line of defense on import.
+/shapes-library/src/domain/zip/                  @marcelomatosvieira
+/shapes-library/src/infra/zip/                   @marcelomatosvieira
+
+# CI / release configuration.
+/.github/                                        @marcelomatosvieira
+/shapes-library/.github/                         @marcelomatosvieira
+/shapes-library/package.json                     @marcelomatosvieira
+/shapes-library/package-lock.json                @marcelomatosvieira
+/shapes-library/tsconfig.json                    @marcelomatosvieira
+/shapes-library/vitest.config.ts                 @marcelomatosvieira

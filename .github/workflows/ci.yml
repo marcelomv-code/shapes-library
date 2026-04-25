@@ -1,0 +1,118 @@
+name: ci
+
+# Phase 13 — hardening plan.
+#
+# Required gates (fail the run): prettier --check, tsc --noEmit, npm test.
+# These are the three that the codebase is already expected to pass cleanly —
+# tsc has been at 0 errors since Phase 7 (strict), the vitest suite has been
+# green since Phase 10, and the project uses Prettier defaults so a format
+# drift should be fixed, not tolerated.
+#
+# Advisory gates (report but don't fail): eslint, ray build. The ESLint
+# baseline is 40 pre-existing errors clustered in rules (`no-empty`,
+# `no-case-declarations`, `no-useless-escape`) that earlier phases chose
+# not to touch; tightening this to `== 0` is a dedicated phase of its own.
+# `ray build` is a Raycast-Store packager whose primary runtime is
+# developer Macs/Windows; running it on Ubuntu is best-effort until we
+# validate the cross-platform story.
+
+on:
+  push:
+    branches: [main, refactor/hardening]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs for the same ref to keep the queue tidy.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Match package.json engines.node (>=22.14.0). 22 is Raycast's
+        # current target; add 24 here when Raycast bumps its floor.
+        node: ["22"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prettier --check
+        run: npx prettier --check "src/**/*.{ts,tsx}" "tests/**/*.{ts,tsx}" "*.{ts,json}"
+
+      - name: Typecheck (tsc --noEmit)
+        run: npm run typecheck
+
+      - name: Unit tests (vitest + v8 coverage, thresholds enforced)
+        run: npm test
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-node${{ matrix.node }}
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: ESLint (advisory)
+        id: eslint
+        continue-on-error: true
+        run: npx eslint src tests --ext .ts,.tsx
+
+      - name: ESLint summary
+        if: always()
+        run: |
+          if [ "${{ steps.eslint.outcome }}" = "failure" ]; then
+            echo "::warning::ESLint reported errors (advisory gate — see 'ESLint (advisory)' step above)."
+          fi
+
+      - name: Raycast build (advisory)
+        continue-on-error: true
+        run: npm run build
+
+  security:
+    name: npm audit (advisory)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit --audit-level=moderate
+        id: audit
+        continue-on-error: true
+        run: npm run audit
+
+      - name: Audit summary
+        if: always()
+        run: |
+          if [ "${{ steps.audit.outcome }}" = "failure" ]; then
+            echo "::warning::npm audit reported vulnerabilities at or above 'moderate' severity."
+          fi

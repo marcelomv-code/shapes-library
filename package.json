@@ -5,9 +5,23 @@
   "description": "Browse, capture, and insert editable PowerPoint shapes into your presentations.",
   "icon": "icon.png",
   "author": "marcelo_vieira",
-  "platforms": ["Windows"],
-  "categories": ["Design Tools", "Productivity"],
-  "keywords": ["powerpoint", "ppt", "pptx", "shape", "shapes", "library", "presentation", "slides"],
+  "platforms": [
+    "Windows"
+  ],
+  "categories": [
+    "Design Tools",
+    "Productivity"
+  ],
+  "keywords": [
+    "powerpoint",
+    "ppt",
+    "pptx",
+    "shape",
+    "shapes",
+    "library",
+    "presentation",
+    "slides"
+  ],
   "license": "MIT",
   "version": "2.0.1",
   "engines": {
@@ -20,7 +34,15 @@
       "title": "Search Shapes",
       "description": "Browse and insert PowerPoint shapes.",
       "mode": "view",
-      "keywords": ["search", "shape", "shapes", "powerpoint", "ppt", "pptx", "library"],
+      "keywords": [
+        "search",
+        "shape",
+        "shapes",
+        "powerpoint",
+        "ppt",
+        "pptx",
+        "library"
+      ],
       "arguments": [
         {
           "name": "category",
@@ -35,14 +57,28 @@
       "title": "Capture Shape from PowerPoint",
       "description": "Extract the selected shape and add it to the library.",
       "mode": "view",
-      "keywords": ["capture", "extract", "shape", "powerpoint", "ppt", "pptx", "library"]
+      "keywords": [
+        "capture",
+        "extract",
+        "shape",
+        "powerpoint",
+        "ppt",
+        "pptx",
+        "library"
+      ]
     },
     {
       "name": "manage-categories",
       "title": "Manage Categories",
       "description": "Add, rename, or delete shape categories.",
       "mode": "view",
-      "keywords": ["categories", "taxonomy", "shape", "shapes", "library"]
+      "keywords": [
+        "categories",
+        "taxonomy",
+        "shape",
+        "shapes",
+        "library"
+      ]
     }
   ],
   "preferences": [
@@ -122,17 +158,19 @@
     "pptxgenjs": "^3.12.0"
   },
   "devDependencies": {
-  "@raycast/eslint-config": "^1.0.11",
-  "@types/node": "^24.3.1",
-  "@types/react": "^18.3.0",
-  "@vitest/coverage-v8": "^3.2.4",
-  "eslint": "^8.57.0",
-  "prettier": "^3.6.2",
-  "react": "^18.2.0",
-  "ts-node": "^10.9.2",
-  "typescript": "^5.9.2",
-  "vitest": "^3.2.4"
-},
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.6.2",
+    "react": "19.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
@@ -141,11 +179,18 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:strict": "vitest run --coverage && ray lint && tsc --noEmit",
     "audit": "npm audit --audit-level=moderate",
     "audit:fix": "npm audit fix",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run audit",
     "generate-previews": "ts-node scripts/generate-previews.ts",
-    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky || true",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the `prepublishOnly` script and rerun `npm publish` again.\\nIf you wanted to publish it to the Raycast Store instead, use `npm run publish` instead.\\n\\n\" && exit 1",
     "publish": "npx @raycast/api@latest publish"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,md,yml,yaml}": "prettier --write"
   }
 }

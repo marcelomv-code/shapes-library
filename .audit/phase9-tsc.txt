@@ -1,0 +1,6 @@
+﻿src/features/shape-picker/libraryZip.ts(117,75): error TS1005: ')' expected.
+src/features/shape-picker/shapeLoader.ts(107,33): error TS1160: Unterminated template literal.
+src/generator/pptxGenerator.ts(234,42): error TS1005: ')' expected.
+src/utils/cache.ts(89,89): error TS1005: '}' expected.
+src/utils/categoryManager.ts(258,8): error TS1005: '}' expected.
+src/utils/shapeMapper.ts(337,47): error TS1010: '*/' expected.

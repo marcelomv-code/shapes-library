@@ -5,7 +5,7 @@ import { ShapeInfo } from "../types/shapes";
  * Much faster than PowerPoint COM API
  */
 export function generateSvgPreview(shape: ShapeInfo): string {
-  const def = shape.pptxDefinition;
+  const def = shape.pptxDefinition ?? { type: "rectangle", x: 0, y: 0, w: 2, h: 2 };
 
   // Convert inches to pixels (assuming 96 DPI)
   const scale = 96;
