@@ -40,19 +40,60 @@ try {
     $selection = $ppt.ActiveWindow.Selection
     Write-Host "STEP4: Selection type: $($selection.Type)"
 
-    if ($selection.Type -ne 2) {
-        $selType = [int]$selection.Type
-        $selName = switch ($selType) {
-            0 { 'None' }
-            1 { 'Text' }
-            2 { 'Shapes' }
-            3 { 'Slides' }
-            Default { "Type $selType" }
+    $isWholeSlide = $false
+    $sourceSlide = $null
+    if ($selection.Type -eq 2) {
+        # Shape selection (existing path)
+        $isWholeSlide = $false
+    } else {
+        # No shape selection: fall back to the active slide so the command
+        # works whether the user is in Slide Sorter (Type=3), editing text
+        # (Type=1), or clicked a thumbnail in Normal view (Selection unchanged).
+        # Avoids the ShapeRange.Copy clipboard path entirely, using
+        # Slide.Copy + Slides.Paste which preserves SVG/Icon shapes.
+        $isWholeSlide = $true
+        if ($selection.Type -eq 3) {
+            Write-Host "STEP4a: Whole slide selected (Slide Sorter)"
+            $sourceSlide = $selection.SlideRange.Item(1)
+        } else {
+            Write-Host "STEP4a: No shape selected (Selection.Type=$([int]$selection.Type)) - capturing active slide"
+            try {
+                $sourceSlide = $ppt.ActiveWindow.View.Slide
+            } catch {
+                Write-Output "ERROR:Could not resolve active slide ($($_.Exception.Message)). Select a shape, or navigate to a slide in Normal view."
+                exit 1
+            }
         }
-        Write-Output "ERROR:No shape selected (Selection.Type=$selType $selName). Click the shape border (not the text), ensure only one shape is selected."
-        exit 1
+        if ($sourceSlide -eq $null) {
+            Write-Output "ERROR:Active slide is null. Open a presentation with at least one slide."
+            exit 1
+        }
     }
 
+    if ($isWholeSlide) {
+        Write-Host "STEP5: Whole-slide path - synthesizing slide-level data"
+        $shapeCount = $sourceSlide.Shapes.Count
+        $isGroupOrMulti = $true
+        $shapeTypeVal = 0
+        $shape = $null
+        $range = $null
+        $data = @{}
+        $data['isGroup'] = $true
+        $data['name'] = "Slide " + [int]$sourceSlide.SlideIndex
+        $data['type'] = 0
+        try {
+            $pageSetup = $ppt.ActivePresentation.PageSetup
+            $data['left'] = 0
+            $data['top'] = 0
+            $data['width'] = [math]::Round($pageSetup.SlideWidth / 72, 3)
+            $data['height'] = [math]::Round($pageSetup.SlideHeight / 72, 3)
+        } catch {
+            $data['left'] = 0; $data['top'] = 0; $data['width'] = 10; $data['height'] = 7.5
+        }
+        $data['rotation'] = 0
+        $data['adjustments'] = @()
+        Write-Host "STEP5a: Whole slide has $shapeCount shapes"
+    } else {
     Write-Host "STEP5: Getting shape"
     $range = $selection.ShapeRange
     $shapeCount = $range.Count
@@ -168,6 +209,7 @@ try {
             }
         } catch {}
     }
+    } # end else (shape-selection branch)
 
     Write-Host "STEP8: Converting to JSON"
     # Duplicate exact shape into a new presentation and save as PPTX (hidden window)
@@ -180,8 +222,15 @@ try {
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
 
         Write-Host "STEP8a: Creating presentation from template or default"
-        # Use template if provided, otherwise create blank presentation
-        if ($TemplatePath -and (Test-Path $TemplatePath)) {
+        if ($isWholeSlide) {
+            # Whole-slide capture: always start blank and skip the template.
+            # Slides.Paste preserves source theme/master/layout intrinsically,
+            # so a destination template would only conflict.
+            Write-Host "STEP8a1: Whole-slide capture - blank presentation (source theme preserved by Slides.Paste)"
+            $new = $ppt.Presentations.Add(0)
+            # Defensive: drain any default slides Add() might have created.
+            while ($new.Slides.Count -gt 0) { $new.Slides.Item(1).Delete() }
+        } elseif ($TemplatePath -and (Test-Path $TemplatePath)) {
             Write-Host "STEP8a1: Opening template: $TemplatePath"
             $new = $ppt.Presentations.Open($TemplatePath, $true, $false, $false)
             Write-Host "STEP8a1: Template opened successfully - using company theme!"
@@ -190,13 +239,38 @@ try {
             $new = $ppt.Presentations.Add(0)
         }
 
-        Write-Host "STEP8a2: Adding blank slide"
-        $slide = $new.Slides.Add(1, 12) # ppLayoutBlank
+        if ($isWholeSlide) {
+            Write-Host "STEP8a3: Cloning entire slide via Slide.Copy + Slides.Paste"
+            $sourceSlide.Copy()
+            Start-Sleep -Milliseconds 200
+            $new.Slides.Paste(1) | Out-Null
+            $clonedCount = 0
+            try { $clonedCount = [int]$new.Slides.Item(1).Shapes.Count } catch {}
+            if ($clonedCount -lt $shapeCount) {
+                Write-Host "STEP8a3-warn: Cloned slide has $clonedCount of $shapeCount source shapes"
+            }
+            Write-Host "STEP8a3: Slide cloned successfully ($clonedCount shapes)"
+        } else {
+            Write-Host "STEP8a2: Adding blank slide"
+            $slide = $new.Slides.Add(1, 12) # ppLayoutBlank
 
-        Write-Host "STEP8a3: Pasting selected shape"
-        if ($isGroupOrMulti) { $range.Copy() } else { $shape.Copy() }
-        $slide.Shapes.Paste() | Out-Null
-        Write-Host "STEP8a3: Shape pasted successfully"
+            Write-Host "STEP8a3: Pasting selected shape"
+            # Multi/group: use Selection.Copy (canonical Ctrl+C path) to preserve
+            # SVG/Icon shapes (msoGraphic) and detached connectors that
+            # ShapeRange.Copy silently drops. Single shape keeps Shape.Copy.
+            if ($isGroupOrMulti) { $selection.Copy() } else { $shape.Copy() }
+            # Clipboard population race: PowerPoint COM occasionally returns from
+            # Copy() before the OLE clipboard is ready, especially for large
+            # multi-selections. A short wait makes Paste deterministic.
+            Start-Sleep -Milliseconds 150
+            $pasted = $slide.Shapes.Paste()
+            $pastedCount = 0
+            try { $pastedCount = [int]$pasted.Count } catch {}
+            if ($isGroupOrMulti -and $pastedCount -lt $shapeCount) {
+                Write-Host "STEP8a3-warn: Pasted $pastedCount of $shapeCount selected shapes (some shape types may not survive clipboard round-trip)"
+            }
+            Write-Host "STEP8a3: Shape pasted successfully ($pastedCount shapes)"
+        }
         Write-Host "STEP8b: Saving native PPTX (temp)"
         $tmpNative = Join-Path $env:TEMP ("raycast-native-" + [guid]::NewGuid().ToString() + ".pptx")
         $new.SaveAs($tmpNative, 24) # ppSaveAsOpenXMLPresentation
