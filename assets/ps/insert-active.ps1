@@ -21,7 +21,12 @@ try {
   $dest = $ppt.ActiveWindow.View.Slide
   if ($null -eq $dest) { $dest = $ppt.ActivePresentation.Slides.Item(1) }
 
-  $src = $ppt.Presentations.Open($SrcPptx, $true, $false, $false)
+  # WithWindow=$true so Shapes.Range.Copy() reliably reaches the system
+  # clipboard. Windowless sources (the prior $false) can produce
+  # "Shapes.Paste : Invalid request. Clipboard is empty" because COM-only
+  # selections don't always reach the OS clipboard. Brief flicker is the
+  # accepted tradeoff for reliability.
+  $src = $ppt.Presentations.Open($SrcPptx, $true, $false, $true)
   $s1 = $src.Slides.Item(1)
   if ($s1.Shapes.Count -eq 0) { Write-Output 'ERROR:Source slide has no shapes'; $src.Close(); exit 1 }
   # Filter out footer/slide number/date placeholders and copyright text

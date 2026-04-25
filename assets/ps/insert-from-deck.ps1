@@ -23,7 +23,10 @@ try {
   if ($app.Presentations.Count -eq 0) { "ERROR:No presentation is open"; exit 1 }
   $dest = $app.ActiveWindow.View.Slide
   if ($null -eq $dest) { $dest = $app.ActivePresentation.Slides.Item(1) }
-  $d = $app.Presentations.Open($DeckPath, $true, $false, $false)
+  # WithWindow=$true so Shapes.Range.Copy() reaches the OS clipboard
+  # (windowless sources cause "Shapes.Paste : Invalid request. Clipboard
+  # is empty"). Brief flicker is the tradeoff.
+  $d = $app.Presentations.Open($DeckPath, $true, $false, $true)
   $sl = $d.Slides.Item($SlideIndex)
   # Filter out footer/slide number/date placeholders and copyright text
   $validNames = @()
