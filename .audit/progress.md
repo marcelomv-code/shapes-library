@@ -836,3 +836,70 @@ natively, so the cleanest fix is to drop the `shortcut` prop entirely.
 `src/features/shape-picker/EditShapeForm.tsx` was removed. Esc continues to
 pop the form via Raycast's built-in navigation. Bundled with F3.9 in the
 Phase 18 polish commit.
+
+## Phase 19 — F2.1 libraryPath sandbox (in progress)
+
+Closes the only baseline scenario without code coverage —
+`REGRESSION_BASELINE.md:112-118` (3.10): setting `libraryPath` to
+`..\..\..\Windows\System32` had undefined behaviour. After this phase the
+extension hard-fails with a friendly "Library path out of sandbox" error
+before any FS write.
+
+### Scope
+
+Resolve the user's `libraryPath` preference to a normalized absolute path
+and assert it lives under one of the allowed sandbox roots
+(`os.homedir()` or `environment.supportPath`) before creating the dir.
+If the resolved path escapes both roots, throw — Raycast surfaces the
+throw as a Failure toast carrying the message
+"Library path out of sandbox: \<path\>".
+
+### Files
+
+- `src/utils/paths.ts` (M) — added private `defaultSandboxRoots`,
+  `isWithinRoot`, `assertWithinSandbox` helpers + `__setSandboxRoots`
+  test hook. Wired the assertion into `getLibraryRoot()` right after
+  `expandUserPath()` and before any `mkdirSync`. Default roots are
+  `[homedir(), environment.supportPath]`. Empty/blank `libraryPath`
+  still falls back to `supportPath` (no assertion needed — supportPath
+  is by definition allowed).
+- `tests/utils/paths.test.ts` (M) —
+  - Reframed `beforeEach` so `supportPath = tmpRoot` (was
+    `tmpRoot/support`). Existing tests that anchor `libraryPath`
+    under `tmpRoot` now satisfy the default sandbox via the
+    `supportPath` root, with no other test edits.
+  - Added `__setSandboxRoots(undefined)` reset hook in `beforeEach`
+    and `afterEach`.
+  - New `describe("sandbox", ...)` covering five cases:
+    1. Absolute libraryPath outside an explicit sandbox root → throws.
+    2. Relative libraryPath that climbs out via `..` traversal → throws.
+    3. Absolute libraryPath inside an explicit sandbox root → resolves.
+    4. Default sandbox accepts a path under `supportPath`.
+    5. Default sandbox accepts a path under `homedir()` (`~/...`).
+
+### Why this design
+
+- **Throw, don't fall back.** A malicious-looking `libraryPath` (e.g.
+  `..\Windows\System32`) means the user has misconfigured the prefs;
+  silently rerouting writes to `supportPath` would mask the problem and
+  cause confusing missing-library symptoms. Failing loudly at every
+  command surface is the spec.
+- **Two roots, not one.** `homedir()` covers normal user folders
+  (`~/Documents/...`, `~/Desktop/...`); `environment.supportPath`
+  covers the default Raycast-managed location which on macOS sits
+  outside `homedir()` in some environments.
+- **Test override hook.** The default sandbox excludes `tmpdir()` on
+  Linux CI runners, so unit tests need a way to relax / scope the
+  sandbox. `__setSandboxRoots()` is exported with the `__` prefix to
+  signal "test surface, do not import from production code".
+
+### Host commit block (after Phase 18 host re-validation closes)
+
+```powershell
+cd shapes-library
+npx prettier --write src/utils/paths.ts tests/utils/paths.test.ts .audit/progress.md
+npx tsc --noEmit
+npx vitest run tests/utils/paths.test.ts
+git add src/utils/paths.ts tests/utils/paths.test.ts .audit/progress.md
+git commit -m "feat(phase19): sandbox libraryPath under homedir/supportPath (F2.1)"
+```

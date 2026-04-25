@@ -1,6 +1,6 @@
 import { environment, getPreferenceValues } from "@raycast/api";
-import { existsSync, mkdirSync } from "fs";
-import { join, isAbsolute, normalize } from "path";
+import { existsSync, mkdirSync, realpathSync } from "fs";
+import { dirname, join, isAbsolute, normalize, relative, resolve } from "path";
 import { homedir } from "os";
 
 type Prefs = { libraryPath?: string };
@@ -33,12 +33,67 @@ function expandUserPath(p: string): string {
 // resolution per process is safe. Reset via `resetLibraryRootCache()` in tests.
 let cachedLibraryRoot: string | undefined;
 
+// Sandbox roots override — tests only. In production we always derive the
+// allowed roots from `homedir()` + `environment.supportPath`.
+let sandboxRootsOverride: string[] | undefined;
+
+function defaultSandboxRoots(): string[] {
+  return [homedir(), environment.supportPath].filter((r): r is string => Boolean(r));
+}
+
+// Resolve a path through any filesystem links / Windows 8.3 short names so
+// the sandbox compares canonical forms. `os.homedir()` returns the long
+// form (`C:\Users\m.vieira`) while `os.tmpdir()` may return the short form
+// (`C:\Users\M9F72~1.VIE\AppData\Local\Temp`); `path.relative` is purely
+// string-based and would treat them as different ancestors.
+//
+// For paths that don't exist yet (a fresh `libraryPath` the user just
+// configured) we walk up to the nearest existing ancestor, realpath that,
+// and re-attach the missing tail.
+function safeRealPath(p: string): string {
+  const abs = resolve(p);
+  try {
+    return realpathSync.native(abs);
+  } catch {
+    let current = abs;
+    let tail = "";
+    while (true) {
+      const parent = dirname(current);
+      if (parent === current) return abs;
+      const segment = current.slice(parent.length).replace(/^[\\/]+/, "");
+      tail = tail ? join(segment, tail) : segment;
+      current = parent;
+      try {
+        return join(realpathSync.native(current), tail);
+      } catch {
+        // continue walking up
+      }
+    }
+  }
+}
+
+function isWithinRoot(child: string, root: string): boolean {
+  const rel = relative(safeRealPath(root), safeRealPath(child));
+  // `relative` returns "" for same dir, "..." for ascending, "x/y" for
+  // descending. An absolute return means the two paths are on different
+  // Windows drives — also out of sandbox.
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+
+function assertWithinSandbox(absPath: string): void {
+  const roots = sandboxRootsOverride ?? defaultSandboxRoots();
+  if (!roots.some((r) => isWithinRoot(absPath, r))) {
+    throw new Error(`Library path out of sandbox: ${absPath}`);
+  }
+}
+
 export function getLibraryRoot(): string {
   if (cachedLibraryRoot !== undefined) return cachedLibraryRoot;
 
   const prefs = getPreferenceValues<Prefs>();
   const configured =
     prefs.libraryPath && prefs.libraryPath.trim().length > 0 ? expandUserPath(prefs.libraryPath) : undefined;
+  if (configured) assertWithinSandbox(configured);
   const base = configured || environment.supportPath;
   try {
     if (!existsSync(base)) mkdirSync(base, { recursive: true });
@@ -62,6 +117,14 @@ export function getLibraryRoot(): string {
  */
 export function resetLibraryRootCache(): void {
   cachedLibraryRoot = undefined;
+}
+
+/**
+ * Test-only hook: override the sandbox roots used by `getLibraryRoot()`.
+ * Pass `undefined` to restore the default `[homedir(), environment.supportPath]`.
+ */
+export function __setSandboxRoots(roots: string[] | undefined): void {
+  sandboxRootsOverride = roots;
 }
 
 export function getShapesDir(): string {
