@@ -49,8 +49,15 @@ if (-not (Test-Path $Dest)) { throw "ZipFile.CreateFromDirectory did not produce
 # loses the temp folder mid-run on antivirus-scanned hosts) does not flag the
 # whole export as broken when the zip is already on disk.
 Write-Output "OK:$Dest"
-try {
-    Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
-} catch {
-    Write-Host "EXPORT-CLEANUP-WARN: $($_.Exception.Message)"
+
+# Best-effort cleanup. The OS reaps the temp tree eventually, so any failure
+# here is purely cosmetic and must not surface as console noise (Polish-P2):
+# AV locks, ROT timing on PS 5.1, or a path the runner has already released
+# all manifest as "does not exist" terminating errors despite SilentlyContinue.
+if (Test-Path -LiteralPath $tmp) {
+    try {
+        Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    } catch {
+        # Intentionally swallowed.
+    }
 }
