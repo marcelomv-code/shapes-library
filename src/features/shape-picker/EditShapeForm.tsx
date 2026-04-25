@@ -78,7 +78,7 @@ export function EditShapeForm({ shape, onSave }: { shape: ShapeInfo; onSave: () 
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Save Changes" onSubmit={handleSubmit} />
-          <Action title="Cancel" onAction={() => pop()} shortcut={{ modifiers: ["cmd"], key: "w" }} />
+          <Action title="Cancel" onAction={() => pop()} />
         </ActionPanel>
       }
     >

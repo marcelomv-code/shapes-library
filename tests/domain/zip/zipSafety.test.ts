@@ -32,16 +32,27 @@ describe("validateEntryPath — rejection cases (Zip Slip)", () => {
     if (r.ok === false) expect(r.reason).toBe("null-byte");
   });
 
-  it("rejects any backslash (Windows separator smuggle)", () => {
+  it("normalizes Windows-producer backslashes to forward slashes", () => {
+    // PowerShell's Compress-Archive (and Explorer's Send-To Compressed Folder)
+    // write entries with `\` separators in violation of the ZIP spec. We
+    // accept them, normalized, so legit Windows-built archives import.
     const r = validateEntryPath("shapes\\sub\\file.json");
-    expect(r.ok).toBe(false);
-    if (r.ok === false) expect(r.reason).toBe("backslash");
+    expect(r.ok).toBe(true);
+    if (r.ok === true) expect(r.normalized).toBe("shapes/sub/file.json");
   });
 
-  it("rejects a lone backslash-prefixed UNC-style name", () => {
+  it("rejects a UNC-style backslash-prefixed name as absolute-windows", () => {
+    // `\\evil\share\x` normalizes to `//evil/share/x` — caught by the
+    // absolute-windows check that runs against the canonical form.
     const r = validateEntryPath("\\\\evil\\share\\x");
     expect(r.ok).toBe(false);
-    if (r.ok === false) expect(r.reason).toBe("backslash");
+    if (r.ok === false) expect(r.reason).toBe("absolute-windows");
+  });
+
+  it("catches parent-escape inside a backslash-only path after normalization", () => {
+    const r = validateEntryPath("shapes\\..\\..\\Windows\\System32\\evil.dll");
+    expect(r.ok).toBe(false);
+    if (r.ok === false) expect(r.reason).toBe("parent-escape");
   });
 
   it("rejects absolute POSIX paths starting with /", () => {

@@ -37,11 +37,16 @@ with:
 
 - empty names
 - null-byte characters
-- backslash path separators
 - POSIX absolute paths (`/etc/...`)
 - Windows drive-letter absolutes (`C:\...`)
-- UNC paths (`\\host\share`)
-- any `..` path component, at any depth
+- UNC paths (`\\host\share`, normalized to `//host/share` then refused)
+- any `..` path component, at any depth, evaluated against the canonical
+  forward-slash form so a backslash-disguised escape (`shapes\..\..\evil`)
+  is rejected as `parent-escape`
+
+Backslash separators are accepted (Windows `Compress-Archive` and Explorer's
+"Send to ZIP" both write them in violation of the ZIP spec), but only after
+normalization to `/`. Every check above runs on the canonical form.
 
 Limits enforced via `DEFAULT_ZIP_LIMITS` (`src/domain/zip/zipSafety.ts`):
 

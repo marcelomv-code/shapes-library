@@ -66,8 +66,7 @@ export type EntryPathViolation =
   | "absolute-windows"
   | "drive-letter"
   | "null-byte"
-  | "parent-escape"
-  | "backslash";
+  | "parent-escape";
 
 export type EntryPathResult = { ok: true; normalized: string } | { ok: false; reason: EntryPathViolation };
 
@@ -77,11 +76,16 @@ export type EntryPathResult = { ok: true; normalized: string } | { ok: false; re
  *
  * Contract:
  *  - Empty / whitespace-only names are rejected.
- *  - Backslashes are rejected outright. Legit zips use forward slashes; a
- *    backslash-only separator is either a crafted Windows-escape attempt or
- *    a producer bug we would rather surface than silently normalize.
- *  - Absolute POSIX paths (`/foo`), absolute UNC (`\\host\share\...`) and
- *    drive-letter paths (`C:\foo`, `C:/foo`) are rejected.
+ *  - Backslashes are normalized to forward slashes BEFORE the structural
+ *    checks below. Windows producers (`Compress-Archive`, the built-in
+ *    Explorer "Send to ZIP") write entries with backslash separators in
+ *    violation of the ZIP spec; rejecting them outright would refuse our
+ *    own legitimate exports. Security is preserved because the segment-level
+ *    checks (`..`, absolute, drive-letter, UNC) all run on the normalized
+ *    string.
+ *  - Absolute POSIX paths (`/foo`), absolute UNC (`\\host\share\...` →
+ *    `//host/share/...`) and drive-letter paths (`C:\foo`, `C:/foo`) are
+ *    rejected.
  *  - Null bytes (`\0`) are rejected — they truncate C-string filesystem calls.
  *  - After splitting on `/`, any segment equal to `..` is a parent escape.
  *    A trailing `/` (directory entry) is accepted.
@@ -100,25 +104,26 @@ export function validateEntryPath(name: string): EntryPathResult {
   if (name.includes("\0")) {
     return { ok: false, reason: "null-byte" };
   }
-  if (name.includes("\\")) {
-    return { ok: false, reason: "backslash" };
+  // Windows producers write `\` separators in zip entries. Normalize before
+  // the structural checks so legit Windows-built archives import cleanly while
+  // every traversal/absolute defense below still applies on the canonical form.
+  const normalized = name.replace(/\\/g, "/");
+
+  if (normalized.startsWith("//")) {
+    // UNC-style after normalization (`\\host\share` → `//host/share`).
+    // Checked BEFORE absolute-posix so `//` does not get mis-classified.
+    return { ok: false, reason: "absolute-windows" };
   }
-  if (name.startsWith("/")) {
+  if (normalized.startsWith("/")) {
     return { ok: false, reason: "absolute-posix" };
   }
-  // Windows drive-letter: C:, C:/, C:\ (backslash already filtered above, but
-  // catch any `X:` regardless of separator in case a producer smuggled just
-  // the letter).
-  if (/^[A-Za-z]:/.test(name)) {
+  // Windows drive-letter: matches `X:`, `X:/`, etc. after normalization.
+  if (/^[A-Za-z]:/.test(normalized)) {
     return { ok: false, reason: "drive-letter" };
-  }
-  // UNC-style (should have been caught by backslash above but double-belt).
-  if (name.startsWith("//")) {
-    return { ok: false, reason: "absolute-windows" };
   }
 
   const segments: string[] = [];
-  for (const raw of name.split("/")) {
+  for (const raw of normalized.split("/")) {
     if (raw === "" || raw === ".") continue; // tolerate ./ and trailing/ empties
     if (raw === "..") {
       return { ok: false, reason: "parent-escape" };
@@ -127,7 +132,7 @@ export function validateEntryPath(name: string): EntryPathResult {
   }
 
   // Re-join without any leading / and preserve trailing slash for directory entries.
-  const trailing = name.endsWith("/") ? "/" : "";
+  const trailing = normalized.endsWith("/") ? "/" : "";
   return { ok: true, normalized: segments.join("/") + trailing };
 }
 

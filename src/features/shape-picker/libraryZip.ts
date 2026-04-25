@@ -87,8 +87,16 @@ export async function importLibraryZip(zipPath: string): Promise<void> {
 
   // Phase 12 defense-in-depth: refuse zip-slip / zipbomb payloads
   // before any extraction tool touches the filesystem. Throws with a
-  // human-readable message on any violation.
-  const safety = await assertZipIsSafe(zipPath);
+  // human-readable message on any violation. Surfacing the rejection in
+  // the dev console (in addition to the Raycast toast) shortens the loop
+  // when the user reports an import failure with no extra context.
+  let safety;
+  try {
+    safety = await assertZipIsSafe(zipPath);
+  } catch (e) {
+    importLog.error(`zip guard rejected: ${e instanceof Error ? e.message : String(e)}`);
+    throw e;
+  }
   importLog.info(`zip guard ok entries=${safety.entryCount} bytes=${safety.totalBytes}`);
 
   if (process.platform === "win32") {

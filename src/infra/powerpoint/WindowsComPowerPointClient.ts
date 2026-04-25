@@ -75,7 +75,7 @@ export class WindowsComPowerPointClient implements PowerPointClient {
 
     if (result.ok === false) {
       if (result.reason === "protocol-error") {
-        return { success: false, error: result.message, logs, stdout, stderr };
+        return { success: false, error: friendlyComError(result.message), logs, stdout, stderr };
       }
       // Preserve the legacy "look for ERROR: line in stdout first"
       // heuristic for the exit-nonzero / timeout / spawn-failed paths.
@@ -84,11 +84,11 @@ export class WindowsComPowerPointClient implements PowerPointClient {
         .split("\n")
         .find((l) => l.trim().startsWith("ERROR:"));
       if (errLine) {
-        return { success: false, error: errLine.trim().replace(/^ERROR:/, ""), logs, stdout, stderr };
+        return { success: false, error: friendlyComError(errLine.trim().replace(/^ERROR:/, "")), logs, stdout, stderr };
       }
       return {
         success: false,
-        error: `PowerShell failed (${result.code ?? "n/a"}). ${stderr || stdout || result.message}`,
+        error: friendlyComError(`PowerShell failed (${result.code ?? "n/a"}). ${stderr || stdout || result.message}`),
         logs,
         stdout,
         stderr,
@@ -260,6 +260,25 @@ export function deckPathFromLibraryRoot(): string {
  */
 function throwIfFailed(result: PSResult): asserts result is Extract<PSResult, { ok: true }> {
   if (result.ok === false) {
-    throw new Error(result.message);
+    throw new Error(friendlyComError(result.message));
   }
+}
+
+/**
+ * Rewrites the raw COM HRESULT surfaced when PowerPoint is not running
+ * (`Marshal.GetActiveObject` fails with `0x800401E3 / MK_E_UNAVAILABLE`)
+ * into a one-line user-facing message. Every PS script that opens with
+ * "STEP1: Getting PowerPoint" forwards `$_.Exception.Message` verbatim,
+ * so the raw HRESULT reaches every adapter surface (capture, copy,
+ * insert, addSlideFromPptx, createDeck, compactDeck). Centralising the
+ * rewrite here covers all of them at once.
+ *
+ * Any other error text passes through unchanged so we don't mask
+ * unrelated COM failures (e.g. a real "No active presentation").
+ */
+function friendlyComError(message: string): string {
+  if (/0x800401E3|MK_E_UNAVAILABLE/i.test(message)) {
+    return "PowerPoint is not running. Open PowerPoint and try again.";
+  }
+  return message;
 }

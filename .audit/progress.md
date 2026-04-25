@@ -758,3 +758,81 @@ git commit -m "feat(phase14): PII-safe scoped logger + redaction contract tests"
 After commit, resume Cowork with:
 
 > Retome o plano shapes-library a partir da Fase 15.
+
+## Phase 18 — acceptance findings (in progress)
+
+Manual `ray develop` session running on host since 2026-04-24. Findings
+recorded here as scenarios pass; gaps not blocking the phase are logged
+for follow-up rather than fixed inline.
+
+### Scenario coverage
+
+| Scenario                                            | Status     | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 3.1 Capture (single shape)                          | PASS       | Rectangle captured, form rendered, JSON + native PPTX written under `basic`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 3.1.x Capture (multi/whole-slide)                   | PASS       | Surfaced bug: `ShapeRange.Copy` drops SVG/Icon shapes (`msoGraphic`) on dense decks. Fixed in commit `0d1e853` by adding a Slide.Copy + Slides.Paste fallback when `Selection.Type != 2`. 31/31 shapes preserved.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 3.2 Auto-save capture                               | PASS       | Preference toggle bypasses the form, shape lands in library directly.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 3.3 Capture with PowerPoint closed                  | PASS       | No crash. Toast text now reads "PowerPoint is not running. Open PowerPoint and try again." after the F3.9 fix below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 3.4 Search Shapes (Copy to Clipboard hit closed PP) | PASS       | Same surface as 3.3, fixed by the F3.9 rewrite in `WindowsComPowerPointClient.ts`. Other 3.4 sub-flows pending host re-test with PowerPoint open.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 3.5 Edit existing shape                             | PASS       | Moving a shape between categories migrates JSON and PNG preview correctly (`[ShapeSaver] Moved preview from basic/... to custom-category/...`). No orphan files seen in either category.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 3.6 Delete shape                                    | PASS       | Removal rewrites the category JSON without the entry (`[ShapeSaver] Saved basic.json`) and the grid refreshes. Filesystem cleanup of `assets/<cat>/<id>.png` and `native/<id>.pptx` happens silently in shapeSaver.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 3.7 Manage Categories                               | PASS       | Create/rename/delete cycle round-tripped through `categories.json` (`[CategoryManager] Saved 4` → `Saved 5` → `Saved 4`). Block-delete-on-non-empty assertion not separately exercised — covered by code review.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 3.8 Export library (ZIP)                            | PASS w/gap | Three successful exports after the export-library.ps1 hardening (defensive `$env:TEMP` resolution, OK emitted before cleanup, best-effort Remove-Item). Toast shows "Library exported"; zips land at `<libraryRoot>\library_export_<ts>.zip`. Producer also moved off `Compress-Archive` to `[System.IO.Compression.ZipFile]::CreateFromDirectory` so new exports use spec-compliant forward-slash entries. Residual `EXPORT-CLEANUP-WARN: An object at the specified path C:\Users\<REDACTED> does not exist.` is cosmetic — the cleanup tries to walk a temp tree the runner has already released; non-fatal, but noisy in the dev console. Track as Polish-P2.                                                                                                                                      |
+| 3.9 Import library (ZIP)                            | PASS       | First attempt failed because PS 5.1 `Compress-Archive` writes entry names with `\` separators that the Phase 12 zip-slip guard rejected outright. Fix: `validateEntryPath` now normalizes `\` to `/` before all structural checks (UNC, absolute, drive-letter, parent-escape) so legit Windows-built zips pass while every traversal defense runs against the canonical form. Round-trip verified: legacy backslash zip imports (`zip guard ok entries=13 bytes=828570`), new forward-slash zip imports identically. `categories.json` and shape JSONs land in the live library; `invalidateCategoriesCache` triggers a fresh read on the next grid refresh. Diagnostic `importLog.error("zip guard rejected: ...")` added so future violations show in the dev console without waiting on the toast. |
+
+### Gap F3.9 — friendly error when PowerPoint is not running
+
+Observed signature (any command path that calls
+`[Runtime.InteropServices.Marshal]::GetActiveObject("PowerPoint.Application")`
+when no PowerPoint instance is registered in the ROT):
+
+```
+ERROR:Exception calling "GetActiveObject" with "1" argument(s):
+"Operation unavailable (Exception from HRESULT: 0x800401E3 (MK_E_UNAVAILABLE))"
+```
+
+**Where it surfaces:** every Windows PS script that opens with
+`STEP1: Getting PowerPoint` — capture, insert-from-deck, insert-active,
+copy-via-powerpoint, ensure-deck, add-shape-to-deck, copy-from-deck,
+compact-deck, export-pptx-to-png. The catch-all at the bottom of each
+script forwards `$_.Exception.Message` verbatim, so the toast surfaces
+the COM HRESULT.
+
+**Resolution (2026-04-25):** fixed in `src/infra/powerpoint/WindowsComPowerPointClient.ts`.
+A new module-private `friendlyComError(message)` helper matches
+`/0x800401E3|MK_E_UNAVAILABLE/i` and rewrites the message to
+"PowerPoint is not running. Open PowerPoint and try again."; any other
+text passes through unchanged so unrelated COM failures (e.g. real
+"No active presentation") are preserved verbatim. Wired at every
+adapter surface in one shot: `throwIfFailed` (covers `copyShapeToClipboard`,
+`copyDeckSlideToClipboard`, `insertSlide`, `addSlideFromPptx`, `createDeck`,
+`compactDeck`) and the three error-return branches of
+`captureSelectedShape` (protocol-error message, stdout `ERROR:` line,
+non-zero exit catch-all). PS scripts unchanged — they keep emitting the
+raw HRESULT, the adapter is now the single rewrite point.
+
+### Polish-P1 — Reserved Cmd+W shortcut on EditShapeForm Cancel action
+
+Raycast warning surfaced during scenario 3.5 / 3.7 navigation:
+
+```
+The shortcut prop provided to the Action 'Cancel' is reserved by Raycast
+and has been removed. Please use another shortcut instead of
+{"modifiers":["cmd"],"key":"w"}.
+```
+
+Source: `src/features/shape-picker/EditShapeForm.tsx:81` —
+
+```tsx
+<Action title="Cancel" onAction={() => pop()} shortcut={{ modifiers: ["cmd"], key: "w" }} />
+```
+
+Cmd+W is reserved by the Raycast host (close window). Raycast strips
+the binding at runtime, so the action still works via mouse / ActionPanel,
+but the warning floods the dev console. Esc already pops the form
+natively, so the cleanest fix is to drop the `shortcut` prop entirely.
+
+**Resolution (2026-04-25):** the `shortcut` prop on the Cancel action in
+`src/features/shape-picker/EditShapeForm.tsx` was removed. Esc continues to
+pop the form via Raycast's built-in navigation. Bundled with F3.9 in the
+Phase 18 polish commit.
