@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, utimesSyn
 import { tmpdir } from "os";
 import { join } from "path";
 import { __raycast } from "../mocks/raycast-api";
-import { resetLibraryRootCache } from "../../src/utils/paths";
+import { resetLibraryRootCache, __setSandboxRoots } from "../../src/utils/paths";
 import {
   loadCategories,
   saveCategories,
@@ -25,12 +25,15 @@ beforeEach(() => {
   resetLibraryRootCache();
   invalidateCategoriesCache();
   tmpRoot = mkdtempSync(join(tmpdir(), "shapes-cats-"));
+  // Linux runners place tmpdir() under /tmp, outside homedir(); allow it explicitly.
+  __setSandboxRoots([tmpRoot]);
   __raycast.setPrefs({ libraryPath: tmpRoot });
 });
 
 afterEach(() => {
   resetLibraryRootCache();
   invalidateCategoriesCache();
+  __setSandboxRoots(undefined);
   if (existsSync(tmpRoot)) rmSync(tmpRoot, { recursive: true, force: true });
 });
 
