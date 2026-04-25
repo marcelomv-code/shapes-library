@@ -60,7 +60,9 @@ function saveCategoryShapes(category: ShapeCategory, shapes: ShapeInfo[]): void 
     writeFileSync(filePath, json, "utf-8");
     try {
       log.info(`Saved ${category}.json to ${filePath}`);
-    } catch {}
+    } catch {
+      // Telemetry-only — never let logging break the save.
+    }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to save shapes to ${category}.json at ${filePath}: ${msg}`);

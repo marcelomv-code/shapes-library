@@ -41,7 +41,7 @@ export function generateSvgPreview(shape: ShapeInfo): string {
                    rx="10" ry="10" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
       break;
 
-    case "ellipse":
+    case "ellipse": {
       const rx = shapeWidth / 2;
       const ry = shapeHeight / 2;
       const cx = shapeX + rx;
@@ -49,8 +49,9 @@ export function generateSvgPreview(shape: ShapeInfo): string {
       shapeSvg = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"
                    fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
       break;
+    }
 
-    case "triangle":
+    case "triangle": {
       const p1x = shapeX + shapeWidth / 2;
       const p1y = shapeY;
       const p2x = shapeX;
@@ -60,8 +61,9 @@ export function generateSvgPreview(shape: ShapeInfo): string {
       shapeSvg = `<polygon points="${p1x},${p1y} ${p2x},${p2y} ${p3x},${p3y}"
                    fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
       break;
+    }
 
-    case "diamond":
+    case "diamond": {
       const dx1 = shapeX + shapeWidth / 2;
       const dy1 = shapeY;
       const dx2 = shapeX + shapeWidth;
@@ -73,6 +75,7 @@ export function generateSvgPreview(shape: ShapeInfo): string {
       shapeSvg = `<polygon points="${dx1},${dy1} ${dx2},${dy2} ${dx3},${dy3} ${dx4},${dy4}"
                    fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
       break;
+    }
 
     case "rightArrow":
       shapeSvg = generateArrowSvg(shapeX, shapeY, shapeWidth, shapeHeight, "right", fill, stroke, strokeWidth);
